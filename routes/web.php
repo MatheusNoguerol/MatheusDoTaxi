@@ -83,3 +83,7 @@ Route::post('exclui-cliente', 'DashboardController@exclui_cliente')->name('exclu
 Route::post('edita-cliente', 'DashboardController@edita_cliente')->name('edita-cliente');
 
 Route::post('info-fin-cli', 'DashboardController@info_fin_cli')->name('info-fin-cli');
+
+
+
+Route::post('salva-funcionario', 'FuncionariosController@salvaFuncionario')->name('salva-funcionario');

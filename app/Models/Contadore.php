@@ -10,6 +10,7 @@ class Contadore extends Model
 {
     
     protected $fillable=[
-        'contadorInfoFi'
+        'contadorInfoFi',
+        'contadorFunc'
     ];
 }
