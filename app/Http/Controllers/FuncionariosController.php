@@ -5,15 +5,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Clientes;
-use App\Models\InfoFi;
+use App\Models\InfoFiFuncionarios;
 use App\Models\Contadore;
 use App\Models\User;
 use App\Models\Funcionarios;
+use App\Models\DadosContratuais;
 
 class FuncionariosController extends Controller
 
 {
     public function salvaFuncionario(Request $request){
+        
+        $contadorFunc = Contadore::select('contadorFunc')->orderBy('contadorFunc', 'desc')->get();
+
+        $codFuncionario = $contadorFunc[0]['contadorFunc'] + 1;
+        
+        $updateContadorFunc = Contadore::where('contadorFunc', '=', $contadorFunc[0]['contadorFunc'])->update([
+            'contadorFunc' => $codFuncionario
+        ]);
 
         $funcionario = new Funcionarios;
         $funcionario->NOME = $request->nome;
@@ -36,18 +45,54 @@ class FuncionariosController extends Controller
         $funcionario->NOME2 = $request->nomeContatoAdicional2;
         $funcionario->TELEFONE2 = $request->telefoneContatoAdicional2;
         $funcionario->OBS = $request->obs;
-        $funcionario->CODFUNCIONARIO = $request->obs;
-        $funcionario->DTADMISSAO = $request->dtAdmissao;
-        $funcionario->CARGO = $request->cargo;
-        $funcionario->TIPOCONTRATO = $request->tipoContrato;
-        $funcionario->COMISSAOFIXA = $request->comissaoFixa;
-        $funcionario->CTPS = $request->ctps;
-        $funcionario->PISPASEP = $request->pispasep;
-        $funcionario->PASSAGEM = $request->passagem;
+        $funcionario->CODFUNCIONARIO = $codFuncionario;
         
-
         $funcionario->save();
 
-        return $funcionario;
+
+        $dadosContratuais = new DadosContratuais;
+        $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+        $dadosContratuais->CARGO = $request->cargo;
+        $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
+        $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+        $dadosContratuais->CTPS = $request->ctps;
+        $dadosContratuais->PISPASEP = $request->pispasep;
+        $dadosContratuais->PASSAGEM = $request->passagem;
+        $dadosContratuais->CODFUNCIONARIO = $codFuncionario;
+        
+        $dadosContratuais->save();
+
+
+        
+        $dadosFinanceiros = new InfoFiFuncionarios;
+        $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+        $dadosFinanceiros->BANCO = $request->banco;
+        $dadosFinanceiros->AGENCIA = $request->agencia;       
+        $dadosFinanceiros->CONTA = $request->conta;
+        $dadosFinanceiros->TITULAR = $request->titular;
+        $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+        $dadosFinanceiros->TIPO = $request->tipoConta;
+        $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+        $dadosFinanceiros->CHAVEPIX = $request->chave;
+        $dadosFinanceiros->CODFUNCIONARIO = $codFuncionario;
+
+        $dadosFinanceiros->save();
+
+
+        return [$funcionario, $dadosContratuais, $dadosFinanceiros];
+    }
+
+    public function allFuncionarios(){ 
+        $query = Funcionarios::all();
+
+        return $query;
+    }
+
+    public function selecionaDadosExtras(Request $request){ 
+        $queryDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->codFuncionario)->get();
+
+        $queryInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->codFuncionario)->get();
+
+        return [$queryDadosContratuais, $queryInfoFiFuncionarios] ;
     }
 }

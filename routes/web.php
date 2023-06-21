@@ -18,6 +18,9 @@ use App\Http\Controllers\UserController;
 
 use App\Http\Controllers\DashboardController;
 
+use App\Http\Controllers\FuncionariosController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,11 +36,10 @@ Route::get('/', function () {
     return view('/home');
 });
 
-
-
-
-
 Auth::routes();
+
+
+############################# SITE #############################
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -49,14 +51,17 @@ Route::get('/localizacao', 'LocalizacaoController@show')->name('localizacao');
 
 Route::get('/faleConosco', 'FaleConoscoController@show')->name('fale-conosco');
 
-###################### 
+
 Route::get('/form', 'FormController@store')->name('form');
 
 Route::post('save_student','StudentController@save_student');
 
 Route::get('welcome1', 'HomeController@show')->name('welcome1');
 
+
+
 ################ AUTH ###############
+
 Route::post('/auth', 'UserController@auth')->name('auth.user');
 
 Route::post('seguros', 'UserController@seguros')->name('seguros');
@@ -86,4 +91,11 @@ Route::post('info-fin-cli', 'DashboardController@info_fin_cli')->name('info-fin-
 
 
 
+
+##################### FUNCIONARIOS ##########################
+
 Route::post('salva-funcionario', 'FuncionariosController@salvaFuncionario')->name('salva-funcionario');
+
+Route::get('all-funcionarios', 'FuncionariosController@allFuncionarios')->name('all-funcionario');
+
+Route::post('seleciona-dados-extras-funcionarios', 'FuncionariosController@selecionaDadosExtras')->name('seleciona-dados-extras-funcionarios');

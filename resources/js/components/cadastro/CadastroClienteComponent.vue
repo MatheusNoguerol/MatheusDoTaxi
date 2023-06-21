@@ -564,11 +564,11 @@
         <div class="row">
           <div class="col">
             <div class="mb-3">
-              <input type="submit" value="Cadastrar" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente">
+              <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()">Cadastrar</b-button>
               <b-button variant="primary" v-if="temClienteSelecionado == true" @click.prevent="EditaCliente()">Editar</b-button>
               <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="ExcluiCliente()">Deletar</b-button>
-              <div style="font-size: 3.3rem;" v-if="this.nome != null || this.email != null || this.placa != null || this.telefone != null || this.telefone != null || this.nascimento != null || this.vencApolice != null || this.msg != null">
-                <b-button pill @click.prevent="limpaDados">Limpar</b-button>
+              <div style="font-size: 3.3rem;" v-if="this.nome != null">
+                <b-button pill variant="primary" @click.prevent="limpaDados()">Limpar</b-button>
               </div>
             </div>
           </div>

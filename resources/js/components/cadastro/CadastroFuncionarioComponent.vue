@@ -69,21 +69,23 @@
         itemsFuncionarios: [],
         fieldsFuncionarios: [
           {
-            key: '',
-            label: '',
+            key: 'NOME',
+            label: 'Nome',
             sortable: true
           },
           {
-            key: '',
-            label: '',
+            key: 'CPF',
+            label: 'CPF',
             sortable: true
           },
           {
-            key: '',
-            label: '',
+            key: 'acoes',
+            label: 'Ações',
             sortable: true
           }
-        ]
+        ],
+        perPageFuncionarios: 10,
+        currentPageFuncionarios: 1,
       } 
     },
 
@@ -96,20 +98,58 @@
     },
 
     computed: {
-      rowsClientes() {
-        return this.itemsClientes.length
+      rowsFuncionarios() {
+        return this.itemsFuncionarios.length
       }
     },
 
     mounted() {
-      console.log('Component mounted.')
+      let self = this 
+
+      self.preLoad()
     },
 
     methods: {
+      preLoad(){
+        let self = this 
+
+        self.itemsFuncionarios = []
+
+        axios.get('all-funcionarios')
+        .then((response) => {
+          
+          for (let x = 0; x < response.data.length; x++) {
+
+            self.itemsFuncionarios.push(response.data[x])
+
+          }
+
+        }).catch((error) => {
+          console.log("Error: ", error)
+        })
+      },
+
       addCampoDeContato(){
         let self = this 
 
         self.temContatoAdicional = true
+      },
+
+      buscaCep(){
+        let self = this 
+
+        axios.get('https://viacep.com.br/ws/'+self.cep+'/json/')
+        .then((response) => {
+
+          self.logradouro = response.data.logradouro
+          self.uf = response.data.uf
+          self.municipio = response.data.localidade
+          self.bairro = response.data.bairro
+          document.getElementById('numero').focus();
+
+        }).catch((error) => {
+          console.log("Error: ", error)
+        })
       },
 
       salvaFuncionario(){
@@ -153,15 +193,78 @@
           chave: self.chave,
           formasPix: self.formasPix
         }).then((response) => {
-          console.log("Response: ", response)
+          self.preLoad()
         }).catch((error) => {
           console.log("Error: ", error)
         })
+      },
+
+      selecionaFuncionarios(row){
+        let self = this 
+
+        axios.post('seleciona-dados-extras-funcionarios',{codFuncionario: row.item.CODFUNCIONARIO})
+        .then((response) => {
+
+          self.nome = row.item.NOME
+          self.cpf = row.item.CPF
+          self.nascimento = row.item.DTNASCIMENTO
+          self.email = row.item.EMAIL
+          self.telefone = row.item.TELEFONE
+          self.sexo = row.item.SEXO
+          self.cep = row.item.CEP
+          self.logradouro = row.item.LOGRADOURO
+          self.numero = row.item.NUMERO
+          self.complemento = row.item.COMPLEMENTO
+          self.uf = row.item.UF
+          self.municipio = row.item.MUNICIPIO
+          self.bairro = row.item.BAIRRO
+          self.parentescoContatoAdicional1 = row.item.GRAUPARENTESCO1
+          self.nomeContatoAdicional1 = row.item.NOME1
+          self.telefoneContatoAdicional1 = row.item.TELEFONE1
+          self.parentescoContatoAdicional2 = row.item.GRAUPARENTESCO2
+          self.nomeContatoAdicional2 = row.item.NOME2
+          self.telefoneContatoAdicional2 = row.item.TELEFONE2
+          self.obs = row.item.OBS
+                    
+          self.dtAdmissao = response.data[0][0].DTADMISSAO
+          self.cargo = response.data[0][0].CARGO
+          self.tipoContrato = response.data[0][0].TIPOCONTRATO
+          self.comissaoFixa = response.data[0][0].COMISSAOFIXA
+          self.ctps = response.data[0][0].CTPS
+          self.pispasep = response.data[0][0].PISPASEP
+          self.passagem = response.data[0][0].PASSAGEM
+
+          self.nmrbanco = response.data[1][0].NOBANCO
+          self.banco = response.data[1][0].BANCO
+          self.agencia = response.data[1][0].AGENCIA
+          self.conta = response.data[1][0].CONTA
+          self.titular = response.data[1][0].TITULAR
+          self.cpfTitular = response.data[1][0].CPFTITULAR
+          self.tipoConta = response.data[1][0].TIPO
+          self.chave = response.data[1][0].CHAVEPIX
+          self.formasPix = response.data[1][0].TIPOCHAVE
+
+          self.temFuncionarioSelecionado = true
+          this.$bvModal.hide('info-Funcionarios')
+        }).catch((error) => {
+          console.log("Error: ", error)
+        })
+
       }
     }
   }
 </script>
 
+<style scoped>
+
+#btn-cadastrar:hover{
+  background: blue;
+  color: white;
+  font-weight: bolder;
+  border: none;
+}
+
+</style>
 
 <template>
    <div>
@@ -222,7 +325,7 @@
 
                     <b-col lg="2">
                       <label for="cep">CEP</label>
-                      <b-form-input v-model="cep" id="cep"></b-form-input>
+                      <b-form-input @change="buscaCep()" v-model="cep" id="cep"></b-form-input>
                     </b-col>
 
                     <b-col lg="4">
@@ -431,11 +534,11 @@
           <div class="row">
             <div class="col">
               <div class="mb-3">
-                <input type="submit" value="Cadastrar" @click.prevent="salvaFuncionario()">
-                <b-button variant="primary" v-if="temFuncionarioSelecionado == true" @click.prevent="EditaFuncionario()">Editar</b-button>
-                <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="ExcluiFuncionario()">Deletar</b-button>
+                <b-button variant="light" v-if="temFuncionarioSelecionado == false" @click.prevent="salvaFuncionario()" id="btn-cadastrar">Cadastrar</b-button>
+                <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="EditaFuncionario()" id="btn-cadastrar">Editar</b-button>
+                <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="ExcluiFuncionario()" id="btn-cadastrar">Deletar</b-button>
                 <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true">
-                  <b-button pill @click.prevent="limpaDados()">Limpar</b-button>
+                  <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-cadastrar">Limpar</b-button>
                 </div>
               </div>
             </div>
@@ -444,12 +547,12 @@
         </form>
       
         <div>
-          <b-button variant="outline-primary" @click.prevent="abreModal()">Consultar Funcionários</b-button>
+          <b-button variant="light" id="btn-cadastrar" v-b-modal.info-Funcionarios>Consultar Funcionários</b-button>
         </div>
 
       </div>
 
-    <b-modal id="info-Funcionarios" size="xl">
+    <b-modal id="info-Funcionarios" size="md">
       <h1 class="text-center">Consulta de Funcionarios</h1>
       <div class="container">
         <b-table 
@@ -458,11 +561,24 @@
         :fields="fieldsFuncionarios" 
         houver 
         outlined 
-        responsive>
-        <template #cell(acoes) ="row">
-          <a href=""><b-icon icon="person-circle" font-scale="1" data-bs-toggle="tooltip" title="Visualizar perfil" @click.prevent="SelecionaFuncionarios(row)"></b-icon></a>
-        </template>
+        responsive
+        :per-page="perPageFuncionarios"
+        :current-page="currentPageFuncionarios">
+          
+          <template #cell(acoes) ="row">
+            <a href=""><b-icon icon="person-circle" font-scale="1" data-bs-toggle="tooltip" title="Visualizar perfil" @click.prevent="selecionaFuncionarios(row)"></b-icon></a>
+          </template>
+        
         </b-table>
+        
+        <b-pagination
+          align="center"
+          v-model="currentPageFuncionarios"
+          :total-rows="rowsFuncionarios"
+          :per-page="perPageFuncionarios"
+          aria-controls="lista-Funcionarios"
+        >
+        </b-pagination>
       </div>
     </b-modal>
 

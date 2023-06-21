@@ -31,13 +31,6 @@ class Funcionarios extends Model
         'NOME2',
         'TELEFONE2',
         'OBS',
-        'CODFUNCIONARIO',
-        'DTADMISSAO',
-        'CARGO',
-        'TIPOCONTRATO',
-        'COMISSAOFIXA',
-        'CTPS',
-        'PISPASEP',
-        'PASSAGEM'
+        'CODFUNCIONARIO'
     ];
 }
