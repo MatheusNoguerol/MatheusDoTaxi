@@ -268,7 +268,7 @@
 
 <template>
    <div>
-      <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Cadastrar Funcionário</h1>
+      <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Caaadastrar Funcionário</h1>
       <h1 v-if="temFuncionarioSelecionado == true" class="text-center">Editar Funcionário</h1>
       <div class="container text-center mt-3">
         <form method="POST">
