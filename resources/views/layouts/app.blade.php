@@ -67,9 +67,9 @@
 
                         <div>
                             <b-navbar>
-                                <b-navbar-nav>
+                                <b-navbar-nav class="navbar navbar-expand-md navbar-light">
                             
-                                    <b-nav-item-dropdown text="Cadastrar" right>
+                                    <b-nav-item-dropdown text="Cadastrar">
                                         <b-dropdown-item>
                                             <a class="dropdown-item" href="{{ route('cadastro-cliente') }}"
                                                 onclick="event.preventDefault();
@@ -105,7 +105,7 @@
                                     </b-nav-item-dropdown>
 
 
-                                    <b-nav-item-dropdown text="Estoque" right>
+                                    <b-nav-item-dropdown text="Estoque">
                                         <b-dropdown-item>
                                             <a class="dropdown-item" href="{{ route('estoque') }}"
                                                 onclick="event.preventDefault();
@@ -130,8 +130,7 @@
                                     </b-nav-item-dropdown>
 
                                     
-
-                                    <b-nav-item-dropdown text="User" right>
+                                    <b-nav-item-dropdown text="User">
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">

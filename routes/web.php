@@ -96,6 +96,9 @@ Route::post('info-fin-cli', 'DashboardController@info_fin_cli')->name('info-fin-
 
 Route::post('salva-funcionario', 'FuncionariosController@salvaFuncionario')->name('salva-funcionario');
 
+Route::post('salva-info-add-funcionarios', 'FuncionariosController@salvaInfoAddFuncionarios')->name('salva-info-add-funcionarios');
+
 Route::get('all-funcionarios', 'FuncionariosController@allFuncionarios')->name('all-funcionario');
 
 Route::post('seleciona-dados-extras-funcionarios', 'FuncionariosController@selecionaDadosExtras')->name('seleciona-dados-extras-funcionarios');
+

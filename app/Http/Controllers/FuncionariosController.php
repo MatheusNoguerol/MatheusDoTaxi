@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Clientes;
 use App\Models\InfoFiFuncionarios;
@@ -12,19 +13,11 @@ use App\Models\Funcionarios;
 use App\Models\DadosContratuais;
 
 class FuncionariosController extends Controller
-
 {
     public function salvaFuncionario(Request $request){
-        
-        $contadorFunc = Contadore::select('contadorFunc')->orderBy('contadorFunc', 'desc')->get();
-
-        $codFuncionario = $contadorFunc[0]['contadorFunc'] + 1;
-        
-        $updateContadorFunc = Contadore::where('contadorFunc', '=', $contadorFunc[0]['contadorFunc'])->update([
-            'contadorFunc' => $codFuncionario
-        ]);
 
         $funcionario = new Funcionarios;
+
         $funcionario->NOME = $request->nome;
         $funcionario->CPF = $request->cpf;
         $funcionario->DTNASCIMENTO = $request->nascimento;
@@ -49,8 +42,12 @@ class FuncionariosController extends Controller
         
         $funcionario->save();
 
+        return $funcionario;
+    }
 
+    public function salvaInfoAddFuncionarios(Request $request){
         $dadosContratuais = new DadosContratuais;
+
         $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
         $dadosContratuais->CARGO = $request->cargo;
         $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
@@ -58,13 +55,13 @@ class FuncionariosController extends Controller
         $dadosContratuais->CTPS = $request->ctps;
         $dadosContratuais->PISPASEP = $request->pispasep;
         $dadosContratuais->PASSAGEM = $request->passagem;
-        $dadosContratuais->CODFUNCIONARIO = $codFuncionario;
+        $dadosContratuais->CODFUNCIONARIO = $request->codFuncionario;
         
         $dadosContratuais->save();
 
-
         
         $dadosFinanceiros = new InfoFiFuncionarios;
+        
         $dadosFinanceiros->NOBANCO = $request->nmrbanco;
         $dadosFinanceiros->BANCO = $request->banco;
         $dadosFinanceiros->AGENCIA = $request->agencia;       
@@ -74,12 +71,13 @@ class FuncionariosController extends Controller
         $dadosFinanceiros->TIPO = $request->tipoConta;
         $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
         $dadosFinanceiros->CHAVEPIX = $request->chave;
-        $dadosFinanceiros->CODFUNCIONARIO = $codFuncionario;
+        $dadosFinanceiros->CODFUNCIONARIO = $request->codFuncionario;
 
         $dadosFinanceiros->save();
 
 
-        return [$funcionario, $dadosContratuais, $dadosFinanceiros];
+
+        return [$dadosContratuais, $dadosFinanceiros];
     }
 
     public function allFuncionarios(){ 
@@ -89,10 +87,13 @@ class FuncionariosController extends Controller
     }
 
     public function selecionaDadosExtras(Request $request){ 
-        $queryDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->codFuncionario)->get();
+        
+        $query = DB::table('funcionarios')
+        ->join('dados_contratuais', 'funcionarios.idfuncionarios', '=', 'dados_contratuais.CODFUNCIONARIO')
+        ->join('info_fi_funcionarios', 'funcionarios.idfuncionarios', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
+        ->select('dados_contratuais.*', 'info_fi_funcionarios.*')
+        ->get();
 
-        $queryInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->codFuncionario)->get();
-
-        return [$queryDadosContratuais, $queryInfoFiFuncionarios] ;
+        return $query;
     }
 }

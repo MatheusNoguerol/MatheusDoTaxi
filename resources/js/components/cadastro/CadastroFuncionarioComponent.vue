@@ -29,7 +29,7 @@
         nomeContatoAdicional2: null,
         telefoneContatoAdicional2: null,
         temContatoAdicional: false,
-        contatoAdicional: null,
+        contatoAdicional: false,
         dtAdmissao: null,
         cargo: null,
         comissaoFixa: null,
@@ -154,7 +154,7 @@
 
       salvaFuncionario(){
         let self = this
-
+        
         axios.post('salva-funcionario', {
           nome: self.nome,
           cpf: self.cpf,
@@ -176,6 +176,10 @@
           nomeContatoAdicional2: self.nomeContatoAdicional2,
           telefoneContatoAdicional2: self.telefoneContatoAdicional2,
           obs: self.obs,
+        }).then((response) => {
+          
+          axios.post('salva-info-add-funcionarios', {
+          codFuncionario:  response.data.id,
           dtAdmissao: self.dtAdmissao,
           cargo: self.cargo,
           tipoContrato: self.tipoContrato,
@@ -191,9 +195,15 @@
           cpfTitular: self.cpfTitular,
           tipoConta: self.tipoConta,
           chave: self.chave,
-          formasPix: self.formasPix
-        }).then((response) => {
-          self.preLoad()
+          formasPix: self.formasPix,
+          }).then((response) => {
+
+            self.preLoad()
+            
+          }).catch((error) => {
+            console.log("Error: ", error)
+          })
+          
         }).catch((error) => {
           console.log("Error: ", error)
         })
@@ -202,9 +212,10 @@
       selecionaFuncionarios(row){
         let self = this 
 
-        axios.post('seleciona-dados-extras-funcionarios',{codFuncionario: row.item.CODFUNCIONARIO})
+        axios.post('seleciona-dados-extras-funcionarios',{codFuncionario: row.item.idfuncionarios})
         .then((response) => {
-
+          
+          
           self.nome = row.item.NOME
           self.cpf = row.item.CPF
           self.nascimento = row.item.DTNASCIMENTO
@@ -226,29 +237,77 @@
           self.telefoneContatoAdicional2 = row.item.TELEFONE2
           self.obs = row.item.OBS
                     
-          self.dtAdmissao = response.data[0][0].DTADMISSAO
-          self.cargo = response.data[0][0].CARGO
-          self.tipoContrato = response.data[0][0].TIPOCONTRATO
-          self.comissaoFixa = response.data[0][0].COMISSAOFIXA
-          self.ctps = response.data[0][0].CTPS
-          self.pispasep = response.data[0][0].PISPASEP
-          self.passagem = response.data[0][0].PASSAGEM
+          self.dtAdmissao = response.data[0].DTADMISSAO
+          self.cargo = response.data[0].CARGO
+          self.tipoContrato = response.data[0].TIPOCONTRATO
+          self.comissaoFixa = response.data[0].COMISSAOFIXA
+          self.ctps = response.data[0].CTPS
+          self.pispasep = response.data[0].PISPASEP
+          self.passagem = response.data[0].PASSAGEM
 
-          self.nmrbanco = response.data[1][0].NOBANCO
-          self.banco = response.data[1][0].BANCO
-          self.agencia = response.data[1][0].AGENCIA
-          self.conta = response.data[1][0].CONTA
-          self.titular = response.data[1][0].TITULAR
-          self.cpfTitular = response.data[1][0].CPFTITULAR
-          self.tipoConta = response.data[1][0].TIPO
-          self.chave = response.data[1][0].CHAVEPIX
-          self.formasPix = response.data[1][0].TIPOCHAVE
+          self.nmrbanco = response.data[0].NOBANCO
+          self.banco = response.data[0].BANCO
+          self.agencia = response.data[0].AGENCIA
+          self.conta = response.data[0].CONTA
+          self.titular = response.data[0].TITULAR
+          self.cpfTitular = response.data[0].CPFTITULAR
+          self.tipoConta = response.data[0].TIPO
+          self.chave = response.data[0].CHAVEPIX
+          self.formasPix = response.data[0].TIPOCHAVE
 
           self.temFuncionarioSelecionado = true
+          self.contatoAdicional = true
+          self.temContatoAdicional = true
           this.$bvModal.hide('info-Funcionarios')
         }).catch((error) => {
           console.log("Error: ", error)
         })
+
+      },
+
+      limpaDados(){
+        let self = this
+
+        self.nome = null
+        self.cpf = null
+        self.nascimento = null
+        self.email = null
+        self.telefone = null
+        self.sexo = null
+        self.cep = null
+        self.logradouro = null
+        self.numero = null
+        self.complemento = null
+        self.uf = null
+        self.municipio = null
+        self.bairro = null
+        self.parentescoContatoAdicional1 = null
+        self.nomeContatoAdicional1 = null
+        self.telefoneContatoAdicional1 = null
+        self.parentescoContatoAdicional2 = null
+        self.nomeContatoAdicional2 = null
+        self.telefoneContatoAdicional2 = null
+        self.obs = null
+        self.dtAdmissao = null
+        self.cargo = null
+        self.tipoContrato = null
+        self.comissaoFixa = null
+        self.ctps = null
+        self.pispasep = null
+        self.passagem = null
+        self.nmrbanco = null
+        self.banco = null
+        self.agencia = null
+        self.conta = null
+        self.titular = null
+        self.cpfTitular = null
+        self.tipoConta = null
+        self.chave = null
+        self.formasPix = null
+
+        self.temFuncionarioSelecionado = false
+        self.contatoAdicional = false
+        self.temContatoAdicional = false   
 
       }
     }
@@ -268,7 +327,7 @@
 
 <template>
    <div>
-      <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Caaadastrar Funcionário</h1>
+      <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Cadastrar Funcionário</h1>
       <h1 v-if="temFuncionarioSelecionado == true" class="text-center">Editar Funcionário</h1>
       <div class="container text-center mt-3">
         <form method="POST">
@@ -277,7 +336,7 @@
             <b-card>
               <b-tabs content-class="mt-3" no-body>
 
-                <b-tab title="Dados Pessoais" active no-body>
+                <b-tab title="Dados Pessoais" id="dadosPessoais" active no-body>
                   <b-row class="my-3">
                     
                     <b-col lg="2">
@@ -383,9 +442,15 @@
                       <b-form-input type="text" id="telefoneContatoAdicional1" v-model="telefoneContatoAdicional1"></b-form-input>
                     </b-col>
                     
-                    <b-col lg="2">
-                      <label for="">+ Campo</label>
-                      <b-form-radio @change="addCampoDeContato()" v-model="contatoAdicional"></b-form-radio>
+                    <b-col lg="2" class="mt-2"><br>
+                      <b-row class="m-0">
+                        <b-col lg="6">
+                          <small>Add</small>
+                        </b-col>
+                        <b-col lg="6">
+                          <b-form-checkbox @change="addCampoDeContato()" v-model="contatoAdicional"></b-form-checkbox>
+                        </b-col>
+                      </b-row>
                     </b-col>
 
                   </b-row>
