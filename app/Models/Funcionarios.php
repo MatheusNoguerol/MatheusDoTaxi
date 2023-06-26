@@ -10,7 +10,6 @@ class Funcionarios extends Model
 {
     
     protected $fillable=[
-        'idfuncionarios',
         'ID',
         'NOME',
         'CPF',
@@ -25,12 +24,13 @@ class Funcionarios extends Model
         'UF',
         'MUNICIPIO',
         'BAIRRO',
-        'GRAUPARENTESCO',
+        'TEMCONTATOADC',
+        'GRAUPARENTESCO1',
         'NOME1',
         'TELEFONE1',
+        'GRAUPARENTESCO2',
         'NOME2',
         'TELEFONE2',
         'OBS',
-        'CODFUNCIONARIO'
     ];
 }

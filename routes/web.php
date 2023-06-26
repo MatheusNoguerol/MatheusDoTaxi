@@ -102,3 +102,5 @@ Route::get('all-funcionarios', 'FuncionariosController@allFuncionarios')->name('
 
 Route::post('seleciona-dados-extras-funcionarios', 'FuncionariosController@selecionaDadosExtras')->name('seleciona-dados-extras-funcionarios');
 
+Route::post('edita-funcionario', 'FuncionariosController@editaFuncionario')->name('edita-funcionario');
+

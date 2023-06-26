@@ -18,7 +18,7 @@ class DadosContratuais extends Model
         'CTPS',
         'PISPASEP',
         'PASSAGEM',
-        'CODFUNCIONARIO',
+        'CODFUNCIONARIO'
     ];
 }
 

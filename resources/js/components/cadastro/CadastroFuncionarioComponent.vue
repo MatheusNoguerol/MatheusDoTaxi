@@ -29,7 +29,7 @@
         nomeContatoAdicional2: null,
         telefoneContatoAdicional2: null,
         temContatoAdicional: false,
-        contatoAdicional: false,
+        contatoAdicional: null,
         dtAdmissao: null,
         cargo: null,
         comissaoFixa: null,
@@ -86,6 +86,7 @@
         ],
         perPageFuncionarios: 10,
         currentPageFuncionarios: 1,
+        id: null
       } 
     },
 
@@ -156,6 +157,7 @@
         let self = this
         
         axios.post('salva-funcionario', {
+          id: self.id,
           nome: self.nome,
           cpf: self.cpf,
           nascimento: self.nascimento,
@@ -169,6 +171,7 @@
           uf: self.uf,
           municipio: self.municipio,
           bairro: self.bairro,
+          temContatoAdicional: self.temContatoAdicional,
           parentescoContatoAdicional1: self.parentescoContatoAdicional1,
           nomeContatoAdicional1: self.nomeContatoAdicional1,
           telefoneContatoAdicional1: self.telefoneContatoAdicional1,
@@ -176,10 +179,6 @@
           nomeContatoAdicional2: self.nomeContatoAdicional2,
           telefoneContatoAdicional2: self.telefoneContatoAdicional2,
           obs: self.obs,
-        }).then((response) => {
-          
-          axios.post('salva-info-add-funcionarios', {
-          codFuncionario:  response.data.id,
           dtAdmissao: self.dtAdmissao,
           cargo: self.cargo,
           tipoContrato: self.tipoContrato,
@@ -195,15 +194,13 @@
           cpfTitular: self.cpfTitular,
           tipoConta: self.tipoConta,
           chave: self.chave,
-          formasPix: self.formasPix,
-          }).then((response) => {
-
-            self.preLoad()
-            
-          }).catch((error) => {
-            console.log("Error: ", error)
-          })
+          formasPix: self.formasPix
+        }).then((response) => {
           
+          self.preLoad()
+          self.makeToastSalvaFuncionario()
+          self.limpaDados()
+              
         }).catch((error) => {
           console.log("Error: ", error)
         })
@@ -212,9 +209,11 @@
       selecionaFuncionarios(row){
         let self = this 
 
-        axios.post('seleciona-dados-extras-funcionarios',{codFuncionario: row.item.idfuncionarios})
+        self.id = row.item.ID
+        
+        axios.post('seleciona-dados-extras-funcionarios',{id: self.id})
         .then((response) => {
-          
+          console.log("response: ", response.data)
           
           self.nome = row.item.NOME
           self.cpf = row.item.CPF
@@ -256,8 +255,9 @@
           self.formasPix = response.data[0].TIPOCHAVE
 
           self.temFuncionarioSelecionado = true
-          self.contatoAdicional = true
-          self.temContatoAdicional = true
+          
+          self.temContatoAdicional = response.data.TEMCONTATOADC == 1 ?  self.temContatoAdicional = true :  self.temContatoAdicional = false;
+
           this.$bvModal.hide('info-Funcionarios')
         }).catch((error) => {
           console.log("Error: ", error)
@@ -265,9 +265,60 @@
 
       },
 
-      limpaDados(){
+      editaFuncionario(){
         let self = this
 
+        axios.post('edita-funcionario', {
+          id: self.id,
+          nome: self.nome,
+          cpf: self.cpf,
+          nascimento: self.nascimento,
+          email: self.email,
+          telefone: self.telefone,
+          sexo: self.sexo,
+          cep: self.cep,
+          logradouro: self.logradouro,
+          numero: self.numero,
+          complemento: self.complemento,
+          uf: self.uf,
+          municipio: self.municipio,
+          bairro: self.bairro,
+          parentescoContatoAdicional1: self.parentescoContatoAdicional1,
+          nomeContatoAdicional1: self.nomeContatoAdicional1,
+          telefoneContatoAdicional1: self.telefoneContatoAdicional1,
+          parentescoContatoAdicional2: self.parentescoContatoAdicional2,
+          nomeContatoAdicional2: self.nomeContatoAdicional2,
+          telefoneContatoAdicional2: self.telefoneContatoAdicional2,
+          obs: self.obs,
+          dtAdmissao: self.dtAdmissao,
+          cargo: self.cargo,
+          tipoContrato: self.tipoContrato,
+          comissaoFixa: self.comissaoFixa,
+          ctps: self.ctps,
+          pispasep: self.pispasep,
+          passagem: self.passagem,
+          nmrbanco: self.nmrbanco,
+          banco: self.banco,
+          agencia: self.agencia,
+          conta: self.conta,
+          titular: self.titular,
+          cpfTitular: self.cpfTitular,
+          tipoConta: self.tipoConta,
+          chave: self.chave,
+          formasPix: self.formasPix
+        }).then((response) => {
+          self.preLoad()
+          self.makeToastEditaFuncionario()
+          self.limpaDados()
+        }).catch((error) => {
+          console.log("Error: ", error)
+        })
+      },
+
+      limpaDados(){
+        let self = this
+        
+        self.id = null
         self.nome = null
         self.cpf = null
         self.nascimento = null
@@ -309,9 +360,33 @@
         self.contatoAdicional = false
         self.temContatoAdicional = false   
 
-      }
+      },
+
+      makeToastEditaFuncionario(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`Funcionário  ${self.nome }  editado.`, {
+          title: 'SUCESSO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'success',
+        })
+      },
+
+      makeToastSalvaFuncionario(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`Funcionário  ${self.nome }  registrado.`, {
+          title: 'SUCESSO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'success',
+        })
+
+      },
     }
   }
+  
 </script>
 
 <style scoped>
@@ -448,7 +523,7 @@
                           <small>Add</small>
                         </b-col>
                         <b-col lg="6">
-                          <b-form-checkbox @change="addCampoDeContato()" v-model="contatoAdicional"></b-form-checkbox>
+                          <b-form-checkbox @change="addCampoDeContato()" value="1" unchecked-value="0" v-model="contatoAdicional"></b-form-checkbox>
                         </b-col>
                       </b-row>
                     </b-col>
@@ -600,8 +675,8 @@
             <div class="col">
               <div class="mb-3">
                 <b-button variant="light" v-if="temFuncionarioSelecionado == false" @click.prevent="salvaFuncionario()" id="btn-cadastrar">Cadastrar</b-button>
-                <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="EditaFuncionario()" id="btn-cadastrar">Editar</b-button>
-                <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="ExcluiFuncionario()" id="btn-cadastrar">Deletar</b-button>
+                <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="editaFuncionario()" id="btn-editar">Editar</b-button>
+                <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="excluiFuncionario()" id="btn-excluir">Deletar</b-button>
                 <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true">
                   <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-cadastrar">Limpar</b-button>
                 </div>

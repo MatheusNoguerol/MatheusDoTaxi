@@ -31,6 +31,7 @@ class FuncionariosController extends Controller
         $funcionario->UF = $request->uf;
         $funcionario->MUNICIPIO = $request->municipio;
         $funcionario->BAIRRO = $request->bairro;
+        $funcionario->TEMCONTATOADC = $request->temContatoAdicional;
         $funcionario->GRAUPARENTESCO1 = $request->parentescoContatoAdicional1;
         $funcionario->NOME1 = $request->nomeContatoAdicional1;
         $funcionario->TELEFONE1 = $request->telefoneContatoAdicional1;
@@ -38,14 +39,10 @@ class FuncionariosController extends Controller
         $funcionario->NOME2 = $request->nomeContatoAdicional2;
         $funcionario->TELEFONE2 = $request->telefoneContatoAdicional2;
         $funcionario->OBS = $request->obs;
-        $funcionario->CODFUNCIONARIO = $codFuncionario;
         
         $funcionario->save();
+       
 
-        return $funcionario;
-    }
-
-    public function salvaInfoAddFuncionarios(Request $request){
         $dadosContratuais = new DadosContratuais;
 
         $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
@@ -55,7 +52,7 @@ class FuncionariosController extends Controller
         $dadosContratuais->CTPS = $request->ctps;
         $dadosContratuais->PISPASEP = $request->pispasep;
         $dadosContratuais->PASSAGEM = $request->passagem;
-        $dadosContratuais->CODFUNCIONARIO = $request->codFuncionario;
+        $dadosContratuais->CODFUNCIONARIO = $funcionario['id'];
         
         $dadosContratuais->save();
 
@@ -71,13 +68,11 @@ class FuncionariosController extends Controller
         $dadosFinanceiros->TIPO = $request->tipoConta;
         $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
         $dadosFinanceiros->CHAVEPIX = $request->chave;
-        $dadosFinanceiros->CODFUNCIONARIO = $request->codFuncionario;
+        $dadosFinanceiros->CODFUNCIONARIO = $funcionario['id'];
 
         $dadosFinanceiros->save();
 
-
-
-        return [$dadosContratuais, $dadosFinanceiros];
+        return [$funcionario ,$dadosContratuais, $dadosFinanceiros];
     }
 
     public function allFuncionarios(){ 
@@ -87,13 +82,63 @@ class FuncionariosController extends Controller
     }
 
     public function selecionaDadosExtras(Request $request){ 
-        
         $query = DB::table('funcionarios')
-        ->join('dados_contratuais', 'funcionarios.idfuncionarios', '=', 'dados_contratuais.CODFUNCIONARIO')
-        ->join('info_fi_funcionarios', 'funcionarios.idfuncionarios', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
+        ->join('dados_contratuais', 'funcionarios.ID', '=', 'dados_contratuais.CODFUNCIONARIO')
+        ->join('info_fi_funcionarios', 'funcionarios.ID', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
         ->select('dados_contratuais.*', 'info_fi_funcionarios.*')
         ->get();
+        //dd($request);
 
         return $query;
+    }
+
+    public function editaFuncionario(Request $request){ 
+        
+        $updateFuncionarios = Funcionarios::where('ID', '=', $request->id)->update([
+            'NOME' => $request->nome ,
+            'CPF' => $request->cpf ,
+            'DTNASCIMENTO' => $request->nascimento ,
+            'EMAIL' => $request->email ,
+            'TELEFONE' => $request->telefone ,
+            'SEXO' => $request->sexo ,
+            'CEP' => $request->cep ,
+            'LOGRADOURO' => $request->logradouro ,
+            'NUMERO' => $request->numero ,
+            'COMPLEMENTO' => $request->complemento ,
+            'UF' => $request->uf ,
+            'MUNICIPIO' => $request->municipio ,
+            'BAIRRO' => $request->bairro ,
+            'GRAUPARENTESCO1' => $request->parentescoContatoAdicional1 ,
+            'NOME1' => $request->nomeContatoAdicional1 ,
+            'TELEFONE1' => $request->telefoneContatoAdicional1 ,
+            'GRAUPARENTESCO2' => $request->parentescoContatoAdicional2 ,
+            'NOME2' => $request->nomeContatoAdicional2 ,
+            'TELEFONE2' => $request->telefoneContatoAdicional2 ,
+            'OBS' => $request->obs 
+        ]);
+        
+        $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
+            'DTADMISSAO' => $request->dtAdmissao ,
+            'CARGO' => $request->cargo ,
+            'TIPOCONTRATO' => $request->tipoContrato ,
+            'COMISSAOFIXA' => $request->comissaoFixa ,
+            'CTPS' => $request->ctps ,
+            'PISPASEP' => $request->pispasep ,
+            'PASSAGEM' => $request->passagem 
+        ]);        
+
+        $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
+            'NOBANCO' => $request->nmrbanco ,
+            'BANCO' => $request->banco ,
+            'AGENCIA' => $request->agencia ,
+            'CONTA' => $request->conta ,
+            'TITULAR' => $request->titular ,
+            'CPFTITULAR' => $request->cpfTitular ,
+            'TIPO' => $request->tipoConta ,
+            'TIPOCHAVE' => $request->formasPix ,
+            'CHAVEPIX' => $request->chave 
+        ]);
+
+        return [$updateFuncionarios, $updateDadosContratuais, $updateInfoFiFuncionarios];
     }
 }
