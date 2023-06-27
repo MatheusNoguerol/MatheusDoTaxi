@@ -82,12 +82,12 @@ class FuncionariosController extends Controller
     }
 
     public function selecionaDadosExtras(Request $request){ 
-        $query = DB::table('funcionarios')
+
+        $query = DB::table('funcionarios')->where('funcionarios.ID', '=', $request->id)
         ->join('dados_contratuais', 'funcionarios.ID', '=', 'dados_contratuais.CODFUNCIONARIO')
         ->join('info_fi_funcionarios', 'funcionarios.ID', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
         ->select('dados_contratuais.*', 'info_fi_funcionarios.*')
         ->get();
-        //dd($request);
 
         return $query;
     }
@@ -117,28 +117,159 @@ class FuncionariosController extends Controller
             'OBS' => $request->obs 
         ]);
         
-        $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
-            'DTADMISSAO' => $request->dtAdmissao ,
-            'CARGO' => $request->cargo ,
-            'TIPOCONTRATO' => $request->tipoContrato ,
-            'COMISSAOFIXA' => $request->comissaoFixa ,
-            'CTPS' => $request->ctps ,
-            'PISPASEP' => $request->pispasep ,
-            'PASSAGEM' => $request->passagem 
-        ]);        
+        $existeCodDc = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->get();
+        $existeCodInfoFi = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->get();
+        
+        if(count($existeCodDc) == 0 && count($existeCodInfoFi) == 0){
+            if($request->nmrbanco == null && $request->banco == null && $request->agencia == null && $request->conta == null && $request->titular == null && $request->cpfTitular == null && $request->tipoConta == null && $request->formasPix == null && $request->chave == null && $request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
+                
+                return $updateFuncionarios;
 
-        $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
-            'NOBANCO' => $request->nmrbanco ,
-            'BANCO' => $request->banco ,
-            'AGENCIA' => $request->agencia ,
-            'CONTA' => $request->conta ,
-            'TITULAR' => $request->titular ,
-            'CPFTITULAR' => $request->cpfTitular ,
-            'TIPO' => $request->tipoConta ,
-            'TIPOCHAVE' => $request->formasPix ,
-            'CHAVEPIX' => $request->chave 
-        ]);
+                }else if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
+                $dadosFinanceiros = new InfoFiFuncionarios;
+        
+                $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+                $dadosFinanceiros->BANCO = $request->banco;
+                $dadosFinanceiros->AGENCIA = $request->agencia;       
+                $dadosFinanceiros->CONTA = $request->conta;
+                $dadosFinanceiros->TITULAR = $request->titular;
+                $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+                $dadosFinanceiros->TIPO = $request->tipoConta;
+                $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+                $dadosFinanceiros->CHAVEPIX = $request->chave;
+                $dadosFinanceiros->CODFUNCIONARIO = $request->id;
 
-        return [$updateFuncionarios, $updateDadosContratuais, $updateInfoFiFuncionarios];
+                $dadosFinanceiros->save();
+
+                return [$updateFuncionarios, $dadosFinanceiros];
+            }else if($request->nmrbanco == null && $request->banco == null && $request->agencia == null && $request->conta == null && $request->titular == null && $request->cpfTitular == null && $request->tipoConta == null &&   $request->formasPix == null && $request->chave == null){
+                $dadosContratuais = new DadosContratuais;
+
+                $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+                $dadosContratuais->CARGO = $request->cargo;
+                $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;
+                $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+                $dadosContratuais->CTPS = $request->ctps;
+                $dadosContratuais->PISPASEP = $request->pispasep;
+                $dadosContratuais->PASSAGEM = $request->passagem;
+                $dadosContratuais->CODFUNCIONARIO = $request->id;
+                
+                $dadosContratuais->save();
+                
+                return [$updateFuncionarios, $dadosContratuais];
+            }else{
+                $dadosFinanceiros = new InfoFiFuncionarios;
+        
+                $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+                $dadosFinanceiros->BANCO = $request->banco;
+                $dadosFinanceiros->AGENCIA = $request->agencia;       
+                $dadosFinanceiros->CONTA = $request->conta;
+                $dadosFinanceiros->TITULAR = $request->titular;
+                $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+                $dadosFinanceiros->TIPO = $request->tipoConta;
+                $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+                $dadosFinanceiros->CHAVEPIX = $request->chave;
+                $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+
+                $dadosFinanceiros->save();
+                
+                $dadosContratuais = new DadosContratuais;
+
+                $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+                $dadosContratuais->CARGO = $request->cargo;
+                $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;
+                $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+                $dadosContratuais->CTPS = $request->ctps;
+                $dadosContratuais->PISPASEP = $request->pispasep;
+                $dadosContratuais->PASSAGEM = $request->passagem;
+                $dadosContratuais->CODFUNCIONARIO = $request->id;
+                
+                $dadosContratuais->save();
+
+                return [$updateFuncionarios, $dadosFinanceiros, $dadosContratuais];
+            }
+
+        }else if(count($existeCodDc) == 0){
+
+            $dadosContratuais = new DadosContratuais;
+            $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+            $dadosContratuais->CARGO = $request->cargo;
+            $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
+            $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+            $dadosContratuais->CTPS = $request->ctps;
+            $dadosContratuais->PISPASEP = $request->pispasep;
+            $dadosContratuais->PASSAGEM = $request->passagem;
+            $dadosContratuais->CODFUNCIONARIO = $request->id;
+            
+            $dadosContratuais->save();
+
+            $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'NOBANCO' => $request->nmrbanco ,
+                'BANCO' => $request->banco ,
+                'AGENCIA' => $request->agencia ,
+                'CONTA' => $request->conta ,
+                'TITULAR' => $request->titular ,
+                'CPFTITULAR' => $request->cpfTitular ,
+                'TIPO' => $request->tipoConta ,
+                'TIPOCHAVE' => $request->formasPix ,
+                'CHAVEPIX' => $request->chave 
+            ]);
+
+            return [$updateFuncionarios, $dadosContratuais, $updateInfoFiFuncionarios];
+        }else if(count($existeCodInfoFi) == 0){
+
+            $dadosFinanceiros = new InfoFiFuncionarios;
+        
+            $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+            $dadosFinanceiros->BANCO = $request->banco;
+            $dadosFinanceiros->AGENCIA = $request->agencia;       
+            $dadosFinanceiros->CONTA = $request->conta;
+            $dadosFinanceiros->TITULAR = $request->titular;
+            $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+            $dadosFinanceiros->TIPO = $request->tipoConta;
+            $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+            $dadosFinanceiros->CHAVEPIX = $request->chave;
+            $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+
+            $dadosFinanceiros->save();
+
+            $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'DTADMISSAO' => $request->dtAdmissao ,
+                'CARGO' => $request->cargo ,
+                'TIPOCONTRATO' => $request->tipoContrato ,
+                'COMISSAOFIXA' => $request->comissaoFixa ,
+                'CTPS' => $request->ctps ,
+                'PISPASEP' => $request->pispasep ,
+                'PASSAGEM' => $request->passagem 
+            ]); 
+
+            return [$updateFuncionarios, $updateDadosContratuais, $dadosFinanceiros];
+        }else{
+
+            $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'DTADMISSAO' => $request->dtAdmissao ,
+                'CARGO' => $request->cargo ,
+                'TIPOCONTRATO' => $request->tipoContrato ,
+                'COMISSAOFIXA' => $request->comissaoFixa ,
+                'CTPS' => $request->ctps ,
+                'PISPASEP' => $request->pispasep ,
+                'PASSAGEM' => $request->passagem 
+            ]); 
+            
+            $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'NOBANCO' => $request->nmrbanco ,
+                'BANCO' => $request->banco ,
+                'AGENCIA' => $request->agencia ,
+                'CONTA' => $request->conta ,
+                'TITULAR' => $request->titular ,
+                'CPFTITULAR' => $request->cpfTitular ,
+                'TIPO' => $request->tipoConta ,
+                'TIPOCHAVE' => $request->formasPix ,
+                'CHAVEPIX' => $request->chave 
+            ]);
+    
+            return [$updateFuncionarios, $updateDadosContratuais, $updateInfoFiFuncionarios];
+        }
+    
     }
 }

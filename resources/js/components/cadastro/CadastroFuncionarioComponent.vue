@@ -213,7 +213,6 @@
         
         axios.post('seleciona-dados-extras-funcionarios',{id: self.id})
         .then((response) => {
-          console.log("response: ", response.data)
           
           self.nome = row.item.NOME
           self.cpf = row.item.CPF
@@ -231,11 +230,18 @@
           self.parentescoContatoAdicional1 = row.item.GRAUPARENTESCO1
           self.nomeContatoAdicional1 = row.item.NOME1
           self.telefoneContatoAdicional1 = row.item.TELEFONE1
+          self.contatoAdicional = row.item.TEMCONTATOADC
           self.parentescoContatoAdicional2 = row.item.GRAUPARENTESCO2
           self.nomeContatoAdicional2 = row.item.NOME2
           self.telefoneContatoAdicional2 = row.item.TELEFONE2
           self.obs = row.item.OBS
-                    
+          
+          if(response.data.length == 0){
+            self.temFuncionarioSelecionado = true
+            self.temContatoAdicional = true
+            this.$bvModal.hide('info-Funcionarios')
+          }
+
           self.dtAdmissao = response.data[0].DTADMISSAO
           self.cargo = response.data[0].CARGO
           self.tipoContrato = response.data[0].TIPOCONTRATO
@@ -256,7 +262,7 @@
 
           self.temFuncionarioSelecionado = true
           
-          self.temContatoAdicional = response.data.TEMCONTATOADC == 1 ?  self.temContatoAdicional = true :  self.temContatoAdicional = false;
+          self.temContatoAdicional = true
 
           this.$bvModal.hide('info-Funcionarios')
         }).catch((error) => {
@@ -357,7 +363,7 @@
         self.formasPix = null
 
         self.temFuncionarioSelecionado = false
-        self.contatoAdicional = false
+        self.contatoAdicional = null
         self.temContatoAdicional = false   
 
       },
