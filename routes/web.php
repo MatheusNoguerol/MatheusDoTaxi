@@ -79,15 +79,15 @@ Route::post('consultar-cadastro', 'UserController@consultarCadastro')->name('con
 
 //Route::get('/dashboard', 'DashboardController@save_cliente')->name('dashboard');
 
-Route::post('save_cliente', 'DashboardController@save_cliente')->name('save-cliente');
+Route::post('salva-cliente', 'ClientesController@salvaCliente')->name('save-cliente');
 
-Route::get('all_clientes', 'DashboardController@all_clientes')->name('all-clientes');
+Route::get('all_clientes', 'ClientesController@all_clientes')->name('all-clientes');
 
-Route::post('exclui-cliente', 'DashboardController@exclui_cliente')->name('exclui-cliente');
+Route::post('exclui-cliente', 'ClientesController@exclui_cliente')->name('exclui-cliente');
 
-Route::post('edita-cliente', 'DashboardController@edita_cliente')->name('edita-cliente');
+Route::post('edita-cliente', 'ClientesController@edita_cliente')->name('edita-cliente');
 
-Route::post('info-fin-cli', 'DashboardController@info_fin_cli')->name('info-fin-cli');
+Route::post('info-fin-cli', 'ClientesController@info_fin_cli')->name('info-fin-cli');
 
 
 
@@ -103,4 +103,6 @@ Route::get('all-funcionarios', 'FuncionariosController@allFuncionarios')->name('
 Route::post('seleciona-dados-extras-funcionarios', 'FuncionariosController@selecionaDadosExtras')->name('seleciona-dados-extras-funcionarios');
 
 Route::post('edita-funcionario', 'FuncionariosController@editaFuncionario')->name('edita-funcionario');
+
+Route::post('deleta-funcionario', 'FuncionariosController@deletaFuncionario')->name('deleta-funcionario');
 

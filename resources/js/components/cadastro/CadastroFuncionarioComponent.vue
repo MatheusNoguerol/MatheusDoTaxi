@@ -321,6 +321,21 @@
         })
       },
 
+      excluiFuncionario(){
+        let self = this
+
+        axios.post('deleta-funcionario', { id: self.id})
+        .then((response) => {
+          
+          self.preLoad()
+          self.makeToastExcluiFuncionario()
+          self.limpaDados()
+          
+        }).catch((error) => {
+          console.log('Error :' , error)
+        })
+      },
+
       limpaDados(){
         let self = this
         
@@ -389,6 +404,17 @@
           variant: 'success',
         })
 
+      },
+
+      makeToastExcluiFuncionario(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`Funcionário  ${self.nome }  excluído.`, {
+          title: 'SUCESSO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'success',
+        })
       },
     }
   }
