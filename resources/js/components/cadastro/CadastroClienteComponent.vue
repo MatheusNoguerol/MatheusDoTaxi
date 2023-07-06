@@ -155,6 +155,50 @@
     mounted() {
       let self = this
 
+
+      self.preLoad()
+    },
+
+    methods:{
+    preLoad(){
+      let self = this 
+
+      self.itemsClientes = []
+
+      axios.get('all_clientes')
+      .then((response) =>{
+        
+        for(var i = 0 ; i < response.data.length ; i++){
+          self.itemsClientes.push({
+            NOME: response.data[i]['NOME'],
+            CPFCNPJ: response.data[i]['CPFCNPJ'],
+            CODCLIENTE: response.data[i]['CODCLIENTE']
+          })
+        }
+        console.log(self.itemsClientes)
+      }).catch((error) =>{
+        console.log('Error: ', error)
+      })
+    },
+
+    salvaCliente(){
+      let self = this
+
+      axios.post('salva-cliente',{dados: self.DadosCriaCliente})
+      .then((response) => {
+
+        self.preLoad()
+        self.makeToastSave()
+        self.limpaDados()
+
+      })
+      .catch((error) => {
+        console.log("Aqui: ", error)
+      });
+    },
+
+
+
       self.preLoad()
     },
 
@@ -195,16 +239,17 @@
       });
     },
 
+
     limpaDados(){
       let self = this
 
-      this.nome= null
-      this.email= null
-      this.msg= null
-      this.placa= null
-      this.telefone= null
-      this.nascimento= null
-      this.vencApolice= null
+      self.nome= null
+      self.email= null
+      self.msg= null
+      self.placa= null
+      self.telefone= null
+      self.nascimento= null
+      self.vencApolice= null
       self.id = null
       self.cpfCnpj = null
       self.tipoCliente = null
@@ -251,10 +296,10 @@
       this.modalShow = true
     },
 
-    SelecionaCliente(row){
+    selecionaCliente(row){
       let self = this
       
-      
+      console.log("Row:", row)
       self.id = row.item.id
       self.nome = row.item.nome
       self.email = row.item.email
@@ -304,7 +349,7 @@
       }
     },
 
-    ExcluiCliente(){
+    excluiCliente(){
         let self = this
 
         axios.post('exclui-cliente',{id: self.id, nome : this.nome})
@@ -317,7 +362,7 @@
         })
     },
 
-    EditaCliente(){
+    editaCliente(){
         let self = this
 
         axios.post('edita-cliente',{
@@ -447,7 +492,11 @@
 <style scoped>
 
 #btn-selecao:hover{
+
+  background-color: blue;
+
   background: blue;
+
   color: white;
   font-weight: bolder;
   border: none;
@@ -738,9 +787,15 @@
           <div class="col">
             <div class="mb-3">
               <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()" id="btn-selecao">Cadastrar</b-button>
+
+              <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="editaCliente()">Editar</b-button>
+              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="excluiCliente()">Deletar</b-button>
+              <div style="font-size: 3.3rem;" v-if="this.nome != null || this.temClienteSelecionado == true">
+
               <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="EditaCliente()" id="btn-selecao">Editar</b-button>
               <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="ExcluiCliente()" id="btn-selecao">Deletar</b-button>
               <div style="font-size: 3.3rem;" v-if="this.nome != null">
+              
                 <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-selecao">Limpar</b-button>
               </div>
             </div>
@@ -770,7 +825,7 @@
         :current-page="currentPageClientes">
 
           <template #cell(acoes) ="row">
-            <a><b-icon cursor="pointer" variant="info" icon="pencil" font-scale="1" data-bs-toggle="tooltip" title="Selecionar cliente" @click.prevent="SelecionaCliente(row)"></b-icon></a>
+            <a><b-icon cursor="pointer" variant="info" icon="pencil" font-scale="1" data-bs-toggle="tooltip" title="Selecionar cliente" @click.prevent="selecionaCliente(row)"></b-icon></a>
           </template>
 
         </b-table>
