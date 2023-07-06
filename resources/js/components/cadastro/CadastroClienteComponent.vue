@@ -155,6 +155,7 @@
     mounted() {
       let self = this
 
+
       self.preLoad()
     },
 
@@ -195,6 +196,49 @@
         console.log("Aqui: ", error)
       });
     },
+
+
+
+      self.preLoad()
+    },
+
+    methods:{
+    preLoad(){
+      let self = this 
+
+      self.itemsClientes = []
+
+      axios.get('all_clientes')
+      .then((response) =>{
+        
+        for(var i = 0 ; i < response.data.length ; i++){
+          self.itemsClientes.push({
+            NOME: response.data[i]['NOME'],
+            CPFCNPJ: response.data[i]['CPFCNPJ'],
+          })
+        }
+
+      }).catch((error) =>{
+        console.log('Error: ', error)
+      })
+    },
+
+    salvaCliente(){
+      let self = this
+
+      axios.post('salva-cliente',{dados: self.DadosCriaCliente})
+      .then((response) => {
+
+        self.preLoad()
+        self.makeToastSave()
+        self.limpaDados()
+
+      })
+      .catch((error) => {
+        console.log("Aqui: ", error)
+      });
+    },
+
 
     limpaDados(){
       let self = this
@@ -448,7 +492,11 @@
 <style scoped>
 
 #btn-selecao:hover{
+
   background-color: blue;
+
+  background: blue;
+
   color: white;
   font-weight: bolder;
   border: none;
@@ -739,9 +787,15 @@
           <div class="col">
             <div class="mb-3">
               <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()" id="btn-selecao">Cadastrar</b-button>
+
               <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="editaCliente()">Editar</b-button>
               <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="excluiCliente()">Deletar</b-button>
               <div style="font-size: 3.3rem;" v-if="this.nome != null || this.temClienteSelecionado == true">
+
+              <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="EditaCliente()" id="btn-selecao">Editar</b-button>
+              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="ExcluiCliente()" id="btn-selecao">Deletar</b-button>
+              <div style="font-size: 3.3rem;" v-if="this.nome != null">
+              
                 <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-selecao">Limpar</b-button>
               </div>
             </div>

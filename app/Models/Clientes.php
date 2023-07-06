@@ -10,26 +10,26 @@ class Clientes extends Model
 {
     
     protected $fillable=[
-        'id',
-        'nome',
-        'email',
-        'msg',
-        'placa',
-        'telefone',
-        'aniversario',
-        'vencApolice',
-        'cpfCnpj',
-        'cep',
-        'logradouro',
-        'numero',
-        'complemento',
-        'uf',
-        'municipio',
-        'bairro',
-        'atualSeguradora',
-        'comissao',
-        'responsavel'
+        'CODCLIENTE',
+        'NOME',
+        'CPFCNPJ',
+        'NASCIMENTO',
+        'EMAIL',
+        'TELEFONE',
+        'TIPOCLIENTE',
+        'CEP',
+        'LOGRADOURO',
+        'NUMERO',
+        'COMPLEMENTO',
+        'UF',
+        'MUNICIPIO',
+        'BAIRRO',
+        'MSG',
+        'RESPONSAVEL'
     ];
+
+
+   
 }
 
 

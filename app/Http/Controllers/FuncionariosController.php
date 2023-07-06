@@ -41,38 +41,81 @@ class FuncionariosController extends Controller
         $funcionario->OBS = $request->obs;
         
         $funcionario->save();
-       
 
-        $dadosContratuais = new DadosContratuais;
+        if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null && $request->nmrbanco == null && $request->banco == null && $request->agencia == null && $request->conta == null && $request->titular == null && $request->cpfTitular == null && $request->tipoConta == null && $request->formasPix == null && $request->chave == null){
+            
+            return $funcionario ;
+            
+        }
+        else if($request->nmrbanco == null && $request->banco == null && $request->agencia == null && $request->conta == null && $request->titular == null && $request->cpfTitular == null && $request->tipoConta == null && $request->formasPix == null && $request->chave == null){
+            
+            $dadosContratuais = new DadosContratuais;
 
-        $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
-        $dadosContratuais->CARGO = $request->cargo;
-        $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
-        $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
-        $dadosContratuais->CTPS = $request->ctps;
-        $dadosContratuais->PISPASEP = $request->pispasep;
-        $dadosContratuais->PASSAGEM = $request->passagem;
-        $dadosContratuais->CODFUNCIONARIO = $funcionario['id'];
+            $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+            $dadosContratuais->CARGO = $request->cargo;
+            $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
+            $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+            $dadosContratuais->CTPS = $request->ctps;
+            $dadosContratuais->PISPASEP = $request->pispasep;
+            $dadosContratuais->PASSAGEM = $request->passagem;
+            $dadosContratuais->CODFUNCIONARIO = $funcionario['id'];
+            
+            $dadosContratuais->save();
+
+            return [$funcionario ,$dadosContratuais];
+
+        }else if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
+
+            $dadosFinanceiros = new InfoFiFuncionarios;
         
-        $dadosContratuais->save();
+            $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+            $dadosFinanceiros->BANCO = $request->banco;
+            $dadosFinanceiros->AGENCIA = $request->agencia;       
+            $dadosFinanceiros->CONTA = $request->conta;
+            $dadosFinanceiros->TITULAR = $request->titular;
+            $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+            $dadosFinanceiros->TIPO = $request->tipoConta;
+            $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+            $dadosFinanceiros->CHAVEPIX = $request->chave;
+            $dadosFinanceiros->CODFUNCIONARIO = $funcionario['id'];
 
+            $dadosFinanceiros->save();
+
+            return [$funcionario , $dadosFinanceiros];
+
+        }else{
+
+            $dadosContratuais = new DadosContratuais;
+
+            $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+            $dadosContratuais->CARGO = $request->cargo;
+            $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
+            $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+            $dadosContratuais->CTPS = $request->ctps;
+            $dadosContratuais->PISPASEP = $request->pispasep;
+            $dadosContratuais->PASSAGEM = $request->passagem;
+            $dadosContratuais->CODFUNCIONARIO = $funcionario['id'];
+            
+            $dadosContratuais->save();
+            
+            $dadosFinanceiros = new InfoFiFuncionarios;
         
-        $dadosFinanceiros = new InfoFiFuncionarios;
-        
-        $dadosFinanceiros->NOBANCO = $request->nmrbanco;
-        $dadosFinanceiros->BANCO = $request->banco;
-        $dadosFinanceiros->AGENCIA = $request->agencia;       
-        $dadosFinanceiros->CONTA = $request->conta;
-        $dadosFinanceiros->TITULAR = $request->titular;
-        $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
-        $dadosFinanceiros->TIPO = $request->tipoConta;
-        $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
-        $dadosFinanceiros->CHAVEPIX = $request->chave;
-        $dadosFinanceiros->CODFUNCIONARIO = $funcionario['id'];
+            $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+            $dadosFinanceiros->BANCO = $request->banco;
+            $dadosFinanceiros->AGENCIA = $request->agencia;       
+            $dadosFinanceiros->CONTA = $request->conta;
+            $dadosFinanceiros->TITULAR = $request->titular;
+            $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+            $dadosFinanceiros->TIPO = $request->tipoConta;
+            $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+            $dadosFinanceiros->CHAVEPIX = $request->chave;
+            $dadosFinanceiros->CODFUNCIONARIO = $funcionario['id'];
 
-        $dadosFinanceiros->save();
+            $dadosFinanceiros->save();
 
-        return [$funcionario ,$dadosContratuais, $dadosFinanceiros];
+            return [$funcionario ,$dadosContratuais, $dadosFinanceiros];
+
+        }
     }
 
     public function allFuncionarios(){ 
@@ -271,5 +314,39 @@ class FuncionariosController extends Controller
             return [$updateFuncionarios, $updateDadosContratuais, $updateInfoFiFuncionarios];
         }
     
+    }
+
+    public function deletaFuncionario(Request $request){ 
+
+        $queryFuncionarios = Funcionarios::where('ID', '=', $request->id)->delete();
+        
+        $temDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->get(); 
+        $temInfoFi = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->get();
+        
+        if(count($temDadosContratuais) == 0 && count($temInfoFi) == 0){
+            
+            return $queryFuncionarios;
+
+        }else if(count($temDadosContratuais) == 0 && count($temInfoFi) <> 0){
+            
+            $queryInfoFi = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->delete();
+
+            return [$queryFuncionarios, $queryInfoFi];
+
+        }else if(count($temDadosContratuais) <> 0 && count($temInfoFi) == 0){
+
+            $queryDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->delete();
+
+            return [$queryFuncionarios, $queryDadosContratuais];
+
+        }else{
+
+            $queryInfoFi = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->delete();
+            
+            $queryDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->delete();
+
+            return [$queryFuncionarios, $queryInfoFi, $queryDadosContratuais];
+
+        }
     }
 }
