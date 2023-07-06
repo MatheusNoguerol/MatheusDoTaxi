@@ -16,13 +16,13 @@
         cliente : '',
         fieldsClientes: [
           {
-            key: 'nome',
+            key: 'NOME',
             label: 'Nome',
             sortable: true
           },
           {
-            key: 'placa',
-            label: 'Placa',
+            key: 'CPFCNPJ',
+            label: 'CPF / CNPJ',
             sortable: true
           },
           {
@@ -69,13 +69,79 @@
         cpfCnpjDC: null,
         perPageClientes: 10,
         currentPageClientes: 1,
+        temGnv: false,
+        possuiGnv: false,
+        gnv: null,
+        possuiAlienacao: false,
+        temAlienacao: false,
+        bancoAlienado: null,
+        renavan: null,
+        chassi: null,
+        anoModelo: null,
+        anoFab: null,
+        combustivel: null,
+        categoria: null,
+        ultimoLa: null,
+        optionsFormasPix: [
+          { value: 'cpf' , text: 'CPF'},
+          { value: 'cnpj' , text: 'CNPJ'},
+          { value: 'tel' , text: 'Telefone'},
+          { value: 'email' , text: 'Email'},
+          { value: 'aleatoria' , text: 'Aleatória'},
+        ],
+        tipoChave: null,
+        chave: null,
       }
     },
 
     computed: {
       rowsClientes() {
         return this.itemsClientes.length
-      }
+      },
+
+      DadosCriaCliente() {
+        return [{
+          nome: this.nome,
+          cpfCnpj: this.cpfCnpj,
+          nascimento: this.nascimento,
+          email: this.email,
+          telefone: this.telefone,
+          tipoCliente: this.tipoCliente,
+          cep: this.cep,
+          logradouro: this.logradouro,
+          numero: this.numero,
+          status: this.status,
+          complemento: this.complemento,
+          uf: this.uf,
+          municipio: this.municipio,
+          bairro: this.bairro,
+          msg: this.msg,
+          placa: this.placa,
+          renavan: this.renavan,
+          chassi: this.chassi,
+          anoModelo: this.anoModelo,
+          anoFab: this.anoFab,
+          combustivel: this.combustivel,
+          possuiGnv: this.possuiGnv,
+          gnv: this.gnv,
+          categoria: this.categoria,
+          possuiAlienacao: this.possuiAlienacao,
+          bancoAlienado: this.bancoAlienado,
+          ultimoLa: this.ultimoLa,
+          vencApolice: this.vencApolice,
+          atualSeguradora: this.atualSeguradora,
+          nmrbanco: this.nmrbanco,
+          banco: this.banco,
+          agencia: this.agencia,
+          conta: this.conta,
+          titular: this.titular,
+          cpfTitular: this.cpfTitular,
+          tipoConta: this.tipoConta,
+          tipoChave: this.tipoChave,
+          chave: this.chave,
+          user: this.user
+        }]
+      },
     },
 
     props: {
@@ -88,80 +154,58 @@
       
     mounted() {
       let self = this
-  
-      this.allClientes()
-      
+
+      self.preLoad()
     },
 
     methods:{
+    preLoad(){
+      let self = this 
+
+      self.itemsClientes = []
+
+      axios.get('all_clientes')
+      .then((response) =>{
+        
+        for(var i = 0 ; i < response.data.length ; i++){
+          self.itemsClientes.push({
+            NOME: response.data[i]['NOME'],
+            CPFCNPJ: response.data[i]['CPFCNPJ'],
+            CODCLIENTE: response.data[i]['CODCLIENTE']
+          })
+        }
+        console.log(self.itemsClientes)
+      }).catch((error) =>{
+        console.log('Error: ', error)
+      })
+    },
+
     salvaCliente(){
       let self = this
 
-      axios.post('save_cliente',{
-        nome : this.nome,
-        email : this.email,
-        msg : this.msg,
-        placa: this.placa,
-        telefone: this.telefone,
-        nascimento: this.nascimento,
-        vencApolice: this.vencApolice,
-        cpfCnpj: this.cpfCnpj,
-        tipoCliente: this.tipoCliente,
-        cep: this.cep,
-        logradouro: this.logradouro,
-        numero: this.numero,
-        complemento: this.complemento,
-        uf: this.uf,
-        municipio: this.municipio,
-        bairro: this.bairro,
-        atualSeguradora: this.atualSeguradora,
-        comissao: this.comissao,
-        nmrbanco: this.nmrbanco,
-        agencia: this.agencia,
-        conta: this.conta,
-        banco: this.banco,
-        titular: this.titular,
-        cpfTitular: this.cpfTitular,
-        tipoConta: this.tipoConta,
-        responsavel: self.user
-      })
+      axios.post('salva-cliente',{dados: self.DadosCriaCliente})
       .then((response) => {
-        self.allClientes()
+
+        self.preLoad()
         self.makeToastSave()
         self.limpaDados()
+
       })
       .catch((error) => {
         console.log("Aqui: ", error)
       });
     },
 
-    allClientes(){
-      let self = this
-
-      self.itemsClientes = []
-      axios.get('all_clientes')
-      .then((response) =>{
-        for(var i = 0 ; i < response.data.length ; i++){
-          self.itemsClientes.push(response.data[i])
-        }
-        this.itemsClientes = response.data
-
-
-      }).catch((error) =>{
-        console.log('Error: ', error)
-      })
-    },
-
     limpaDados(){
       let self = this
 
-      this.nome= null
-      this.email= null
-      this.msg= null
-      this.placa= null
-      this.telefone= null
-      this.nascimento= null
-      this.vencApolice= null
+      self.nome= null
+      self.email= null
+      self.msg= null
+      self.placa= null
+      self.telefone= null
+      self.nascimento= null
+      self.vencApolice= null
       self.id = null
       self.cpfCnpj = null
       self.tipoCliente = null
@@ -184,6 +228,22 @@
       self.titular = null
       self.cpfTitular = null
       self.tipoConta = null
+      self.temGnv = false
+      self.possuiGnv = false
+      self.gnv = null
+      self.possuiAlienacao = false
+      self.temAlienacao = false
+      self.bancoAlienado = null
+      self.renavan = null
+      self.chassi = null
+      self.anoModelo = null
+      self.anoFab = null
+      self.combustivel = null
+      self.categoria = null
+      self.ultimoLa = null
+      self.tipoChave = null
+      self.chave = null
+        
 
       self.temClienteSelecionado = false
     },
@@ -192,10 +252,10 @@
       this.modalShow = true
     },
 
-    SelecionaCliente(row){
+    selecionaCliente(row){
       let self = this
       
-      
+      console.log("Row:", row)
       self.id = row.item.id
       self.nome = row.item.nome
       self.email = row.item.email
@@ -245,7 +305,7 @@
       }
     },
 
-    ExcluiCliente(){
+    excluiCliente(){
         let self = this
 
         axios.post('exclui-cliente',{id: self.id, nome : this.nome})
@@ -258,7 +318,7 @@
         })
     },
 
-    EditaCliente(){
+    editaCliente(){
         let self = this
 
         axios.post('edita-cliente',{
@@ -361,13 +421,44 @@
         self.temComplemento = false
       }
     },
+
+    alteraGnv(){
+      let self = this
+
+      if(self.possuiGnv === true){
+        self.temGnv = true
+      }else{
+        self.temGnv = false
+      }
+    },
+
+    alteraAlienacao(){
+      let self = this
+
+      if(self.possuiAlienacao === true){
+        self.temAlienacao = true
+      }else{
+        self.temAlienacao = false
+      }
+    }
   },   
 }
 </script>
 
+<style scoped>
+
+#btn-selecao:hover{
+  background-color: blue;
+  color: white;
+  font-weight: bolder;
+  border: none;
+}
+
+</style>
+
 <template>
   <div>
-    Olá
+    
     <h1 v-if="temClienteSelecionado == false" class="text-center">Cadastrar Cliente</h1>
     <h1 v-if="temClienteSelecionado == true" class="text-center">Editar Cliente</h1>
     
@@ -483,6 +574,86 @@
 
 
               <b-tab title="Veículo" no-body>
+                <b-row class="my-2">      
+
+                  <b-col lg="3">
+                    <label for="placa" class="form-label">Placa</label>
+                    <input type="text" v-model="placa" name="placa" class="form-control" id="placa">
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="renavan" class="form-label">Renavan</label>
+                    <b-form-input type="text" v-model="renavan" name="renavan" class="form-control" id="renavan"></b-form-input>
+                  </b-col> 
+
+                  <b-col lg="5">
+                    <label for="chassi" class="form-label">Chassi</label>
+                    <b-form-input v-model="chassi" id="chassi"></b-form-input>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-2">
+                  
+                  <b-col lg="3">
+                    <label for="ANOMODELO" class="form-label">Ano Modelo</label>
+                    <b-form-input type="text" v-model="anoModelo" class="form-control" maxLength="4" id="ANOMODELO" ></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="ANOFAB" class="form-label">Ano Fab.</label>
+                    <b-form-input type="text" v-model="anoFab" class="form-control" maxLength="4" id="ANOFAB" ></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="COMBUSTIVEL" class="form-label">Combustível</label>
+                    <b-form-input type="text" v-model="combustivel" class="form-control" id="COMBUSTIVEL" ></b-form-input>
+                  </b-col>
+                  
+                  <b-col lg="3">
+                    <label for="gnv" id="gnv" class="form-label">GNV</label>
+                    <b-input-group>
+                      <b-input-group-prepend is-text>
+                        <input type="checkbox" 
+                        v-model="possuiGnv"
+                        value="1"
+                        unchecked-value="0" @change="alteraGnv()">
+                      </b-input-group-prepend>
+                      <b-form-input type="text" disabled v-if="temGnv == false"></b-form-input>
+                      <b-form-input type="text" v-if="temGnv == true" v-model="gnv"></b-form-input>
+                    </b-input-group>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-2">
+                  
+                  <b-col lg="3">
+                    <label for="categoria" class="form-label">Categoria</label>
+                    <b-form-input type="text" v-model="categoria" class="form-control" id="categoria" ></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="alienacao" id="alienacao" class="form-label">Alienação</label>
+                    <b-input-group>
+                      <b-input-group-prepend is-text>
+                        <input type="checkbox" 
+                        v-model="possuiAlienacao"
+                        value="1"
+                        unchecked-value="0" @change="alteraAlienacao()">
+                      </b-input-group-prepend>
+                      <b-form-input type="text" disabled v-if="temAlienacao == false"></b-form-input>
+                      <b-form-input type="text" v-if="temAlienacao == true" v-model="bancoAlienado"></b-form-input>
+                    </b-input-group>
+                  </b-col> 
+                  
+                  <b-col lg="3">
+                    <label for="ultimoLa">Último L.A</label>
+                    <b-form-input type="date" id="ultimoLa" v-model="ultimoLa" max="9999-12-31"></b-form-input>
+                  </b-col> 
+
+                </b-row>
+
                 <b-row class="my-2">
 
                   <b-col lg="3">
@@ -493,19 +664,7 @@
                   <b-col lg="3">
                     <label for="atualSeguradora">Atual seguradora</label>
                     <b-form-input type="text" id="atualSeguradora" v-model="atualSeguradora"></b-form-input>
-                  </b-col>                  
-
-                  <b-col lg="3">
-                    <label for="placa" class="form-label">Placa</label>
-                    <input type="text" v-model="placa" name="placa" class="form-control" id="placa">
-                  </b-col>
-
-                  <b-col lg="3">
-                    <label for="comissao" class="form-label">Comissão</label>
-                    <b-input-group append="%">
-                      <b-form-input v-model="comissao" id="comissao"></b-form-input>
-                    </b-input-group>
-                  </b-col>
+                  </b-col> 
 
                 </b-row>
               </b-tab>
@@ -553,6 +712,21 @@
                     <b-form-select type="text" v-model="tipoConta" name="tipoConta" :options="OptionsConta" class="form-control" id="tipoConta"></b-form-select>
                   </b-col>
                 </b-row>
+
+                <b-row class="my-3">
+                  
+                  <b-col lg="3">
+                    <label for="pix">Escolha o tipo da chave</label>
+                    <b-form-select type="text" :options="optionsFormasPix" v-model="tipoChave" class="form-control" id="pix"></b-form-select>
+                  </b-col>
+
+                  <b-col lg="3" v-if="this.tipoChave != null">
+                    <label for="chave">PIX</label>
+                    <b-form-input type="text" v-model="chave" class="form-control" id="chave"></b-form-input>
+                  </b-col>
+
+                </b-row>
+                
               </b-tab>
 
 
@@ -564,11 +738,11 @@
         <div class="row">
           <div class="col">
             <div class="mb-3">
-              <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()">Cadastrar</b-button>
-              <b-button variant="primary" v-if="temClienteSelecionado == true" @click.prevent="EditaCliente()">Editar</b-button>
-              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="ExcluiCliente()">Deletar</b-button>
-              <div style="font-size: 3.3rem;" v-if="this.nome != null">
-                <b-button pill variant="primary" @click.prevent="limpaDados()">Limpar</b-button>
+              <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()" id="btn-selecao">Cadastrar</b-button>
+              <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="editaCliente()">Editar</b-button>
+              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="excluiCliente()">Deletar</b-button>
+              <div style="font-size: 3.3rem;" v-if="this.nome != null || this.temClienteSelecionado == true">
+                <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-selecao">Limpar</b-button>
               </div>
             </div>
           </div>
@@ -576,7 +750,7 @@
       </form>
       
       <div>
-        <b-button variant="outline-primary" @click.prevent="abreModal()">Consultar Clientes</b-button>
+        <b-button variant="light" id="btn-selecao" @click.prevent="abreModal()">Consultar Clientes</b-button>
       </div>
 
     </div>
@@ -597,7 +771,7 @@
         :current-page="currentPageClientes">
 
           <template #cell(acoes) ="row">
-            <a><b-icon cursor="pointer" variant="info" icon="pencil" font-scale="1" data-bs-toggle="tooltip" title="Selecionar cliente" @click.prevent="SelecionaCliente(row)"></b-icon></a>
+            <a><b-icon cursor="pointer" variant="info" icon="pencil" font-scale="1" data-bs-toggle="tooltip" title="Selecionar cliente" @click.prevent="selecionaCliente(row)"></b-icon></a>
           </template>
 
         </b-table>
