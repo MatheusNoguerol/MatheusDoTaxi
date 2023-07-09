@@ -16,8 +16,6 @@ use App\Http\Controllers\FaleConoscoController;
 
 use App\Http\Controllers\UserController;
 
-use App\Http\Controllers\DashboardController;
-
 use App\Http\Controllers\FuncionariosController;
 
 
@@ -54,7 +52,6 @@ Route::get('/faleConosco', 'FaleConoscoController@show')->name('fale-conosco');
 
 Route::get('/form', 'FormController@store')->name('form');
 
-Route::post('save_student','StudentController@save_student');
 
 Route::get('welcome1', 'HomeController@show')->name('welcome1');
 
@@ -77,7 +74,8 @@ Route::post('adicionar-produto', 'UserController@adicionarProduto')->name('adici
 Route::post('consultar-cadastro', 'UserController@consultarCadastro')->name('consultar-cadastro');
 
 
-//Route::get('/dashboard', 'DashboardController@save_cliente')->name('dashboard');
+
+##################### CLIENTE ##########################
 
 Route::post('salva-cliente', 'ClientesController@salvaCliente')->name('save-cliente');
 
@@ -87,7 +85,7 @@ Route::post('exclui-cliente', 'ClientesController@exclui_cliente')->name('exclui
 
 Route::post('edita-cliente', 'ClientesController@edita_cliente')->name('edita-cliente');
 
-Route::post('info-fin-cli', 'ClientesController@info_fin_cli')->name('info-fin-cli');
+Route::post('seleciona-cliente', 'ClientesController@selecionaCliente')->name('seleciona-cliente');
 
 
 

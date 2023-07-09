@@ -12,6 +12,12 @@ use App\Models\User;
 
 class ClientesController extends Controller
 {
+    public function all_clientes(){
+    
+        $query = Clientes::all();
+    
+        return $query;
+    }
     
     public function salvaCliente(Request $request){
         $cliente = new Clientes;
@@ -123,13 +129,6 @@ class ClientesController extends Controller
         }
     }    
 
-    public function all_clientes(){
-
-        $query = Clientes::all();
-
-        return $query;
-    }
-
     public function exclui_cliente(Request $request){
         $query = Clientes::where('id', '=', $request->id)->delete();
 
@@ -175,9 +174,41 @@ class ClientesController extends Controller
         return [$query, $InfoFi];
     }
 
-    public function info_fin_cli(Request $request){
-        $dados = InfoFi::where('id', '=', $request->id)->get();
+    public function selecionaCliente(Request $request){
+        $temDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request->codigo)->get();
 
-        return $dados;
+
+        $temInfoFiClientes = InfoFiClientes::where('CODCLIENTE', '=', $request->codigo)->get();
+        
+        if(count($temDadosVeiculares) === 0 && count($temInfoFiClientes) === 0){
+
+            return ;
+
+        }else if(count($temInfoFiClientes) === 0 && count($temDadosVeiculares) <> 0){
+            $query = DB::table('clientes')->where('clientes.CODCLIENTE', '=', $request->codigo)
+            ->join('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')
+            ->select('dados_veiculares.*')
+            ->get();
+
+            return ['success' => 2 , $query];
+
+        }else if(count($temInfoFiClientes) <> 0 && count($temDadosVeiculares) === 0){
+            $query = DB::table('clientes')->where('clientes.CODCLIENTE', '=', $request->codigo)
+            ->join('info_fi_clientes', 'clientes.CODCLIENTE', '=', 'info_fi_clientes.CODCLIENTE')
+            ->select('info_fi_clientes.*')
+            ->get();
+
+            return ['success' => 3 , $query];
+
+        }else{
+            $query = DB::table('clientes')->where('clientes.CODCLIENTE', '=', $request->codigo)
+            ->join('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')
+            ->join('info_fi_clientes', 'clientes.CODCLIENTE', '=', 'info_fi_clientes.CODCLIENTE')
+            ->select('dados_veiculares.*', 'info_fi_clientes.*')
+            ->get();
+
+            return ['success' => 4 , $query];
+        }
+
     }
 }

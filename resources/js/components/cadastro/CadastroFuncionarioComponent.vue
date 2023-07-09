@@ -724,7 +724,7 @@
 
       </div>
 
-    <b-modal id="info-Funcionarios" size="md">
+    <b-modal id="info-Funcionarios" size="lg">
       <h1 class="text-center">Consulta de Funcionarios</h1>
       <div class="container">
         <b-table 
