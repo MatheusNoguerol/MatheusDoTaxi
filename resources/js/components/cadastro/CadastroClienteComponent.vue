@@ -139,7 +139,8 @@ export default {
         tipoConta: this.tipoConta,
         tipoChave: this.tipoChave,
         chave: this.chave,
-        user: this.user
+        user: this.user,
+        codCliente: this.codCliente = null ? null : this.codCliente
       }]
     },
   },
@@ -210,7 +211,8 @@ export default {
 
     limpaDados(){
       let self = this
-
+      
+      self.codCliente = null
       self.nome= null
       self.email= null
       self.msg= null
@@ -225,6 +227,8 @@ export default {
       self.logradouro = null
       self.numero = null
       self.complemento = null
+      self.temComplemento = false
+      self.status = false
       self.uf = null
       self.municipio = null
       self.bairro = null
@@ -241,10 +245,10 @@ export default {
       self.cpfTitular = null
       self.tipoConta = null
       self.temGnv = false
-      self.possuiGnv = false
       self.gnv = null
-      self.possuiAlienacao = false
       self.temAlienacao = false
+      self.possuiGnv = false
+      self.possuiAlienacao = false
       self.bancoAlienado = null
       self.renavan = null
       self.chassi = null
@@ -285,72 +289,120 @@ export default {
       self.municipio = row.item.municipio
       self.bairro = row.item.bairro
 
+      if(self.complemento != null){
+        self.temComplemento = true
+        self.status = 'possui'
+      }else{
+        self.temComplemento = false
+        self.status = 'nao_possui'
+      }
+
+      this.$bvModal.hide('info-cliente')
 
       axios.post('seleciona-cliente', {codigo: row.item.codCliente})
       .then((response) => {
-        console.log('Response: ', response.data)
 
-        if(response.data.success === 2){
-          console.log('2')
-        }else if(response.data.success === 3){
-          console.log('3')
-        }else if(response.data.success === 4){
-          console.log('4')
+      if(response.data.success === 2){
+
+        self.placa = response.data[0][0]['PLACA']
+        self.renavan = response.data[0][0]['RENAVAN']
+        self.chassi = response.data[0][0]['CHASSI']
+        self.anoModelo = response.data[0][0]['ANOMODELO']
+        self.anoFab = response.data[0][0]['ANOFAB']
+        self.combustivel = response.data[0][0]['COMBUSTIVEL']
+        self.possuiGnv = response.data[0][0]['TEMGAS']
+        self.gnv = response.data[0][0]['CILINDRO']
+        self.categoria = response.data[0][0]['CATEGORIA']
+        self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
+        self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
+        self.ultimoLa = response.data[0][0]['ULTIMOLA']
+        self.vencApolice = response.data[0][0]['VENCAPOLICE']
+        self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
+        self.makeToastNoInfo()
+        
+        if(self.gnv != null){
+          self.temGnv = true
+          self.possuiGnv = '1'
+        }else{
+          self.temGnv = true
+          self.possuiGnv = '0'
         }
-        
-          
-          // self.placa = response.data[0][0]['PLACA']
-          // self.renavan = response.data[0][0]['RENAVAN']
-          // self.chassi = response.data[0][0]['CHASSI']
-          // self.anoModelo = response.data[0][0]['ANOMODELO']
-          // self.anoFab = response.data[0][0]['ANOFAB']
-          // self.combustivel = response.data[0][0]['COMBUSTIVEL']
-          // self.possuiGnv = response.data[0][0]['TEMGAS']
-          // self.gnv = response.data[0][0]['CILINDRO']
-          // self.categoria = response.data[0][0]['CATEGORIA']
-          // self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
-          // self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
-          // self.ultimoLa = response.data[0][0]['ULTIMOLA']
-          // self.vencApolice = response.data[0][0]['VENCAPOLICE']
-          // self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
 
-          // self.nmrbanco = response.data[0][0].nobanco
-          // self.agencia = response.data[0][0].agencia
-          // self.conta = response.data[0][0].conta
-          // self.banco = response.data[0][0].banco
-          // self.titular = response.data[0][0].titular
-          // self.cpfTitular = response.data[0][0].cpfTitular
-          // self.tipoConta = response.data[0][0].tipo
-        
+        if(self.bancoAlienado != null){
+          self.temAlienacao = true
+          self.possuiAlienacao = 1
+        }else{
+          self.temAlienacao = true
+          self.possuiAlienacao = 0
+        }
+      
+      }else if(response.data.success === 3){
+
+        self.nmrbanco = response.data[0][0]['NOBANCO']
+        self.agencia = response.data[0][0]['AGENCIA']
+        self.conta = response.data[0][0]['CONTA']
+        self.banco = response.data[0][0]['BANCO']
+        self.titular = response.data[0][0]['TITULAR']
+        self.cpfTitular = response.data[0][0]['CPFTITULAR']
+        self.tipoConta = response.data[0][0]['TIPOCONTA']
+        self.tipoChave = response.data[0][0]['TIPOCHAVE']
+        self.chave = response.data[0][0]['CHAVE']
+        self.makeToastNoInfo()
+
+      }else if(response.data.success === 4){
+
+        self.placa = response.data[0][0]['PLACA']
+        self.renavan = response.data[0][0]['RENAVAN']
+        self.chassi = response.data[0][0]['CHASSI']
+        self.anoModelo = response.data[0][0]['ANOMODELO']
+        self.anoFab = response.data[0][0]['ANOFAB']
+        self.combustivel = response.data[0][0]['COMBUSTIVEL']
+        self.possuiGnv = response.data[0][0]['TEMGAS']
+        self.gnv = response.data[0][0]['CILINDRO']
+        self.categoria = response.data[0][0]['CATEGORIA']
+        self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
+        self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
+        self.ultimoLa = response.data[0][0]['ULTIMOLA']
+        self.vencApolice = response.data[0][0]['VENCAPOLICE']
+        self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
+        self.nmrbanco = response.data[0][0]['NOBANCO']
+        self.agencia = response.data[0][0]['AGENCIA']
+        self.conta = response.data[0][0]['CONTA']
+        self.banco = response.data[0][0]['BANCO']
+        self.titular = response.data[0][0]['TITULAR']
+        self.cpfTitular = response.data[0][0]['CPFTITULAR']
+        self.tipoConta = response.data[0][0]['TIPOCONTA']
+        self.tipoChave = response.data[0][0]['TIPOCHAVE']
+        self.chave = response.data[0][0]['CHAVE']
+
+        if(self.gnv != null){
+          self.temGnv = true
+          self.possuiGnv = 1
+        }else{
+          self.temGnv = true
+          self.possuiGnv = 0
+        }
+
+        if(self.bancoAlienado != null){
+          self.temAlienacao = true
+          self.possuiAlienacao = 1
+        }else{
+          self.temAlienacao = true
+          self.possuiAlienacao = 0
+        }
+
+      }else if(response.data.error === 1){
+
+        self.makeToastNoInfo()
+
+      }
+
       }).catch((error) => {
           console.log('Error: ', error)
       })
       
-      
-      //axios.post('info-fin-cli', {id: self.id})
-      // .then((response) => {
-      //   console.log("Aqui:", response)
-      //  self.nmrbanco = response.data[0].nobanco
-      //   self.agencia = response.data[0].agencia
-      //   self.conta = response.data[0].conta
-      //   self.banco = response.data[0].banco
-      //   self.titular = response.data[0].titular
-      //   self.cpfTitular = response.data[0].cpfTitular
-      //   self.tipoConta = response.data[0].tipo
-      //}).catch((error) => {
-      //   console.log("Error: ", error)
-      // })
       self.temClienteSelecionado = true
       
-      if(row.item.complemento.length > 0 ){
-        self.temComplemento = true
-        self.status = 'possui'
-        this.$bvModal.hide('info-cliente')
-      }else{
-        self.temComplemento = false
-        self.status = 'nao_possui'
-        this.$bvModal.hide('info-cliente')
-      }
     },
 
     excluiCliente(){
@@ -369,35 +421,7 @@ export default {
     editaCliente(){
         let self = this
 
-        axios.post('edita-cliente',{
-          id: self.id,
-          nome : self.nome,
-          email : self.email,
-          msg : self.msg,
-          placa: self.placa,
-          telefone: self.telefone,
-          nascimento: self.nascimento,
-          vencApolice: self.vencApolice,
-          cpfCnpj: self.cpfCnpj,
-          tipoCliente: self.tipoCliente,
-          cep: self.cep,
-          logradouro: self.logradouro,
-          numero: self.numero,
-          complemento: self.complemento,
-          uf: self.uf,
-          municipio: self.municipio,
-          bairro: self.bairro,
-          atualSeguradora: self.atualSeguradora,
-          id: self.id,
-          comissao: self.comissao,
-          nmrbanco: self.nmrbanco,
-          agencia: self.agencia,
-          conta: self.conta,
-          banco: self.banco,
-          titular: self.titular,
-          cpfTitular: self.cpfTitular,
-          tipoConta: self.tipoConta
-          })
+        axios.post('edita-cliente',{dados: self.DadosCriaCliente})
         .then((response) => {
           self.allClientes()
           self.makeToast()
@@ -439,6 +463,18 @@ export default {
         autoHideDelay: 2500,
         appendToast: append,
         variant: 'success',
+      })
+
+    },
+
+    makeToastNoInfo(append = false) {
+      let self = this
+
+      this.$bvToast.toast(`Cliente  ${self.nome } está com o cadastro incompleto.`, {
+        title: 'ATENÇÃO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'warning',
       })
 
     },
@@ -519,7 +555,7 @@ export default {
                 <b-row class="my-2">
                   
                   <b-col lg="2">
-                    <label for="id">ID</label>
+                    <label for="id">Código Cliente</label>
                     <b-form-input type="text" v-model="codCliente" disabled></b-form-input>
                   </b-col>
 

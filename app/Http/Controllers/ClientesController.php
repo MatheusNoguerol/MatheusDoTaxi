@@ -139,6 +139,223 @@ class ClientesController extends Controller
 
     public function edita_cliente(Request $request){
         
+        $updateCliente = Clientes::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
+            'NOME' => $request['dados'][0]['nome'],
+            'CPFCNPJ' => $request['dados'][0]['cpfCnpj'],
+            'NASCIMENTO' => $request['dados'][0]['nascimento'] ,
+            'EMAIL' => $request['dados'][0]['email'],
+            'TELEFONE' => $request['dados'][0]['telefone'],
+            'TIPOCLIENTE' => $request['dados'][0]['tipoCliente'],
+            'CEP' => $request['dados'][0]['cep'],
+            'LOGRADOURO' => $request['dados'][0]['logradouro'],
+            'NUMERO' => $request['dados'][0]['numero'],
+            'COMPLEMENTO' => $request['dados'][0]['nascimento'],
+            'UF' => $request['dados'][0]['uf'],
+            'MUNICIPIO' => $request['dados'][0]['municipio'],
+            'BAIRRO' => $request['dados'][0]['bairro'],
+            'MSG' => $request['dados'][0]['msg'],
+            'RESPONSAVEL' => $request['dados'][0]['user'] 
+        ]);
+        
+        $existeCodDv = DadosVeiculares::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->get();
+        
+        $existeCodInfoFi = InfoFiClientes::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->get();
+        
+        if(count($existeCodDv) == 0 && count($existeCodInfoFi) == 0){
+            
+            if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
+                
+                dd('oi');
+                
+
+                
+                // renavan
+                // chassi
+                // anoModelo
+                // anoFab
+                // combustivel
+                // possuiGnv
+                // gnv
+                // possuiAlienacao
+                // bancoAlienado
+                // ultimoLa
+                // vencApolice
+                // atualSeguradora
+
+
+
+
+                return $updateFuncionarios;
+
+            }else if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
+                $dadosFinanceiros = new InfoFiFuncionarios;
+        
+                $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+                $dadosFinanceiros->BANCO = $request->banco;
+                $dadosFinanceiros->AGENCIA = $request->agencia;       
+                $dadosFinanceiros->CONTA = $request->conta;
+                $dadosFinanceiros->TITULAR = $request->titular;
+                $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+                $dadosFinanceiros->TIPO = $request->tipoConta;
+                $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+                $dadosFinanceiros->CHAVEPIX = $request->chave;
+                $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+
+                $dadosFinanceiros->save();
+
+                return [$updateFuncionarios, $dadosFinanceiros];
+            }else if($request->nmrbanco == null && $request->banco == null && $request->agencia == null && $request->conta == null && $request->titular == null && $request->cpfTitular == null && $request->tipoConta == null &&   $request->formasPix == null && $request->chave == null){
+                $dadosContratuais = new DadosContratuais;
+
+                $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+                $dadosContratuais->CARGO = $request->cargo;
+                $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;
+                $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+                $dadosContratuais->CTPS = $request->ctps;
+                $dadosContratuais->PISPASEP = $request->pispasep;
+                $dadosContratuais->PASSAGEM = $request->passagem;
+                $dadosContratuais->CODFUNCIONARIO = $request->id;
+                
+                $dadosContratuais->save();
+                
+                return [$updateFuncionarios, $dadosContratuais];
+            }else{
+                $dadosFinanceiros = new InfoFiFuncionarios;
+        
+                $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+                $dadosFinanceiros->BANCO = $request->banco;
+                $dadosFinanceiros->AGENCIA = $request->agencia;       
+                $dadosFinanceiros->CONTA = $request->conta;
+                $dadosFinanceiros->TITULAR = $request->titular;
+                $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+                $dadosFinanceiros->TIPO = $request->tipoConta;
+                $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+                $dadosFinanceiros->CHAVEPIX = $request->chave;
+                $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+
+                $dadosFinanceiros->save();
+                
+                $dadosContratuais = new DadosContratuais;
+
+                $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+                $dadosContratuais->CARGO = $request->cargo;
+                $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;
+                $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+                $dadosContratuais->CTPS = $request->ctps;
+                $dadosContratuais->PISPASEP = $request->pispasep;
+                $dadosContratuais->PASSAGEM = $request->passagem;
+                $dadosContratuais->CODFUNCIONARIO = $request->id;
+                
+                $dadosContratuais->save();
+
+                return [$updateFuncionarios, $dadosFinanceiros, $dadosContratuais];
+            }
+
+        }else if(count($existeCodDc) == 0){
+
+            $dadosContratuais = new DadosContratuais;
+            $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
+            $dadosContratuais->CARGO = $request->cargo;
+            $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
+            $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
+            $dadosContratuais->CTPS = $request->ctps;
+            $dadosContratuais->PISPASEP = $request->pispasep;
+            $dadosContratuais->PASSAGEM = $request->passagem;
+            $dadosContratuais->CODFUNCIONARIO = $request->id;
+            
+            $dadosContratuais->save();
+
+            $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'NOBANCO' => $request->nmrbanco ,
+                'BANCO' => $request->banco ,
+                'AGENCIA' => $request->agencia ,
+                'CONTA' => $request->conta ,
+                'TITULAR' => $request->titular ,
+                'CPFTITULAR' => $request->cpfTitular ,
+                'TIPO' => $request->tipoConta ,
+                'TIPOCHAVE' => $request->formasPix ,
+                'CHAVEPIX' => $request->chave 
+            ]);
+
+            return [$updateFuncionarios, $dadosContratuais, $updateInfoFiFuncionarios];
+        }else if(count($existeCodInfoFi) == 0){
+
+            $dadosFinanceiros = new InfoFiFuncionarios;
+        
+            $dadosFinanceiros->NOBANCO = $request->nmrbanco;
+            $dadosFinanceiros->BANCO = $request->banco;
+            $dadosFinanceiros->AGENCIA = $request->agencia;       
+            $dadosFinanceiros->CONTA = $request->conta;
+            $dadosFinanceiros->TITULAR = $request->titular;
+            $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
+            $dadosFinanceiros->TIPO = $request->tipoConta;
+            $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
+            $dadosFinanceiros->CHAVEPIX = $request->chave;
+            $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+
+            $dadosFinanceiros->save();
+
+            $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'DTADMISSAO' => $request->dtAdmissao ,
+                'CARGO' => $request->cargo ,
+                'TIPOCONTRATO' => $request->tipoContrato ,
+                'COMISSAOFIXA' => $request->comissaoFixa ,
+                'CTPS' => $request->ctps ,
+                'PISPASEP' => $request->pispasep ,
+                'PASSAGEM' => $request->passagem 
+            ]); 
+
+            return [$updateFuncionarios, $updateDadosContratuais, $dadosFinanceiros];
+        }else{
+
+            $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'DTADMISSAO' => $request->dtAdmissao ,
+                'CARGO' => $request->cargo ,
+                'TIPOCONTRATO' => $request->tipoContrato ,
+                'COMISSAOFIXA' => $request->comissaoFixa ,
+                'CTPS' => $request->ctps ,
+                'PISPASEP' => $request->pispasep ,
+                'PASSAGEM' => $request->passagem 
+            ]); 
+            
+            $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
+                'NOBANCO' => $request->nmrbanco ,
+                'BANCO' => $request->banco ,
+                'AGENCIA' => $request->agencia ,
+                'CONTA' => $request->conta ,
+                'TITULAR' => $request->titular ,
+                'CPFTITULAR' => $request->cpfTitular ,
+                'TIPO' => $request->tipoConta ,
+                'TIPOCHAVE' => $request->formasPix ,
+                'CHAVEPIX' => $request->chave 
+            ]);
+    
+            return [$updateFuncionarios, $updateDadosContratuais, $updateInfoFiFuncionarios];
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         $query = Clientes::where('id', '=', $request->id)->update([
             'nome' => $request->nome,
             'email' => $request->email,
@@ -182,7 +399,7 @@ class ClientesController extends Controller
         
         if(count($temDadosVeiculares) === 0 && count($temInfoFiClientes) === 0){
 
-            return ;
+            return ['error' => 1];
 
         }else if(count($temInfoFiClientes) === 0 && count($temDadosVeiculares) <> 0){
             $query = DB::table('clientes')->where('clientes.CODCLIENTE', '=', $request->codigo)

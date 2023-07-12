@@ -168,7 +168,7 @@ class FuncionariosController extends Controller
                 
                 return $updateFuncionarios;
 
-                }else if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
+            }else if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
                 $dadosFinanceiros = new InfoFiFuncionarios;
         
                 $dadosFinanceiros->NOBANCO = $request->nmrbanco;
