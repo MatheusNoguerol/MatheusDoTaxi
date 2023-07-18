@@ -100,47 +100,50 @@ export default {
     },
 
     DadosCriaCliente() {
+      let self = this
+
       return [{
-        nome: this.nome,
-        cpfCnpj: this.cpfCnpj,
-        nascimento: this.nascimento,
-        email: this.email,
-        telefone: this.telefone,
-        tipoCliente: this.tipoCliente,
-        cep: this.cep,
-        logradouro: this.logradouro,
-        numero: this.numero,
-        status: this.status,
-        complemento: this.complemento,
-        uf: this.uf,
-        municipio: this.municipio,
-        bairro: this.bairro,
-        msg: this.msg,
-        placa: this.placa,
-        renavan: this.renavan,
-        chassi: this.chassi,
-        anoModelo: this.anoModelo,
-        anoFab: this.anoFab,
-        combustivel: this.combustivel,
-        possuiGnv: this.possuiGnv,
-        gnv: this.gnv,
-        categoria: this.categoria,
-        possuiAlienacao: this.possuiAlienacao,
-        bancoAlienado: this.bancoAlienado,
-        ultimoLa: this.ultimoLa,
-        vencApolice: this.vencApolice,
-        atualSeguradora: this.atualSeguradora,
-        nmrbanco: this.nmrbanco,
-        banco: this.banco,
-        agencia: this.agencia,
-        conta: this.conta,
-        titular: this.titular,
-        cpfTitular: this.cpfTitular,
-        tipoConta: this.tipoConta,
-        tipoChave: this.tipoChave,
-        chave: this.chave,
         user: this.user,
-        codCliente: this.codCliente = null ? null : this.codCliente
+        codCliente : self.codCliente,
+        nome : self.nome,
+        cpfCnpj : self.cpfCnpj,
+        nascimento : self.nascimento,
+        email : self.email,
+        telefone : self.telefone,
+        tipoCliente : self.tipoCliente,
+        cep : self.cep,
+        logradouro : self.logradouro,
+        numero : self.numero,
+        status : self.status,
+        complemento : self.complemento,
+        complemento : self.complemento,
+        uf : self.uf,
+        municipio : self.municipio,
+        bairro : self.bairro,
+        msg : self.msg,
+        placa : self.placa == null ? null : self.placa,
+        renavan : self.renavan,
+        chassi : self.chassi,
+        anoModelo : self.anoModelo,
+        anoFab : self.anoFab,
+        combustivel : self.combustivel,
+        possuiGnv : self.possuiGnv,
+        gnv : self.gnv,
+        categoria : self.categoria,
+        possuiAlienacao : self.possuiAlienacao,
+        bancoAlienado : self.bancoAlienado,
+        ultimoLa : self.ultimoLa,
+        vencApolice : self.vencApolice == null ? null : self.vencApolice,
+        atualSeguradora : self.atualSeguradora,
+        nmrbanco : self.nmrbanco,
+        banco : self.banco,
+        agencia : self.agencia,
+        conta : self.conta,
+        titular : self.titular,
+        cpfTitular : self.cpfTitular,
+        tipoConta : self.tipoConta,
+        tipoChave : self.tipoChave,
+        chave : self.chave,
       }]
     },
   },
@@ -173,7 +176,7 @@ export default {
             nome: response.data[i]['NOME'],
             cpfCnpj: response.data[i]['CPFCNPJ'],
             codCliente: response.data[i]['CODCLIENTE'],
-            nascimento: response.data[i]['CODCLIENTE'],
+            nascimento: response.data[i]['NASCIMENTO'],
             email: response.data[i]['EMAIL'],
             telefone: response.data[i]['TELEFONE'],
             tipoCliente: response.data[i]['TIPOCLIENTE'],
@@ -195,18 +198,21 @@ export default {
 
     salvaCliente(){
       let self = this
-
-      axios.post('salva-cliente',{dados: self.DadosCriaCliente})
-      .then((response) => {
-
-        self.preLoad()
-        self.makeToastSave()
-        self.limpaDados()
-
-      })
-      .catch((error) => {
-        console.log("Aqui: ", error)
-      });
+      if(self.nome == null || self.nome == ''){
+        self.makeToastErroSemNome()
+      }else{
+        axios.post('salva-cliente',{dados: self.DadosCriaCliente})
+        .then((response) => {
+  
+          self.preLoad()
+          self.makeToastSave()
+          self.limpaDados()
+  
+        })
+        .catch((error) => {
+          console.log("Aqui: ", error)
+        });
+      }
     },
 
     limpaDados(){
@@ -302,100 +308,100 @@ export default {
       axios.post('seleciona-cliente', {codigo: row.item.codCliente})
       .then((response) => {
 
-      if(response.data.success === 2){
+        if(response.data.success === 2){
 
-        self.placa = response.data[0][0]['PLACA']
-        self.renavan = response.data[0][0]['RENAVAN']
-        self.chassi = response.data[0][0]['CHASSI']
-        self.anoModelo = response.data[0][0]['ANOMODELO']
-        self.anoFab = response.data[0][0]['ANOFAB']
-        self.combustivel = response.data[0][0]['COMBUSTIVEL']
-        self.possuiGnv = response.data[0][0]['TEMGAS']
-        self.gnv = response.data[0][0]['CILINDRO']
-        self.categoria = response.data[0][0]['CATEGORIA']
-        self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
-        self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
-        self.ultimoLa = response.data[0][0]['ULTIMOLA']
-        self.vencApolice = response.data[0][0]['VENCAPOLICE']
-        self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
-        self.makeToastNoInfo()
+          self.placa = response.data[0][0]['PLACA']
+          self.renavan = response.data[0][0]['RENAVAN']
+          self.chassi = response.data[0][0]['CHASSI']
+          self.anoModelo = response.data[0][0]['ANOMODELO']
+          self.anoFab = response.data[0][0]['ANOFAB']
+          self.combustivel = response.data[0][0]['COMBUSTIVEL']
+          self.possuiGnv = response.data[0][0]['TEMGAS']
+          self.gnv = response.data[0][0]['CILINDRO']
+          self.categoria = response.data[0][0]['CATEGORIA']
+          self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
+          self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
+          self.ultimoLa = response.data[0][0]['ULTIMOLA']
+          self.vencApolice = response.data[0][0]['VENCAPOLICE']
+          self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
+          self.makeToastNoInfo()
+          
+          if(self.gnv != null){
+            self.temGnv = true
+            self.possuiGnv = '1'
+          }else{
+            self.temGnv = true
+            self.possuiGnv = '0'
+          }
+
+          if(self.bancoAlienado != null){
+            self.temAlienacao = true
+            self.possuiAlienacao = 1
+          }else{
+            self.temAlienacao = true
+            self.possuiAlienacao = 0
+          }
         
-        if(self.gnv != null){
-          self.temGnv = true
-          self.possuiGnv = '1'
-        }else{
-          self.temGnv = true
-          self.possuiGnv = '0'
+        }else if(response.data.success === 3){
+
+          self.nmrbanco = response.data[0][0]['NOBANCO']
+          self.agencia = response.data[0][0]['AGENCIA']
+          self.conta = response.data[0][0]['CONTA']
+          self.banco = response.data[0][0]['BANCO']
+          self.titular = response.data[0][0]['TITULAR']
+          self.cpfTitular = response.data[0][0]['CPFTITULAR']
+          self.tipoConta = response.data[0][0]['TIPOCONTA']
+          self.tipoChave = response.data[0][0]['TIPOCHAVE']
+          self.chave = response.data[0][0]['CHAVE']
+          self.makeToastNoInfo()
+
+        }else if(response.data.success === 4){
+
+          self.placa = response.data[0][0]['PLACA']
+          self.renavan = response.data[0][0]['RENAVAN']
+          self.chassi = response.data[0][0]['CHASSI']
+          self.anoModelo = response.data[0][0]['ANOMODELO']
+          self.anoFab = response.data[0][0]['ANOFAB']
+          self.combustivel = response.data[0][0]['COMBUSTIVEL']
+          self.possuiGnv = response.data[0][0]['TEMGAS']
+          self.gnv = response.data[0][0]['CILINDRO']
+          self.categoria = response.data[0][0]['CATEGORIA']
+          self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
+          self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
+          self.ultimoLa = response.data[0][0]['ULTIMOLA']
+          self.vencApolice = response.data[0][0]['VENCAPOLICE']
+          self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
+          self.nmrbanco = response.data[0][0]['NOBANCO']
+          self.agencia = response.data[0][0]['AGENCIA']
+          self.conta = response.data[0][0]['CONTA']
+          self.banco = response.data[0][0]['BANCO']
+          self.titular = response.data[0][0]['TITULAR']
+          self.cpfTitular = response.data[0][0]['CPFTITULAR']
+          self.tipoConta = response.data[0][0]['TIPOCONTA']
+          self.tipoChave = response.data[0][0]['TIPOCHAVE']
+          self.chave = response.data[0][0]['CHAVE']
+
+          if(self.gnv != null){
+            self.temGnv = true
+            self.possuiGnv = 1
+          }else{
+            self.temGnv = true
+            self.possuiGnv = 0
+          }
+
+          if(self.bancoAlienado != null){
+            self.temAlienacao = true
+            self.possuiAlienacao = 1
+          }else{
+            self.temAlienacao = true
+            self.possuiAlienacao = 0
+          }
+
+        }else if(response.data.error === 1){
+
+          self.makeToastNoInfo()
+
         }
-
-        if(self.bancoAlienado != null){
-          self.temAlienacao = true
-          self.possuiAlienacao = 1
-        }else{
-          self.temAlienacao = true
-          self.possuiAlienacao = 0
-        }
-      
-      }else if(response.data.success === 3){
-
-        self.nmrbanco = response.data[0][0]['NOBANCO']
-        self.agencia = response.data[0][0]['AGENCIA']
-        self.conta = response.data[0][0]['CONTA']
-        self.banco = response.data[0][0]['BANCO']
-        self.titular = response.data[0][0]['TITULAR']
-        self.cpfTitular = response.data[0][0]['CPFTITULAR']
-        self.tipoConta = response.data[0][0]['TIPOCONTA']
-        self.tipoChave = response.data[0][0]['TIPOCHAVE']
-        self.chave = response.data[0][0]['CHAVE']
-        self.makeToastNoInfo()
-
-      }else if(response.data.success === 4){
-
-        self.placa = response.data[0][0]['PLACA']
-        self.renavan = response.data[0][0]['RENAVAN']
-        self.chassi = response.data[0][0]['CHASSI']
-        self.anoModelo = response.data[0][0]['ANOMODELO']
-        self.anoFab = response.data[0][0]['ANOFAB']
-        self.combustivel = response.data[0][0]['COMBUSTIVEL']
-        self.possuiGnv = response.data[0][0]['TEMGAS']
-        self.gnv = response.data[0][0]['CILINDRO']
-        self.categoria = response.data[0][0]['CATEGORIA']
-        self.possuiAlienacao = response.data[0][0]['TEMALIENACAO']
-        self.bancoAlienado = response.data[0][0]['BANCOALIENADO']
-        self.ultimoLa = response.data[0][0]['ULTIMOLA']
-        self.vencApolice = response.data[0][0]['VENCAPOLICE']
-        self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
-        self.nmrbanco = response.data[0][0]['NOBANCO']
-        self.agencia = response.data[0][0]['AGENCIA']
-        self.conta = response.data[0][0]['CONTA']
-        self.banco = response.data[0][0]['BANCO']
-        self.titular = response.data[0][0]['TITULAR']
-        self.cpfTitular = response.data[0][0]['CPFTITULAR']
-        self.tipoConta = response.data[0][0]['TIPOCONTA']
-        self.tipoChave = response.data[0][0]['TIPOCHAVE']
-        self.chave = response.data[0][0]['CHAVE']
-
-        if(self.gnv != null){
-          self.temGnv = true
-          self.possuiGnv = 1
-        }else{
-          self.temGnv = true
-          self.possuiGnv = 0
-        }
-
-        if(self.bancoAlienado != null){
-          self.temAlienacao = true
-          self.possuiAlienacao = 1
-        }else{
-          self.temAlienacao = true
-          self.possuiAlienacao = 0
-        }
-
-      }else if(response.data.error === 1){
-
-        self.makeToastNoInfo()
-
-      }
 
       }).catch((error) => {
           console.log('Error: ', error)
@@ -408,9 +414,9 @@ export default {
     excluiCliente(){
         let self = this
 
-        axios.post('exclui-cliente',{id: self.id, nome : this.nome})
+        axios.post('exclui-cliente',{codigo: self.codCliente})
         .then((response) => {
-          self.allClientes()
+          self.preLoad()
           self.makeToastExclui()
           self.limpaDados()
         }).catch((error) => {
@@ -423,18 +429,32 @@ export default {
 
         axios.post('edita-cliente',{dados: self.DadosCriaCliente})
         .then((response) => {
-          self.allClientes()
-          self.makeToast()
+          
+          self.preLoad()
+          self.makeToastEdita()
           self.limpaDados()
+
         }).catch((error) => {
           console.log("Error: ", error)
       })
     },
 
-    makeToast(append = false) {
+    makeToastErroSemNome(append = false) {
       let self = this
 
-      this.$bvToast.toast(`Cliente com id ${self.id }  editado.`, {
+      this.$bvToast.toast(`Digite um nome para cadastrar o cliente.`, {
+        title: 'ATENÇÃO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'danger',
+      })
+
+    },
+
+    makeToastEdita(append = false) {
+      let self = this
+
+      this.$bvToast.toast(`Cliente ${self.nome }  editado.`, {
         title: 'SUCESSO!',
         autoHideDelay: 2500,
         appendToast: append,
@@ -458,7 +478,7 @@ export default {
     makeToastExclui(append = false) {
       let self = this
 
-      this.$bvToast.toast(`Cliente  ${self.id }  deletado.`, {
+      this.$bvToast.toast(`Cliente  ${self.nome }  deletado.`, {
         title: 'SUCESSO!',
         autoHideDelay: 2500,
         appendToast: append,
@@ -662,7 +682,7 @@ export default {
 
                   <b-col lg="3">
                     <label for="placa" class="form-label">Placa</label>
-                    <input type="text" v-model="placa" name="placa" class="form-control" id="placa">
+                    <b-form-input type="text" v-model="placa" name="placa" class="form-control" id="placa"></b-form-input>
                   </b-col>
 
                   <b-col lg="4">
@@ -742,7 +762,7 @@ export default {
 
                   <b-col lg="3">
                     <label for="vencimentoApolice" class="form-label">Venc. Apolice</label>
-                    <b-form-input type="date" v-model="vencApolice" name="vencApolice" class="form-control" id="vencimentoApolice" max="9999-12-31"></b-form-input>
+                    <b-form-input type="date" v-model="vencApolice" class="form-control" id="vencimentoApolice" max="9999-12-31"></b-form-input>
                   </b-col>
 
                   <b-col lg="3">

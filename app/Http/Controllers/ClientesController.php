@@ -130,11 +130,29 @@ class ClientesController extends Controller
     }    
 
     public function exclui_cliente(Request $request){
-        $query = Clientes::where('id', '=', $request->id)->delete();
+        $queryClientes = Clientes::where('CODCLIENTE', '=', $request->codigo)->delete();
+        
+        $temDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request->codigo)->get();
 
-        $queryDeletaInfofi = InfoFi::where('titular', '=', $request->nome)->delete();
+        $temInfoFiClientes = InfoFiClientes::where('CODCLIENTE', '=', $request->codigo)->get();
 
-        return [$query, $queryDeletaInfofi];
+        if(count($temDadosVeiculares) == 0 && count($temInfoFiClientes) == 0){
+            return $queryClientes;
+        }else if(count($temDadosVeiculares) == 0){
+            $queryInfoFiClientes = InfoFiClientes::where('CODCLIENTE', '=', $request->codigo)->delete();
+
+            return [$queryClientes, $queryInfoFiClientes];
+        }else if(count($temInfoFiClientes) == 0){
+            $queryDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request->codigo)->delete();
+
+            return [$queryClientes, $queryDadosVeiculares];
+        }else{
+            $queryDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request->codigo)->delete();
+
+            $queryInfoFiClientes = InfoFiClientes::where('CODCLIENTE', '=', $request->codigo)->delete();
+
+            return [$queryClientes, $queryDadosVeiculares, $queryInfoFiClientes];
+        }
     }
 
     public function edita_cliente(Request $request){
@@ -162,233 +180,200 @@ class ClientesController extends Controller
         $existeCodInfoFi = InfoFiClientes::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->get();
         
         if(count($existeCodDv) == 0 && count($existeCodInfoFi) == 0){
-            
-            if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
+
+            if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null && $request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
                 
-                dd('oi');
+                return $updateCliente;
+
+            }else if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null && $request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null){
                 
+                $dadosFinanceiros = new InfoFiClientes;
 
+                $dadosFinanceiros->CODCLIENTE = $request['dados'][0]['codCliente'];
+                $dadosFinanceiros->NOBANCO = $request['dados'][0]['nmrbanco'];
+                $dadosFinanceiros->BANCO = $request['dados'][0]['banco'];
+                $dadosFinanceiros->AGENCIA = $request['dados'][0]['agencia'];
+                $dadosFinanceiros->CONTA = $request['dados'][0]['conta'];
+                $dadosFinanceiros->TITULAR = $request['dados'][0]['titular'];
+                $dadosFinanceiros->CPFTITULAR = $request['dados'][0]['cpfTitular'];
+                $dadosFinanceiros->TIPOCONTA = $request['dados'][0]['tipoConta'];
+                $dadosFinanceiros->TIPOCHAVE = $request['dados'][0]['tipoChave'];
+                $dadosFinanceiros->CHAVE = $request['dados'][0]['chave'];
                 
-                // renavan
-                // chassi
-                // anoModelo
-                // anoFab
-                // combustivel
-                // possuiGnv
-                // gnv
-                // possuiAlienacao
-                // bancoAlienado
-                // ultimoLa
-                // vencApolice
-                // atualSeguradora
-
-
-
-
-                return $updateFuncionarios;
-
-            }else if($request->dtAdmissao == null && $request->cargo == null && $request->tipoContrato == null && $request->comissaoFixa == null && $request->ctps == null && $request->pispasep == null && $request->passagem == null){
-                $dadosFinanceiros = new InfoFiFuncionarios;
-        
-                $dadosFinanceiros->NOBANCO = $request->nmrbanco;
-                $dadosFinanceiros->BANCO = $request->banco;
-                $dadosFinanceiros->AGENCIA = $request->agencia;       
-                $dadosFinanceiros->CONTA = $request->conta;
-                $dadosFinanceiros->TITULAR = $request->titular;
-                $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
-                $dadosFinanceiros->TIPO = $request->tipoConta;
-                $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
-                $dadosFinanceiros->CHAVEPIX = $request->chave;
-                $dadosFinanceiros->CODFUNCIONARIO = $request->id;
 
                 $dadosFinanceiros->save();
 
-                return [$updateFuncionarios, $dadosFinanceiros];
-            }else if($request->nmrbanco == null && $request->banco == null && $request->agencia == null && $request->conta == null && $request->titular == null && $request->cpfTitular == null && $request->tipoConta == null &&   $request->formasPix == null && $request->chave == null){
-                $dadosContratuais = new DadosContratuais;
+                return [$updateCliente, $dadosFinanceiros];
+            }else if($request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
+                
+                $dadosVeiculares = new DadosVeiculares;
 
-                $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
-                $dadosContratuais->CARGO = $request->cargo;
-                $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;
-                $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
-                $dadosContratuais->CTPS = $request->ctps;
-                $dadosContratuais->PISPASEP = $request->pispasep;
-                $dadosContratuais->PASSAGEM = $request->passagem;
-                $dadosContratuais->CODFUNCIONARIO = $request->id;
+                $dadosVeiculares->CODCLIENTE = $request['dados'][0]['codCliente'];
+                $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+                $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
+                $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
+                $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
+                $dadosVeiculares->ANOFAB = $request['dados'][0]['anoFab'];
+                $dadosVeiculares->COMBUSTIVEL = $request['dados'][0]['combustivel'];
+                $dadosVeiculares->TEMGAS = $request['dados'][0]['possuiGnv'];
+                $dadosVeiculares->CILINDRO = $request['dados'][0]['gnv'];
+                $dadosVeiculares->CATEGORIA = $request['dados'][0]['categoria'];
+                $dadosVeiculares->ULTIMOLA = $request['dados'][0]['ultimoLa'];
+                $dadosVeiculares->TEMALIENACAO = $request['dados'][0]['possuiAlienacao'];
+                $dadosVeiculares->BANCOALIENADO = $request['dados'][0]['bancoAlienado'];
+                $dadosVeiculares->VENCAPOLICE = $request['dados'][0]['vencApolice'];
+                $dadosVeiculares->ATUALSEGURADORA = $request['dados'][0]['atualSeguradora'];
                 
-                $dadosContratuais->save();
+                $dadosVeiculares->save();
                 
-                return [$updateFuncionarios, $dadosContratuais];
+                return [$updateCliente, $dadosVeiculares];
             }else{
-                $dadosFinanceiros = new InfoFiFuncionarios;
-        
-                $dadosFinanceiros->NOBANCO = $request->nmrbanco;
-                $dadosFinanceiros->BANCO = $request->banco;
-                $dadosFinanceiros->AGENCIA = $request->agencia;       
-                $dadosFinanceiros->CONTA = $request->conta;
-                $dadosFinanceiros->TITULAR = $request->titular;
-                $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
-                $dadosFinanceiros->TIPO = $request->tipoConta;
-                $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
-                $dadosFinanceiros->CHAVEPIX = $request->chave;
-                $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+                $dadosFinanceiros = new InfoFiClientes;
+                
+
+                $dadosFinanceiros->CODCLIENTE = $request['dados'][0]['codCliente'];
+                $dadosFinanceiros->NOBANCO = $request['dados'][0]['nmrbanco'];
+                $dadosFinanceiros->BANCO = $request['dados'][0]['banco'];
+                $dadosFinanceiros->AGENCIA = $request['dados'][0]['agencia'];
+                $dadosFinanceiros->CONTA = $request['dados'][0]['conta'];
+                $dadosFinanceiros->TITULAR = $request['dados'][0]['titular'];
+                $dadosFinanceiros->CPFTITULAR = $request['dados'][0]['cpfTitular'];
+                $dadosFinanceiros->TIPOCONTA = $request['dados'][0]['tipoConta'];
+                $dadosFinanceiros->TIPOCHAVE = $request['dados'][0]['tipoChave'];
+                $dadosFinanceiros->CHAVE = $request['dados'][0]['chave'];
+                
 
                 $dadosFinanceiros->save();
-                
-                $dadosContratuais = new DadosContratuais;
 
-                $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
-                $dadosContratuais->CARGO = $request->cargo;
-                $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;
-                $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
-                $dadosContratuais->CTPS = $request->ctps;
-                $dadosContratuais->PISPASEP = $request->pispasep;
-                $dadosContratuais->PASSAGEM = $request->passagem;
-                $dadosContratuais->CODFUNCIONARIO = $request->id;
-                
-                $dadosContratuais->save();
 
-                return [$updateFuncionarios, $dadosFinanceiros, $dadosContratuais];
+                $dadosVeiculares = new DadosVeiculares;
+
+                $dadosVeiculares->CODCLIENTE = $request['dados'][0]['codCliente'];
+                $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+                $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
+                $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
+                $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
+                $dadosVeiculares->ANOFAB = $request['dados'][0]['anoFab'];
+                $dadosVeiculares->COMBUSTIVEL = $request['dados'][0]['combustivel'];
+                $dadosVeiculares->TEMGAS = $request['dados'][0]['possuiGnv'];
+                $dadosVeiculares->CILINDRO = $request['dados'][0]['gnv'];
+                $dadosVeiculares->CATEGORIA = $request['dados'][0]['categoria'];
+                $dadosVeiculares->ULTIMOLA = $request['dados'][0]['ultimoLa'];
+                $dadosVeiculares->TEMALIENACAO = $request['dados'][0]['possuiAlienacao'];
+                $dadosVeiculares->BANCOALIENADO = $request['dados'][0]['bancoAlienado'];
+                $dadosVeiculares->VENCAPOLICE = $request['dados'][0]['vencApolice'];
+                $dadosVeiculares->ATUALSEGURADORA = $request['dados'][0]['atualSeguradora'];
+                
+                $dadosVeiculares->save();
+
+                return [$updateCliente, $dadosFinanceiros, $dadosVeiculares];
             }
 
-        }else if(count($existeCodDc) == 0){
+        }else if(count($existeCodDv) == 0){
 
-            $dadosContratuais = new DadosContratuais;
-            $dadosContratuais->DTADMISSAO = $request->dtAdmissao;
-            $dadosContratuais->CARGO = $request->cargo;
-            $dadosContratuais->TIPOCONTRATO = $request->tipoContrato;        
-            $dadosContratuais->COMISSAOFIXA = $request->comissaoFixa;
-            $dadosContratuais->CTPS = $request->ctps;
-            $dadosContratuais->PISPASEP = $request->pispasep;
-            $dadosContratuais->PASSAGEM = $request->passagem;
-            $dadosContratuais->CODFUNCIONARIO = $request->id;
+            $dadosVeiculares = new DadosVeiculares;
+
+            $dadosVeiculares->CODCLIENTE = $request['dados'][0]['codCliente'];
+            $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+            $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
+            $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
+            $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
+            $dadosVeiculares->ANOFAB = $request['dados'][0]['anoFab'];
+            $dadosVeiculares->COMBUSTIVEL = $request['dados'][0]['combustivel'];
+            $dadosVeiculares->TEMGAS = $request['dados'][0]['possuiGnv'];
+            $dadosVeiculares->CILINDRO = $request['dados'][0]['gnv'];
+            $dadosVeiculares->CATEGORIA = $request['dados'][0]['categoria'];
+            $dadosVeiculares->ULTIMOLA = $request['dados'][0]['ultimoLa'];
+            $dadosVeiculares->TEMALIENACAO = $request['dados'][0]['possuiAlienacao'];
+            $dadosVeiculares->BANCOALIENADO = $request['dados'][0]['bancoAlienado'];
+            $dadosVeiculares->VENCAPOLICE = $request['dados'][0]['vencApolice'];
+            $dadosVeiculares->ATUALSEGURADORA = $request['dados'][0]['atualSeguradora'];
             
-            $dadosContratuais->save();
+            $dadosVeiculares->save();
 
-            $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
-                'NOBANCO' => $request->nmrbanco ,
-                'BANCO' => $request->banco ,
-                'AGENCIA' => $request->agencia ,
-                'CONTA' => $request->conta ,
-                'TITULAR' => $request->titular ,
-                'CPFTITULAR' => $request->cpfTitular ,
-                'TIPO' => $request->tipoConta ,
-                'TIPOCHAVE' => $request->formasPix ,
-                'CHAVEPIX' => $request->chave 
+            $updateInfoFiClientes = InfoFiClientes::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
+                'NOBANCO' => $request['dados'][0]['nmrbanco'],
+                'BANCO' => $request['dados'][0]['banco'],
+                'AGENCIA' => $request['dados'][0]['agencia'],
+                'CONTA' => $request['dados'][0]['conta'],
+                'TITULAR' => $request['dados'][0]['titular'],
+                'CPFTITULAR' => $request['dados'][0]['cpfTitular'],
+                'TIPOCONTA' => $request['dados'][0]['tipoConta'],
+                'TIPOCHAVE' => $request['dados'][0]['tipoChave'],
+                'CHAVE' => $request['dados'][0]['chave'] 
             ]);
 
-            return [$updateFuncionarios, $dadosContratuais, $updateInfoFiFuncionarios];
+            return [$updateCliente, $dadosVeiculares, $updateInfoFiClientes];
         }else if(count($existeCodInfoFi) == 0){
 
-            $dadosFinanceiros = new InfoFiFuncionarios;
-        
-            $dadosFinanceiros->NOBANCO = $request->nmrbanco;
-            $dadosFinanceiros->BANCO = $request->banco;
-            $dadosFinanceiros->AGENCIA = $request->agencia;       
-            $dadosFinanceiros->CONTA = $request->conta;
-            $dadosFinanceiros->TITULAR = $request->titular;
-            $dadosFinanceiros->CPFTITULAR = $request->cpfTitular;
-            $dadosFinanceiros->TIPO = $request->tipoConta;
-            $dadosFinanceiros->TIPOCHAVE = $request->formasPix;
-            $dadosFinanceiros->CHAVEPIX = $request->chave;
-            $dadosFinanceiros->CODFUNCIONARIO = $request->id;
+            $dadosFinanceiros = new InfoFiClientes;
+                
+
+            $dadosFinanceiros->CODCLIENTE = $request['dados'][0]['codCliente'];
+            $dadosFinanceiros->NOBANCO = $request['dados'][0]['nmrbanco'];
+            $dadosFinanceiros->BANCO = $request['dados'][0]['banco'];
+            $dadosFinanceiros->AGENCIA = $request['dados'][0]['agencia'];
+            $dadosFinanceiros->CONTA = $request['dados'][0]['conta'];
+            $dadosFinanceiros->TITULAR = $request['dados'][0]['titular'];
+            $dadosFinanceiros->CPFTITULAR = $request['dados'][0]['cpfTitular'];
+            $dadosFinanceiros->TIPOCONTA = $request['dados'][0]['tipoConta'];
+            $dadosFinanceiros->TIPOCHAVE = $request['dados'][0]['tipoChave'];
+            $dadosFinanceiros->CHAVE = $request['dados'][0]['chave'];
+            
 
             $dadosFinanceiros->save();
 
-            $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
-                'DTADMISSAO' => $request->dtAdmissao ,
-                'CARGO' => $request->cargo ,
-                'TIPOCONTRATO' => $request->tipoContrato ,
-                'COMISSAOFIXA' => $request->comissaoFixa ,
-                'CTPS' => $request->ctps ,
-                'PISPASEP' => $request->pispasep ,
-                'PASSAGEM' => $request->passagem 
+            $updateDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
+                'PLACA' => $request['dados'][0]['placa'],
+                'CHASSI' => $request['dados'][0]['chassi'],
+                'RENAVAN' => $request['dados'][0]['renavan'],
+                'ANOMODELO' => $request['dados'][0]['anoModelo'],
+                'ANOFAB' => $request['dados'][0]['anoFab'],
+                'COMBUSTIVEL' => $request['dados'][0]['combustivel'],
+                'TEMGAS' => $request['dados'][0]['possuiGnv'],
+                'CILINDRO' => $request['dados'][0]['gnv'],
+                'CATEGORIA' => $request['dados'][0]['categoria'],
+                'ULTIMOLA' => $request['dados'][0]['ultimoLa'],
+                'TEMALIENACAO' => $request['dados'][0]['possuiAlienacao'],
+                'BANCOALIENADO' => $request['dados'][0]['bancoAlienado'],
+                'VENCAPOLICE' => $request['dados'][0]['vencApolice'],
+                'ATUALSEGURADORA' => $request['dados'][0]['atualSeguradora'],
             ]); 
 
-            return [$updateFuncionarios, $updateDadosContratuais, $dadosFinanceiros];
+            return [$updateCliente, $updateDadosVeiculares, $dadosFinanceiros];
         }else{
 
-            $updateDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->id)->update([
-                'DTADMISSAO' => $request->dtAdmissao ,
-                'CARGO' => $request->cargo ,
-                'TIPOCONTRATO' => $request->tipoContrato ,
-                'COMISSAOFIXA' => $request->comissaoFixa ,
-                'CTPS' => $request->ctps ,
-                'PISPASEP' => $request->pispasep ,
-                'PASSAGEM' => $request->passagem 
-            ]); 
+            $updateDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
+                'PLACA' => $request['dados'][0]['placa'],
+                'CHASSI' => $request['dados'][0]['chassi'],
+                'RENAVAN' => $request['dados'][0]['renavan'],
+                'ANOMODELO' => $request['dados'][0]['anoModelo'],
+                'ANOFAB' => $request['dados'][0]['anoFab'],
+                'COMBUSTIVEL' => $request['dados'][0]['combustivel'],
+                'TEMGAS' => $request['dados'][0]['possuiGnv'],
+                'CILINDRO' => $request['dados'][0]['gnv'],
+                'CATEGORIA' => $request['dados'][0]['categoria'],
+                'ULTIMOLA' => $request['dados'][0]['ultimoLa'],
+                'TEMALIENACAO' => $request['dados'][0]['possuiAlienacao'],
+                'BANCOALIENADO' => $request['dados'][0]['bancoAlienado'],
+                'VENCAPOLICE' => $request['dados'][0]['vencApolice'],
+                'ATUALSEGURADORA' => $request['dados'][0]['atualSeguradora'],
+            ]);  
             
-            $updateInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->id)->update([
-                'NOBANCO' => $request->nmrbanco ,
-                'BANCO' => $request->banco ,
-                'AGENCIA' => $request->agencia ,
-                'CONTA' => $request->conta ,
-                'TITULAR' => $request->titular ,
-                'CPFTITULAR' => $request->cpfTitular ,
-                'TIPO' => $request->tipoConta ,
-                'TIPOCHAVE' => $request->formasPix ,
-                'CHAVEPIX' => $request->chave 
+            $updateInfoFiClientes = InfoFiClientes::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
+                'NOBANCO' => $request['dados'][0]['nmrbanco'],
+                'BANCO' => $request['dados'][0]['banco'],
+                'AGENCIA' => $request['dados'][0]['agencia'],
+                'CONTA' => $request['dados'][0]['conta'],
+                'TITULAR' => $request['dados'][0]['titular'],
+                'CPFTITULAR' => $request['dados'][0]['cpfTitular'],
+                'TIPOCONTA' => $request['dados'][0]['tipoConta'],
+                'TIPOCHAVE' => $request['dados'][0]['tipoChave'],
+                'CHAVE' => $request['dados'][0]['chave'] 
             ]);
     
-            return [$updateFuncionarios, $updateDadosContratuais, $updateInfoFiFuncionarios];
+            return [$updateCliente, $updateDadosVeiculares, $updateInfoFiClientes];
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        $query = Clientes::where('id', '=', $request->id)->update([
-            'nome' => $request->nome,
-            'email' => $request->email,
-            'msg' => $request->msg,
-            'placa' => $request->placa,
-            'telefone' => $request->telefone,
-            'tipoCliente' => $request->tipoCliente,
-            'aniversario' => $request->aniversario,
-            'vencApolice' => $request->vencApolice,
-            'cpfCnpj' => $request->cpfCnpj,
-            'cep' => $request->cep,
-            'numero' => $request->numero,
-            'complemento' => $request->complemento,
-            'uf' => $request->uf,
-            'municipio' => $request->municipio,
-            'bairro' => $request->bairro,
-            'atualSeguradora' => $request->atualSeguradora,
-            'comissao' => $request->comissao,
-            
-        ]);
-
-        $InfoFi = InfoFi::where('id', '=', $request->id)->update([
-            'nobanco' => $request->nmrbanco,
-            'agencia' => $request->agencia,
-            'conta' => $request->conta,
-            'banco'  => $request->banco,
-            'titular'  => $request->titular,
-            'cpfTitular' => $request->cpfTitular,
-            'tipo' => $request->tipoConta,
-            
-        ]);
-
-        return [$query, $InfoFi];
     }
 
     public function selecionaCliente(Request $request){
