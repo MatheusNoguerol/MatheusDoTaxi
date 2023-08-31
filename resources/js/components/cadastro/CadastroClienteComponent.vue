@@ -101,7 +101,6 @@ export default {
 
     DadosCriaCliente() {
       let self = this
-
       return [{
         user: this.user,
         codCliente : self.codCliente,

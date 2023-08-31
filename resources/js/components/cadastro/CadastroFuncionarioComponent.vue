@@ -3,7 +3,7 @@
     data(){
       return{
         temFuncionarioSelecionado: false,
-        id: null,
+        codFuncionario: null,
         nome: null,
         cpf: null,
         nascimento: null,
@@ -157,7 +157,7 @@
         let self = this
         
         axios.post('salva-funcionario', {
-          id: self.id,
+          id: self.codFuncionario,
           nome: self.nome,
           cpf: self.cpf,
           nascimento: self.nascimento,
@@ -194,7 +194,8 @@
           cpfTitular: self.cpfTitular,
           tipoConta: self.tipoConta,
           chave: self.chave,
-          formasPix: self.formasPix
+          formasPix: self.formasPix,
+          responsavel: self.user
         }).then((response) => {
           
           self.preLoad()
@@ -209,64 +210,96 @@
       selecionaFuncionarios(row){
         let self = this 
 
-        self.id = row.item.ID
-        
-        axios.post('seleciona-dados-extras-funcionarios',{id: self.id})
-        .then((response) => {
-          
-          self.nome = row.item.NOME
-          self.cpf = row.item.CPF
-          self.nascimento = row.item.DTNASCIMENTO
-          self.email = row.item.EMAIL
-          self.telefone = row.item.TELEFONE
-          self.sexo = row.item.SEXO
-          self.cep = row.item.CEP
-          self.logradouro = row.item.LOGRADOURO
-          self.numero = row.item.NUMERO
-          self.complemento = row.item.COMPLEMENTO
-          self.uf = row.item.UF
-          self.municipio = row.item.MUNICIPIO
-          self.bairro = row.item.BAIRRO
-          self.parentescoContatoAdicional1 = row.item.GRAUPARENTESCO1
-          self.nomeContatoAdicional1 = row.item.NOME1
-          self.telefoneContatoAdicional1 = row.item.TELEFONE1
-          self.contatoAdicional = row.item.TEMCONTATOADC
-          self.parentescoContatoAdicional2 = row.item.GRAUPARENTESCO2
-          self.nomeContatoAdicional2 = row.item.NOME2
-          self.telefoneContatoAdicional2 = row.item.TELEFONE2
-          self.obs = row.item.OBS
-          
-          if(response.data.length == 0){
-            self.temFuncionarioSelecionado = true
-            self.temContatoAdicional = true
-            this.$bvModal.hide('info-Funcionarios')
-          }
+        self.codFuncionario = row.item.ID
+        self.nome = row.item.NOME
+        self.cpf = row.item.CPF
+        self.nascimento = row.item.DTNASCIMENTO
+        self.email = row.item.EMAIL
+        self.telefone = row.item.TELEFONE
+        self.sexo = row.item.SEXO
+        self.cep = row.item.CEP
+        self.logradouro = row.item.LOGRADOURO
+        self.numero = row.item.NUMERO
+        self.complemento = row.item.COMPLEMENTO
+        self.uf = row.item.UF
+        self.municipio = row.item.MUNICIPIO
+        self.bairro = row.item.BAIRRO
+        self.parentescoContatoAdicional1 = row.item.GRAUPARENTESCO1
+        self.nomeContatoAdicional1 = row.item.NOME1
+        self.telefoneContatoAdicional1 = row.item.TELEFONE1
+        self.contatoAdicional = row.item.TEMCONTATOADC
+        self.parentescoContatoAdicional2 = row.item.GRAUPARENTESCO2
+        self.nomeContatoAdicional2 = row.item.NOME2
+        self.telefoneContatoAdicional2 = row.item.TELEFONE2
+        self.obs = row.item.OBS
 
-          self.dtAdmissao = response.data[0].DTADMISSAO
-          self.cargo = response.data[0].CARGO
-          self.tipoContrato = response.data[0].TIPOCONTRATO
-          self.comissaoFixa = response.data[0].COMISSAOFIXA
-          self.ctps = response.data[0].CTPS
-          self.pispasep = response.data[0].PISPASEP
-          self.passagem = response.data[0].PASSAGEM
-
-          self.nmrbanco = response.data[0].NOBANCO
-          self.banco = response.data[0].BANCO
-          self.agencia = response.data[0].AGENCIA
-          self.conta = response.data[0].CONTA
-          self.titular = response.data[0].TITULAR
-          self.cpfTitular = response.data[0].CPFTITULAR
-          self.tipoConta = response.data[0].TIPO
-          self.chave = response.data[0].CHAVEPIX
-          self.formasPix = response.data[0].TIPOCHAVE
-
-          self.temFuncionarioSelecionado = true
-          
+        if(row.item.NOME2 != null){
           self.temContatoAdicional = true
+          self.contatoAdicional = 1
+        }else{
+          self.temContatoAdicional = false
+          self.contatoAdicional = 0
+        }
+        this.$bvModal.hide('info-Funcionarios')
 
-          this.$bvModal.hide('info-Funcionarios')
+        axios.post('seleciona-dados-extras-funcionarios',{codigo: row.item.ID})
+        .then((response) => {
+
+          console.log('dados extras: ', response.data)
+          
+          if(response.data.success === 2){
+
+            self.dtAdmissao = response.data[0][0]['DTADMISSAO']
+            self.cargo = response.data[0][0]['CARGO']
+            self.tipoContrato = response.data[0][0]['TIPOCONTRATO']
+            self.comissaoFixa = response.data[0][0]['COMISSAOFIXA']
+            self.ctps = response.data[0][0]['CTPS']
+            self.pispasep = response.data[0][0]['PISPASEP']
+            self.passagem = response.data[0][0]['PASSAGEM']
+            
+            self.makeToastNoInfo()
+        
+          }else if(response.data.success === 3){
+
+            self.nmrbanco = response.data[0][0]['NOBANCO']
+            self.agencia = response.data[0][0]['AGENCIA']
+            self.conta = response.data[0][0]['CONTA']
+            self.banco = response.data[0][0]['BANCO']
+            self.titular = response.data[0][0]['TITULAR']
+            self.cpfTitular = response.data[0][0]['CPFTITULAR']
+            self.tipoConta = response.data[0][0]['TIPOCONTA']
+            self.formasPix = response.data[0][0]['TIPOCHAVE']
+            self.chave = response.data[0][0]['CHAVEPIX']
+
+            self.makeToastNoInfo()
+
+          }else if(response.data.success === 4){
+
+            self.dtAdmissao = response.data[0][0]['DTADMISSAO']
+            self.cargo = response.data[0][0]['CARGO']
+            self.tipoContrato = response.data[0][0]['TIPOCONTRATO']
+            self.comissaoFixa = response.data[0][0]['COMISSAOFIXA']
+            self.ctps = response.data[0][0]['CTPS']
+            self.pispasep = response.data[0][0]['PISPASEP']
+            self.passagem = response.data[0][0]['PASSAGEM']
+            self.nmrbanco = response.data[0][0]['NOBANCO']
+            self.agencia = response.data[0][0]['AGENCIA']
+            self.conta = response.data[0][0]['CONTA']
+            self.banco = response.data[0][0]['BANCO']
+            self.titular = response.data[0][0]['TITULAR']
+            self.cpfTitular = response.data[0][0]['CPFTITULAR']
+            self.tipoConta = response.data[0][0]['TIPOCONTA']
+            self.formasPix = response.data[0][0]['TIPOCHAVE']
+            self.chave = response.data[0][0]['CHAVEPIX']
+
+          }else if(response.data.error === 1){
+
+            self.makeToastNoInfo()
+
+          }
+          self.temFuncionarioSelecionado = true
         }).catch((error) => {
-          console.log("Error: ", error)
+            console.log('Error: ', error)
         })
 
       },
@@ -275,7 +308,7 @@
         let self = this
 
         axios.post('edita-funcionario', {
-          id: self.id,
+          id: self.codFuncionario,
           nome: self.nome,
           cpf: self.cpf,
           nascimento: self.nascimento,
@@ -324,7 +357,7 @@
       excluiFuncionario(){
         let self = this
 
-        axios.post('deleta-funcionario', { id: self.id})
+        axios.post('deleta-funcionario', { id: self.codFuncionario})
         .then((response) => {
           
           self.preLoad()
@@ -339,7 +372,7 @@
       limpaDados(){
         let self = this
         
-        self.id = null
+        self.codFuncionario = null
         self.nome = null
         self.cpf = null
         self.nascimento = null
@@ -416,6 +449,17 @@
           variant: 'success',
         })
       },
+
+      makeToastNoInfo(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`Funcionário ${self.nome } está com o cadastro incompleto.`, {
+          title: 'ATENÇÃO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'warning',
+        })
+      },
     }
   }
   
@@ -433,7 +477,7 @@
 </style>
 
 <template>
-   <div>
+  <div>
       <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Cadastrar Funcionário</h1>
       <h1 v-if="temFuncionarioSelecionado == true" class="text-center">Editar Funcionário</h1>
       <div class="container text-center mt-3">
@@ -447,8 +491,8 @@
                   <b-row class="my-3">
                     
                     <b-col lg="2">
-                      <label for="id">ID</label>
-                      <b-form-input type="text" v-model="id" disabled></b-form-input>
+                      <label for="id">ID Funcionário</label>
+                      <b-form-input type="text" v-model="codFuncionario" disabled></b-form-input>
                     </b-col>
 
                     <b-col lg="4">
@@ -709,7 +753,7 @@
                 <b-button variant="light" v-if="temFuncionarioSelecionado == false" @click.prevent="salvaFuncionario()" id="btn-cadastrar">Cadastrar</b-button>
                 <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="editaFuncionario()" id="btn-editar">Editar</b-button>
                 <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="excluiFuncionario()" id="btn-excluir">Deletar</b-button>
-                <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true">
+                <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true || this.nome != null">
                   <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-cadastrar">Limpar</b-button>
                 </div>
               </div>

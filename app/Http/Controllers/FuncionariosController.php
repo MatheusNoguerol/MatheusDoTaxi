@@ -39,6 +39,7 @@ class FuncionariosController extends Controller
         $funcionario->NOME2 = $request->nomeContatoAdicional2;
         $funcionario->TELEFONE2 = $request->telefoneContatoAdicional2;
         $funcionario->OBS = $request->obs;
+        $funcionario->RESPONSAVEL = $request->responsavel;
         
         $funcionario->save();
 
@@ -125,12 +126,40 @@ class FuncionariosController extends Controller
     }
 
     public function selecionaDadosExtras(Request $request){ 
+        
+        $temDadosContratuais = DadosContratuais::where('CODFUNCIONARIO', '=', $request->codigo)->get();
+        
+        $temInfoFiFuncionarios = InfoFiFuncionarios::where('CODFUNCIONARIO', '=', $request->codigo)->get();
+        
+        if(count($temDadosContratuais) === 0 && count($temInfoFiFuncionarios) === 0){
 
-        $query = DB::table('funcionarios')->where('funcionarios.ID', '=', $request->id)
-        ->join('dados_contratuais', 'funcionarios.ID', '=', 'dados_contratuais.CODFUNCIONARIO')
-        ->join('info_fi_funcionarios', 'funcionarios.ID', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
-        ->select('dados_contratuais.*', 'info_fi_funcionarios.*')
-        ->get();
+            return ['error' => 1];
+
+        }else if(count($temInfoFiFuncionarios) === 0 && count($temDadosContratuais) <> 0){
+            $query = DB::table('funcionarios')->where('funcionarios.ID', '=', $request->codigo)
+            ->join('dados_contratuais', 'funcionarios.ID', '=', 'dados_contratuais.CODFUNCIONARIO')
+            ->select('dados_contratuais.*')
+            ->get();
+
+            return ['success' => 2 , $query];
+
+        }else if(count($temInfoFiFuncionarios) <> 0 && count($temDadosContratuais) === 0){
+            $query = DB::table('funcionarios')->where('funcionarios.ID', '=', $request->codigo)
+            ->join('info_fi_funcionarios', 'funcionarios.ID', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
+            ->select('info_fi_funcionarios.*')
+            ->get();
+
+            return ['success' => 3 , $query];
+
+        }else{
+            $query = DB::table('funcionarios')->where('funcionarios.ID', '=', $request->codigo)
+            ->join('dados_contratuais', 'funcionarios.ID', '=', 'dados_contratuais.CODFUNCIONARIO')
+            ->join('info_fi_funcionarios', 'funcionarios.ID', '=', 'info_fi_funcionarios.CODFUNCIONARIO')
+            ->select('dados_contratuais.*', 'info_fi_funcionarios.*')
+            ->get();
+
+            return ['success' => 4 , $query];
+        }
 
         return $query;
     }
