@@ -103,3 +103,10 @@ Route::post('edita-funcionario', 'FuncionariosController@editaFuncionario')->nam
 
 Route::post('deleta-funcionario', 'FuncionariosController@deletaFuncionario')->name('deleta-funcionario');
 
+Route::post('seleciona-anexos', 'FuncionariosController@selecionaAnexo')->name('seleciona-anexos');
+
+Route::post('storage/upload', 'FuncionariosController@upLoad')->name('storage-upload');
+
+Route::post('deleta-anexo', 'FuncionariosController@deletaAnexo')->name('deleta-anexo');
+
+Route::post('download-anexo', 'FuncionariosController@downloadAnexo')->name('download-anexo');

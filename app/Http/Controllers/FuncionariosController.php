@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Clientes;
 use App\Models\InfoFiFuncionarios;
@@ -11,6 +12,7 @@ use App\Models\Contadore;
 use App\Models\User;
 use App\Models\Funcionarios;
 use App\Models\DadosContratuais;
+use App\Models\AnexosFuncionarios;
 
 class FuncionariosController extends Controller
 {
@@ -377,5 +379,54 @@ class FuncionariosController extends Controller
             return [$queryFuncionarios, $queryInfoFi, $queryDadosContratuais];
 
         }
+    }
+
+    public function upLoad(Request $request){ 
+        $name = $request->cod . $request->file('file')->getClientOriginalName();
+        $extensao = $request->file('file')->getClientOriginalExtension();
+
+        $request->file('file')->storeAs('public/images/', $name);
+
+        $query = new AnexosFuncionarios;
+
+        $query->CODFUNCIONARIO = $request->cod;
+        $query->CAMINHO = $name;
+        $query->EXTENSAO = $extensao;
+        $query->TIPODOCUMENTO = $request->tipoDoc;
+
+        $query->save();
+        return $query;
+    
+    }
+
+    public function selecionaAnexo(Request $request){ 
+        
+        $query = AnexosFuncionarios::where('CODFUNCIONARIO', '=', $request->codFuncionario)->get();
+
+        return $query;
+    
+    }
+
+    public function deletaAnexo(Request $request){ 
+        
+        if(Storage::exists('public/images/' . $request->caminho)){
+            $query = AnexosFuncionarios::where('CODFUNCIONARIO', '=', $request->codFuncionario)->where('CAMINHO','=', $request->caminho)->where('TIPODOCUMENTO','=', $request->tipoDocumento)->delete();
+            Storage::delete('public/images/' . $request->caminho);
+            return $query;
+        }else{
+            return ['error' => 1, 'msg' => 'O arquivo não existe na aplicação.'];
+        }
+        
+    
+    }
+
+    public function downloadAnexo(Request $request){
+        // dd('images/'. $request->caminho);
+        $myFile = storage_path("app/public/images/". $request->caminho);
+        return response()->download($myFile);
+        // $query = download(public_path('storage/'. $request->caminho));
+        
+        // return $query;
+     
     }
 }
