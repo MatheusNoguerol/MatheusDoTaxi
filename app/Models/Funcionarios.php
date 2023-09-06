@@ -32,5 +32,6 @@ class Funcionarios extends Model
         'NOME2',
         'TELEFONE2',
         'OBS',
+        'RESPONSAVEL',
     ];
 }

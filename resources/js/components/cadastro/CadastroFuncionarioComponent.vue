@@ -3,7 +3,7 @@
     data(){
       return{
         temFuncionarioSelecionado: false,
-        id: null,
+        codFuncionario: null,
         nome: null,
         cpf: null,
         nascimento: null,
@@ -86,7 +86,48 @@
         ],
         perPageFuncionarios: 10,
         currentPageFuncionarios: 1,
-        id: null
+        id: null,
+        documentoEscolhido: null,
+        arrayFotos: [],
+        file1: null,
+        imagen: null,
+        teste: '../storage/app/public/images/53mqdefault.jpg',
+        tipoDoc: null,
+        isBusyTableAnexos: false, 
+        fieldsAnexos: [
+          {
+            key: 'CODFUNCIONARIO',
+            label: 'Cod. Funcionário',
+            sortable: true
+          },
+          {
+            key: 'TIPODOCUMENTO',
+            label: 'Tipo',
+            sortable: true
+          },
+          {
+            key: 'CAMINHO',
+            label: 'Caminho',
+            sortable: true
+          },
+          {
+            key: 'acoes',
+            label: 'Ações',
+            sortable: true
+          }
+        ],
+        currentPageAnexos: null,
+        tipoDocumentoEscolhido: null,
+        tipoDocumentoPdf: false,
+        extensao: null,
+        optionsTipoDocumentoAnexo: [
+          { value: 'CNH' , text: 'CNH'},
+          { value: 'Residência' , text: 'Residência'},
+          { value: 'Identidade' , text: 'Identidade'},
+          { value: 'CPF' , text: 'CPF'},
+          { value: 'CTPS' , text: 'CTPS'},
+        ],
+        selected: null
       } 
     },
 
@@ -101,6 +142,10 @@
     computed: {
       rowsFuncionarios() {
         return this.itemsFuncionarios.length
+      },
+
+      rowsAnexos() {
+        return this.arrayFotos.length
       }
     },
 
@@ -157,7 +202,7 @@
         let self = this
         
         axios.post('salva-funcionario', {
-          id: self.id,
+          id: self.codFuncionario,
           nome: self.nome,
           cpf: self.cpf,
           nascimento: self.nascimento,
@@ -194,7 +239,8 @@
           cpfTitular: self.cpfTitular,
           tipoConta: self.tipoConta,
           chave: self.chave,
-          formasPix: self.formasPix
+          formasPix: self.formasPix,
+          responsavel: self.user
         }).then((response) => {
           
           self.preLoad()
@@ -209,64 +255,111 @@
       selecionaFuncionarios(row){
         let self = this 
 
-        self.id = row.item.ID
-        
-        axios.post('seleciona-dados-extras-funcionarios',{id: self.id})
-        .then((response) => {
-          
-          self.nome = row.item.NOME
-          self.cpf = row.item.CPF
-          self.nascimento = row.item.DTNASCIMENTO
-          self.email = row.item.EMAIL
-          self.telefone = row.item.TELEFONE
-          self.sexo = row.item.SEXO
-          self.cep = row.item.CEP
-          self.logradouro = row.item.LOGRADOURO
-          self.numero = row.item.NUMERO
-          self.complemento = row.item.COMPLEMENTO
-          self.uf = row.item.UF
-          self.municipio = row.item.MUNICIPIO
-          self.bairro = row.item.BAIRRO
-          self.parentescoContatoAdicional1 = row.item.GRAUPARENTESCO1
-          self.nomeContatoAdicional1 = row.item.NOME1
-          self.telefoneContatoAdicional1 = row.item.TELEFONE1
-          self.contatoAdicional = row.item.TEMCONTATOADC
-          self.parentescoContatoAdicional2 = row.item.GRAUPARENTESCO2
-          self.nomeContatoAdicional2 = row.item.NOME2
-          self.telefoneContatoAdicional2 = row.item.TELEFONE2
-          self.obs = row.item.OBS
-          
-          if(response.data.length == 0){
-            self.temFuncionarioSelecionado = true
-            self.temContatoAdicional = true
-            this.$bvModal.hide('info-Funcionarios')
-          }
+        self.codFuncionario = row.item.ID
+        self.nome = row.item.NOME
+        self.cpf = row.item.CPF
+        self.nascimento = row.item.DTNASCIMENTO
+        self.email = row.item.EMAIL
+        self.telefone = row.item.TELEFONE
+        self.sexo = row.item.SEXO
+        self.cep = row.item.CEP
+        self.logradouro = row.item.LOGRADOURO
+        self.numero = row.item.NUMERO
+        self.complemento = row.item.COMPLEMENTO
+        self.uf = row.item.UF
+        self.municipio = row.item.MUNICIPIO
+        self.bairro = row.item.BAIRRO
+        self.parentescoContatoAdicional1 = row.item.GRAUPARENTESCO1
+        self.nomeContatoAdicional1 = row.item.NOME1
+        self.telefoneContatoAdicional1 = row.item.TELEFONE1
+        self.contatoAdicional = row.item.TEMCONTATOADC
+        self.parentescoContatoAdicional2 = row.item.GRAUPARENTESCO2
+        self.nomeContatoAdicional2 = row.item.NOME2
+        self.telefoneContatoAdicional2 = row.item.TELEFONE2
+        self.obs = row.item.OBS
 
-          self.dtAdmissao = response.data[0].DTADMISSAO
-          self.cargo = response.data[0].CARGO
-          self.tipoContrato = response.data[0].TIPOCONTRATO
-          self.comissaoFixa = response.data[0].COMISSAOFIXA
-          self.ctps = response.data[0].CTPS
-          self.pispasep = response.data[0].PISPASEP
-          self.passagem = response.data[0].PASSAGEM
-
-          self.nmrbanco = response.data[0].NOBANCO
-          self.banco = response.data[0].BANCO
-          self.agencia = response.data[0].AGENCIA
-          self.conta = response.data[0].CONTA
-          self.titular = response.data[0].TITULAR
-          self.cpfTitular = response.data[0].CPFTITULAR
-          self.tipoConta = response.data[0].TIPO
-          self.chave = response.data[0].CHAVEPIX
-          self.formasPix = response.data[0].TIPOCHAVE
-
-          self.temFuncionarioSelecionado = true
-          
+        if(row.item.NOME2 != null){
           self.temContatoAdicional = true
+          self.contatoAdicional = 1
+        }else{
+          self.temContatoAdicional = false
+          self.contatoAdicional = 0
+        }
+        this.$bvModal.hide('info-Funcionarios')
 
-          this.$bvModal.hide('info-Funcionarios')
+        axios.post('seleciona-dados-extras-funcionarios',{codigo: row.item.ID})
+        .then((response) => {
+
+          
+          if(response.data.success === 2){
+
+            self.dtAdmissao = response.data[0][0]['DTADMISSAO']
+            self.cargo = response.data[0][0]['CARGO']
+            self.tipoContrato = response.data[0][0]['TIPOCONTRATO']
+            self.comissaoFixa = response.data[0][0]['COMISSAOFIXA']
+            self.ctps = response.data[0][0]['CTPS']
+            self.pispasep = response.data[0][0]['PISPASEP']
+            self.passagem = response.data[0][0]['PASSAGEM']
+            
+            self.makeToastNoInfo()
+        
+          }else if(response.data.success === 3){
+
+            self.nmrbanco = response.data[0][0]['NOBANCO']
+            self.agencia = response.data[0][0]['AGENCIA']
+            self.conta = response.data[0][0]['CONTA']
+            self.banco = response.data[0][0]['BANCO']
+            self.titular = response.data[0][0]['TITULAR']
+            self.cpfTitular = response.data[0][0]['CPFTITULAR']
+            self.tipoConta = response.data[0][0]['TIPOCONTA']
+            self.formasPix = response.data[0][0]['TIPOCHAVE']
+            self.chave = response.data[0][0]['CHAVEPIX']
+
+            self.makeToastNoInfo()
+
+          }else if(response.data.success === 4){
+
+            self.dtAdmissao = response.data[0][0]['DTADMISSAO']
+            self.cargo = response.data[0][0]['CARGO']
+            self.tipoContrato = response.data[0][0]['TIPOCONTRATO']
+            self.comissaoFixa = response.data[0][0]['COMISSAOFIXA']
+            self.ctps = response.data[0][0]['CTPS']
+            self.pispasep = response.data[0][0]['PISPASEP']
+            self.passagem = response.data[0][0]['PASSAGEM']
+            self.nmrbanco = response.data[0][0]['NOBANCO']
+            self.agencia = response.data[0][0]['AGENCIA']
+            self.conta = response.data[0][0]['CONTA']
+            self.banco = response.data[0][0]['BANCO']
+            self.titular = response.data[0][0]['TITULAR']
+            self.cpfTitular = response.data[0][0]['CPFTITULAR']
+            self.tipoConta = response.data[0][0]['TIPOCONTA']
+            self.formasPix = response.data[0][0]['TIPOCHAVE']
+            self.chave = response.data[0][0]['CHAVEPIX']
+
+          }else if(response.data.error === 1){
+
+            self.makeToastNoInfo()
+
+          }
+          self.temFuncionarioSelecionado = true
         }).catch((error) => {
-          console.log("Error: ", error)
+            console.log('Error: ', error)
+        })
+
+        axios.post('seleciona-anexos', {codFuncionario: self.codFuncionario})
+        .then((response) => {
+          for (let x = 0; x < response.data.length; x++) {
+
+            self.arrayFotos.push({
+              CODFUNCIONARIO: response.data[x].CODFUNCIONARIO,
+              TIPODOCUMENTO: response.data[x].TIPODOCUMENTO,
+              CAMINHO: response.data[x].CAMINHO,
+              EXTENSAO: response.data[x].EXTENSAO
+            })
+
+          }
+        }).catch((error)=>{
+          console.log('Error: ', error)
         })
 
       },
@@ -275,7 +368,7 @@
         let self = this
 
         axios.post('edita-funcionario', {
-          id: self.id,
+          id: self.codFuncionario,
           nome: self.nome,
           cpf: self.cpf,
           nascimento: self.nascimento,
@@ -324,7 +417,7 @@
       excluiFuncionario(){
         let self = this
 
-        axios.post('deleta-funcionario', { id: self.id})
+        axios.post('deleta-funcionario', { id: self.codFuncionario})
         .then((response) => {
           
           self.preLoad()
@@ -339,7 +432,7 @@
       limpaDados(){
         let self = this
         
-        self.id = null
+        self.codFuncionario = null
         self.nome = null
         self.cpf = null
         self.nascimento = null
@@ -376,6 +469,10 @@
         self.tipoConta = null
         self.chave = null
         self.formasPix = null
+        self.tipoDoc = null
+        self.file1 = null
+        self.arrayFotos = []
+        self.isBusyTableAnexos = false
 
         self.temFuncionarioSelecionado = false
         self.contatoAdicional = null
@@ -416,6 +513,158 @@
           variant: 'success',
         })
       },
+
+      makeToastNoInfo(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`Funcionário ${self.nome } está com o cadastro incompleto.`, {
+          title: 'ATENÇÃO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'warning',
+        })
+      },
+
+      uploadProfileImage(){
+        let self = this
+
+        if(self.tipoDoc == null || self.tipoDoc == ''){
+          self.makeToastNoFile()
+        }else{
+          self.arrayFotos = []
+
+          self.isBusyTableAnexos = true
+          const formData = new FormData();
+          formData.append("file", self.file1);
+          formData.append("cod", self.codFuncionario);
+          formData.append("tipoDoc", self.tipoDoc);
+
+          axios.post("storage/upload", formData,{
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }).then((response) => {
+            
+            self.makeToastUpload()
+            self.rechargeAnexos()
+
+            self.file1 = null
+            self.tipoDoc = null
+          }).catch((error) => {
+            console.log('Error: ', error)
+          });
+        }
+      },
+
+      selecionaAnexo(row){
+        let self = this
+
+        self.documentoEscolhido = null
+        self.tipoDocumentoEscolhido = null
+        self.extensao = null
+
+        console.log('row ->',row)
+        self.documentoEscolhido = '../storage/app/public/images/' + row.item.CAMINHO
+        self.tipoDocumentoEscolhido = row.item.TIPODOCUMENTO
+        self.extensao = row.item.EXTENSAO
+
+        if(self.extensao == 'pdf'){
+          self.tipoDocumentoPdf = true
+        }else{
+          self.tipoDocumentoPdf = false
+        }      
+      },
+      
+      limpaTipoDocumento(){
+        let self = this
+
+        self.selected = null
+      },
+
+      makeToastUpload(append = false) {
+         let self = this
+
+          this.$bvToast.toast(`Documento adicionado.`, {
+          title: 'SUCESSO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'success',
+        })
+      },
+
+      makeToastNoFile(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`selecione o tipo de documento a ser anexado...`, {
+          title: 'ATENÇÃO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'warning',
+        })
+      },
+
+      deletaAnexo(row){
+        let self = this
+
+        self.isBusyTableAnexos = true
+
+        self.arrayFotos = []
+
+        axios.post('deleta-anexo', {codFuncionario: self.codFuncionario, tipoDocumento: row.item.TIPODOCUMENTO, caminho: row.item.CAMINHO})
+        .then((response) => {
+          console.log(Response)
+          axios.post('seleciona-anexos', {codFuncionario: self.codFuncionario})
+          .then((response) => {
+            for (let x = 0; x < response.data.length; x++) {
+
+              self.arrayFotos.push({
+                CODFUNCIONARIO: response.data[x].CODFUNCIONARIO,
+                TIPODOCUMENTO: response.data[x].TIPODOCUMENTO,
+                CAMINHO: response.data[x].CAMINHO,
+                EXTENSAO: response.data[x].EXTENSAO
+              })
+
+            }
+            self.isBusyTableAnexos = false
+          }).catch((error)=>{
+            console.log('Error: ', error)
+          })
+        }).catch((error) => {
+          console.log('Error: ', error)
+        })
+      },
+
+      rechargeAnexos(){
+        let self = this
+
+        axios.post('seleciona-anexos', {codFuncionario: self.codFuncionario})
+        .then((response) => {
+          for (let x = 0; x < response.data.length; x++) {
+
+            self.arrayFotos.push({
+              CODFUNCIONARIO: response.data[x].CODFUNCIONARIO,
+              TIPODOCUMENTO: response.data[x].TIPODOCUMENTO,
+              CAMINHO: response.data[x].CAMINHO,
+              EXTENSAO: response.data[x].EXTENSAO
+            })
+
+          }
+          self.isBusyTableAnexos = false
+        }).catch((error)=>{
+          console.log('Error: ', error)
+        })
+      },
+
+      downloadAnexo(row){
+        let self = this
+        console.log('->',row)
+        axios.post('download-anexo', {caminho: row.item.CAMINHO})
+        .then((response)=>{
+          console.log('response aqui:', response)
+        }).catch((error)=> {
+          console.log('Error: ', error)
+        })
+      }
     }
   }
   
@@ -433,7 +682,7 @@
 </style>
 
 <template>
-   <div>
+  <div>
       <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Cadastrar Funcionário</h1>
       <h1 v-if="temFuncionarioSelecionado == true" class="text-center">Editar Funcionário</h1>
       <div class="container text-center mt-3">
@@ -447,8 +696,8 @@
                   <b-row class="my-3">
                     
                     <b-col lg="2">
-                      <label for="id">ID</label>
-                      <b-form-input type="text" v-model="id" disabled></b-form-input>
+                      <label for="id">ID Funcionário</label>
+                      <b-form-input type="text" v-model="codFuncionario" disabled></b-form-input>
                     </b-col>
 
                     <b-col lg="4">
@@ -699,6 +948,96 @@
                   </b-row>
                 </b-tab>
 
+                <b-tab title="Anexos" no-body>
+                  <b-row>
+
+                    <b-col lg="3" class="mt-4">
+                      <b-input-group>
+                        <b-form-select v-model="tipoDoc" :options="optionsTipoDocumentoAnexo">
+                          <template #first>
+                            <b-form-select-option :value="null" disabled>Tipo documento</b-form-select-option>
+                          </template>
+                        </b-form-select>
+                        <b-input-group-append>
+                            <b-button data-bs-toggle="tooltip" title="Limpar documento" variant="outline-primary" @click="limpaTipoDocumento()">
+                                <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
+                            </b-button>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-col>
+
+                    <b-col lg="7">
+                      <label for=""></label><br>
+                      <b-form-file
+                        v-model="file1"
+                        :state="Boolean(file1)"
+                        placeholder="Selecione um arquivo ou solte aqui..."
+                        drop-placeholder="Solte o arquivo aqui..."
+                        enctype="multipart/form-data"
+                        accept=".jpg, .png, .pdf, .jpeg"
+                      ></b-form-file>
+                    </b-col>
+                    
+                    <b-col lg="2" class="mt-4">
+                      <b-button title="Save file" @click.prevent="uploadProfileImage()" variant="outline-primary">
+                        <b-icon icon="cloud-upload" aria-hidden="true"></b-icon>
+                      </b-button>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="my-3">
+                    
+                        <div class="col-lg-12 p-1">
+                            <b-table hover outlined responsive
+                                id="anexos-table"
+                                head-variant="light"
+                                :busy="isBusyTableAnexos"
+                                :fields="fieldsAnexos"
+                                :items="arrayFotos"
+                                per-page="10"
+                                :current-page="currentPageAnexos">
+                                <template #table-busy>
+                                    <div class="text-center text-primary my-2">
+                                        <b-spinner class="align-middle"></b-spinner>
+                                        <strong>Carregando...</strong>
+                                    </div>
+                                </template>
+
+                                <template #cell(acoes)="row">
+                                    <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Visualizar arquivo" variant="outline-primary" v-b-modal.modal-view-anexo>
+                                      <b-icon icon="eye" @click.prevent="selecionaAnexo(row)"></b-icon>
+                                    </b-button>
+                                    
+                                    <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Deletar arquivo" variant="outline-primary">
+                                      <b-icon icon="trash" @click.prevent="deletaAnexo(row)"></b-icon>
+                                    </b-button>
+
+                                    <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Baixar arquivo" variant="outline-primary">
+                                      <b-icon icon="download" @click.prevent="downloadAnexo(row)"></b-icon>
+                                    </b-button>
+                                </template>
+                            </b-table>
+                        </div>
+                        <div class="col col-lg-12 mt-0 pt-0">
+                            <div class="justify-content-end d-flex mt-0 pt-0">
+                                <small class="text-muted mt-0 pt-0"><p>{{rowsAnexos}} registros encontrados.</p></small>
+                            </div>
+                        </div>
+                        <div class="col col-lg-12 mt-1" >
+                            <div class="justify-content-center d-flex">
+                                <b-pagination
+                                    v-model="currentPageAnexos"
+                                    :total-rows="rowsAnexos"
+                                    per-page="10"
+                                    aria-controls="produtos-desativados-table">
+                                </b-pagination>
+                            </div>
+                        </div>
+                   
+                  </b-row>
+                  
+                </b-tab>
+
               </b-tabs>
             </b-card>
           </div>
@@ -709,7 +1048,7 @@
                 <b-button variant="light" v-if="temFuncionarioSelecionado == false" @click.prevent="salvaFuncionario()" id="btn-cadastrar">Cadastrar</b-button>
                 <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="editaFuncionario()" id="btn-editar">Editar</b-button>
                 <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="excluiFuncionario()" id="btn-excluir">Deletar</b-button>
-                <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true">
+                <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true || this.nome != null">
                   <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-cadastrar">Limpar</b-button>
                 </div>
               </div>
@@ -751,6 +1090,19 @@
           aria-controls="lista-Funcionarios"
         >
         </b-pagination>
+      </div>
+    </b-modal>
+
+    
+    <b-modal id="modal-view-anexo" hide-footer size="xl">
+      <div class="container-fluid">
+        <b-img :src="documentoEscolhido" fluid v-if="tipoDocumentoPdf == false"></b-img>
+
+        <b-embed
+          v-if="tipoDocumentoPdf == true"
+          type="iframe"
+          :src="documentoEscolhido"
+        ></b-embed>
       </div>
     </b-modal>
 

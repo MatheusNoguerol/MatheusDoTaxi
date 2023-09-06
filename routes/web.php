@@ -71,7 +71,6 @@ Route::post('cadastro-funcionario', 'UserController@cadastroFuncionario')->name(
 
 Route::post('adicionar-produto', 'UserController@adicionarProduto')->name('adicionar-produto');
 
-Route::post('consultar-cadastro', 'UserController@consultarCadastro')->name('consultar-cadastro');
 
 
 
@@ -104,3 +103,10 @@ Route::post('edita-funcionario', 'FuncionariosController@editaFuncionario')->nam
 
 Route::post('deleta-funcionario', 'FuncionariosController@deletaFuncionario')->name('deleta-funcionario');
 
+Route::post('seleciona-anexos', 'FuncionariosController@selecionaAnexo')->name('seleciona-anexos');
+
+Route::post('storage/upload', 'FuncionariosController@upLoad')->name('storage-upload');
+
+Route::post('deleta-anexo', 'FuncionariosController@deletaAnexo')->name('deleta-anexo');
+
+Route::post('download-anexo', 'FuncionariosController@downloadAnexo')->name('download-anexo');
