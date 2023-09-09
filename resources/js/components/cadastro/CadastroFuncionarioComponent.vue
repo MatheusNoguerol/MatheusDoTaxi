@@ -96,18 +96,13 @@
         isBusyTableAnexos: false, 
         fieldsAnexos: [
           {
-            key: 'CODFUNCIONARIO',
-            label: 'Cod. Funcionário',
-            sortable: true
-          },
-          {
             key: 'TIPODOCUMENTO',
             label: 'Tipo',
             sortable: true
           },
           {
             key: 'CAMINHO',
-            label: 'Caminho',
+            label: 'Arquivo',
             sortable: true
           },
           {
@@ -127,7 +122,8 @@
           { value: 'CPF' , text: 'CPF'},
           { value: 'CTPS' , text: 'CTPS'},
         ],
-        selected: null
+        selected: null,
+        arquivo: null
       } 
     },
 
@@ -175,12 +171,6 @@
         })
       },
 
-      addCampoDeContato(){
-        let self = this 
-
-        self.temContatoAdicional = true
-      },
-
       buscaCep(){
         let self = this 
 
@@ -201,55 +191,59 @@
       salvaFuncionario(){
         let self = this
         
-        axios.post('salva-funcionario', {
-          id: self.codFuncionario,
-          nome: self.nome,
-          cpf: self.cpf,
-          nascimento: self.nascimento,
-          email: self.email,
-          telefone: self.telefone,
-          sexo: self.sexo,
-          cep: self.cep,
-          logradouro: self.logradouro,
-          numero: self.numero,
-          complemento: self.complemento,
-          uf: self.uf,
-          municipio: self.municipio,
-          bairro: self.bairro,
-          temContatoAdicional: self.temContatoAdicional,
-          parentescoContatoAdicional1: self.parentescoContatoAdicional1,
-          nomeContatoAdicional1: self.nomeContatoAdicional1,
-          telefoneContatoAdicional1: self.telefoneContatoAdicional1,
-          parentescoContatoAdicional2: self.parentescoContatoAdicional2,
-          nomeContatoAdicional2: self.nomeContatoAdicional2,
-          telefoneContatoAdicional2: self.telefoneContatoAdicional2,
-          obs: self.obs,
-          dtAdmissao: self.dtAdmissao,
-          cargo: self.cargo,
-          tipoContrato: self.tipoContrato,
-          comissaoFixa: self.comissaoFixa,
-          ctps: self.ctps,
-          pispasep: self.pispasep,
-          passagem: self.passagem,
-          nmrbanco: self.nmrbanco,
-          banco: self.banco,
-          agencia: self.agencia,
-          conta: self.conta,
-          titular: self.titular,
-          cpfTitular: self.cpfTitular,
-          tipoConta: self.tipoConta,
-          chave: self.chave,
-          formasPix: self.formasPix,
-          responsavel: self.user
-        }).then((response) => {
-          
-          self.preLoad()
-          self.makeToastSalvaFuncionario()
-          self.limpaDados()
-              
-        }).catch((error) => {
-          console.log("Error: ", error)
-        })
+        if(self.nome == null || self.nome == ''){
+          self.makeToastNoSaveFuncionario()
+        }else{
+          axios.post('salva-funcionario', {
+            id: self.codFuncionario,
+            nome: self.nome,
+            cpf: self.cpf,
+            nascimento: self.nascimento,
+            email: self.email,
+            telefone: self.telefone,
+            sexo: self.sexo,
+            cep: self.cep,
+            logradouro: self.logradouro,
+            numero: self.numero,
+            complemento: self.complemento,
+            uf: self.uf,
+            municipio: self.municipio,
+            bairro: self.bairro,
+            temContatoAdicional: self.temContatoAdicional,
+            parentescoContatoAdicional1: self.parentescoContatoAdicional1,
+            nomeContatoAdicional1: self.nomeContatoAdicional1,
+            telefoneContatoAdicional1: self.telefoneContatoAdicional1,
+            parentescoContatoAdicional2: self.parentescoContatoAdicional2,
+            nomeContatoAdicional2: self.nomeContatoAdicional2,
+            telefoneContatoAdicional2: self.telefoneContatoAdicional2,
+            obs: self.obs,
+            dtAdmissao: self.dtAdmissao,
+            cargo: self.cargo,
+            tipoContrato: self.tipoContrato,
+            comissaoFixa: self.comissaoFixa,
+            ctps: self.ctps,
+            pispasep: self.pispasep,
+            passagem: self.passagem,
+            nmrbanco: self.nmrbanco,
+            banco: self.banco,
+            agencia: self.agencia,
+            conta: self.conta,
+            titular: self.titular,
+            cpfTitular: self.cpfTitular,
+            tipoConta: self.tipoConta,
+            chave: self.chave,
+            formasPix: self.formasPix,
+            responsavel: self.user
+          }).then((response) => {
+            
+            self.preLoad()
+            self.makeToastSalvaFuncionario()
+            self.limpaDados()
+                
+          }).catch((error) => {
+            console.log("Error: ", error)
+          })
+        }
       },
 
       selecionaFuncionarios(row){
@@ -503,6 +497,17 @@
 
       },
 
+      makeToastNoSaveFuncionario(append = false){
+        let self = this
+
+        this.$bvToast.toast(`Digite pelo menos o nome do funcionário.`, {
+          title: 'ATENÇÃO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'warning',
+        })
+      },
+
       makeToastExcluiFuncionario(append = false) {
         let self = this
 
@@ -528,31 +533,36 @@
       uploadProfileImage(){
         let self = this
 
-        if(self.tipoDoc == null || self.tipoDoc == ''){
-          self.makeToastNoFile()
+        if(self.temFuncionarioSelecionado == false){
+          self.makeToastNoFuncionarioSelecionado()
         }else{
-          self.arrayFotos = []
-
-          self.isBusyTableAnexos = true
-          const formData = new FormData();
-          formData.append("file", self.file1);
-          formData.append("cod", self.codFuncionario);
-          formData.append("tipoDoc", self.tipoDoc);
-
-          axios.post("storage/upload", formData,{
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }).then((response) => {
-            
-            self.makeToastUpload()
-            self.rechargeAnexos()
-
-            self.file1 = null
-            self.tipoDoc = null
-          }).catch((error) => {
-            console.log('Error: ', error)
-          });
+          
+          if(self.tipoDoc == null || self.tipoDoc == ''){
+            self.makeToastNoFile()
+          }else{
+            self.arrayFotos = []
+  
+            self.isBusyTableAnexos = true
+            const formData = new FormData();
+            formData.append("file", self.file1);
+            formData.append("cod", self.codFuncionario);
+            formData.append("tipoDoc", self.tipoDoc);
+  
+            axios.post("storage/upload", formData,{
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }).then((response) => {
+              
+              self.makeToastUpload()
+              self.rechargeAnexos()
+  
+              self.file1 = null
+              self.tipoDoc = null
+            }).catch((error) => {
+              console.log('Error: ', error)
+            });
+          }
         }
       },
 
@@ -562,9 +572,11 @@
         self.documentoEscolhido = null
         self.tipoDocumentoEscolhido = null
         self.extensao = null
+        self.arquivo = null
 
         console.log('row ->',row)
         self.documentoEscolhido = '../storage/app/public/images/' + row.item.CAMINHO
+        self.arquivo = row.item.CAMINHO
         self.tipoDocumentoEscolhido = row.item.TIPODOCUMENTO
         self.extensao = row.item.EXTENSAO
 
@@ -655,16 +667,29 @@
         })
       },
 
-      downloadAnexo(row){
+      makeToastNoFuncionarioSelecionado(append = false){
         let self = this
-        console.log('->',row)
-        axios.post('download-anexo', {caminho: row.item.CAMINHO})
-        .then((response)=>{
-          console.log('response aqui:', response)
-        }).catch((error)=> {
-          console.log('Error: ', error)
+
+        this.$bvToast.toast(`Para anexar um arquivo, selecione um funcionário...`, {
+          title: 'ATENÇÃO!',
+          autoHideDelay: 2500,
+          appendToast: append,
+          variant: 'warning',
         })
-      }
+      },
+
+      
+
+      // downloadAnexo(row){
+      //   let self = this
+      //   console.log('->',row)
+      //   axios.post('download-anexo', {caminho: row.item.CAMINHO})
+      //   .then((response)=>{
+      //     console.log('response aqui:', response)
+      //   }).catch((error)=> {
+      //     console.log('Error: ', error)
+      //   })
+      // }
     }
   }
   
@@ -683,385 +708,382 @@
 
 <template>
   <div>
-      <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Cadastrar Funcionário</h1>
-      <h1 v-if="temFuncionarioSelecionado == true" class="text-center">Editar Funcionário</h1>
-      <div class="container text-center mt-3">
-        <form method="POST">
+    <h1 v-if="temFuncionarioSelecionado == false" class="text-center">Cadastrar Funcionário</h1>
+    <h1 v-if="temFuncionarioSelecionado == true" class="text-center">Editar Funcionário</h1>
+    <div class="container text-center mt-3">
+      <form method="POST">
 
-          <div class="container">
-            <b-card>
-              <b-tabs content-class="mt-3" no-body>
+        <div class="container">
+          <b-card>
+            <b-tabs content-class="mt-3" no-body>
 
-                <b-tab title="Dados Pessoais" id="dadosPessoais" active no-body>
-                  <b-row class="my-3">
-                    
-                    <b-col lg="2">
-                      <label for="id">ID Funcionário</label>
-                      <b-form-input type="text" v-model="codFuncionario" disabled></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="nome" class="form-label">Nome</label>
-                      <input v-model="nome" type="text" name="nome" class="form-control" id="nome">
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="cpf">CPF</label>
-                      <b-form-input v-model="cpf" name="cpf" id="cpf"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="nascimento">Dt. nascimento</label>
-                      <b-form-input type="date" id="nascimento" v-model="nascimento" name="nascimento" max="9999-12-31"></b-form-input>
-                    </b-col>
-
-                  </b-row>
-
-                  <b-row class="my-3">
-
-                    <b-col lg="4">
-                      <label for="email" class="form-label">Email</label>
-                      <input type="text" v-model="email" name="email" class="form-control" id="email">
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="telefone" class="form-label">Telefone</label>
-                      <input type="text" v-model="telefone" name="telefone" class="form-control" id="telefone">
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="sexo" class="form-label">Sexo</label>
-                      <b-form-select type="text" :options="optionsSexo" v-model="sexo" name="sexo" class="form-control" id="sexo"></b-form-select>
-                    </b-col>
-
-                  </b-row>
-
-                  <b-row class="my-3">
-
-                    <b-col lg="2">
-                      <label for="cep">CEP</label>
-                      <b-form-input @change="buscaCep()" v-model="cep" id="cep"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="logradouro">Endereço</label>
-                      <b-form-input v-model="logradouro" id="logradouro"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="2">
-                      <label for="numero">Número</label>
-                      <b-form-input type="number" v-model="numero" id="numero"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="complemento">Complemento</label>
-                      <b-form-input v-model="complemento" id="complemento"></b-form-input>
-                    </b-col>
-
-                  </b-row>
-
-                  <b-row class="my-3 mb-4">
-
-                    <b-col lg="2">
-                      <label for="uf">UF</label>
-                      <b-form-input type="text" v-model="uf" id="uf"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="5">
-                      <label for="municipio">Município</label>
-                      <b-form-input type="text" v-model="municipio" id="municipio"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="bairro">Bairro</label>
-                      <b-form-input type="text" id="bairro" v-model="bairro"></b-form-input>
-                    </b-col>
-
-                  </b-row>
-                      
-                  <h5 class="mb-4">Contatos adicionais</h5>
-
-                  <b-row class="my-3">
-
-                    <b-col lg="3">
-                      <label for="parentescoContatoAdicional1" class="form-label">Grau de parentesco</label>
-                      <b-form-select id="parentescoContatoAdicional1" :options="optionsParentesco" v-model="parentescoContatoAdicional1"></b-form-select>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="nomeContatoAdicional1" class="form-label">Nome</label>
-                      <b-form-input type="text" id="nomeContatoAdicional1" v-model="nomeContatoAdicional1"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="telefoneContatoAdicional1" class="form-label">Telefone</label>
-                      <b-form-input type="text" id="telefoneContatoAdicional1" v-model="telefoneContatoAdicional1"></b-form-input>
-                    </b-col>
-                    
-                    <b-col lg="2" class="mt-2"><br>
-                      <b-row class="m-0">
-                        <b-col lg="6">
-                          <small>Add</small>
-                        </b-col>
-                        <b-col lg="6">
-                          <b-form-checkbox @change="addCampoDeContato()" value="1" unchecked-value="0" v-model="contatoAdicional"></b-form-checkbox>
-                        </b-col>
-                      </b-row>
-                    </b-col>
-
-                  </b-row>
-
-                  <b-row class="my-3" v-show="temContatoAdicional">
-
-                    <b-col lg="4">
-                      <label for="parentescoContatoAdicional2" class="form-label">Grau de parentesco</label>
-                      <b-form-select id="parentescoContatoAdicional2" :options="optionsParentesco" v-model="parentescoContatoAdicional2"></b-form-select>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="nomeContatoAdicional2" class="form-label">Nome</label>
-                      <b-form-input type="text" id="nomeContatoAdicional2" v-model="nomeContatoAdicional2"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="telefoneContatoAdicional2" class="form-label">Telefone</label>
-                      <b-form-input type="text" id="telefoneContatoAdicional2" v-model="telefoneContatoAdicional2"></b-form-input>
-                    </b-col>
-                    
-                  </b-row>
-
-                  <b-row class="my-3">
-
-                    <b-col lg="12">
-                      <label for="obs" class="form-label">Observação</label>
-                      <br><textarea name="obs" v-model="obs" id="obs" rows="5" class="w-100" style="border-radius: 1.0rem;"></textarea>
-                    </b-col>
-                    
-                  </b-row>
-                </b-tab>
-
-                <b-tab title="Dados Contratuais" no-body>
-                  <b-row class="my-3">
-
-                    <b-col lg="3">
-                      <label for="dtAdmissao" class="form-label">Dt. admissao</label>
-                      <b-form-input type="date" v-model="dtAdmissao" name="dtAdmissao" class="form-control" id="dtAdmissao" max="9999-12-31"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="cargo">Cargo</label>
-                      <b-form-input type="text" id="cargo" v-model="cargo"></b-form-input>
-                    </b-col>                  
-
-                    <b-col lg="3">
-                      <label for="tipoContrato">Tipo de contrato</label>
-                      <b-form-select :options="optionsContrato" v-model="tipoContrato" id="tipoContrato"></b-form-select>
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="comissaoFixa" class="form-label">Comissão fixa</label>
-                      <b-input-group append="%">
-                        <b-form-input v-model="comissaoFixa" id="comissaoFixa"></b-form-input>
-                      </b-input-group>
-                    </b-col>
-                      
-                  </b-row>
-
-                  <b-row class="my-3">
-
-                    <b-col lg="4">
-                      <label for="ctps">CTPS</label>
-                      <b-form-input v-model="ctps" id="ctps"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="pispasep">PIS/PASEP</label>
-                      <b-form-input v-model="pispasep" id="pispasep"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="passagem" class="form-label">Passagem</label>
-                      <b-input-group prepend="R$">
-                        <b-form-input v-model="passagem" id="passagem"></b-form-input>
-                      </b-input-group>
-                    </b-col>
-                    
-                  </b-row>
-                </b-tab>
-
-                <b-tab title="Informações financeiras" no-body>
-                  <b-row class="my-3">
-
-                    <b-col lg="3">
-                      <label for="nmrBanco" class="form-label">N° Banco</label>
-                      <b-form-input type="text" v-model="nmrbanco" name="nmrBanco" class="form-control" id="nmrBanco"></b-form-input>
-                    </b-col>
-
-                      <b-col lg="3">
-                      <label for="banco" class="form-label">Banco</label>
-                      <b-form-input v-model="banco" id="banco"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="agencia">Agencia</label>
-                      <b-form-input type="text" id="agencia" v-model="agencia"></b-form-input>
-                    </b-col>                  
-
-                    <b-col lg="3">
-                      <label for="conta" class="form-label">Conta</label>
-                      <b-form-input type="text" v-model="conta" name="conta" class="form-control" id="conta"></b-form-input>
-                    </b-col>
-
-                  </b-row>
-
-                  <b-row class="my-3">
-
-                    <b-col lg="5">
-                      <label for="titular" class="form-label">Titular</label>
-                      <b-form-input type="text" v-model="titular" name="titular" class="form-control" id="titular"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="3">
-                      <label for="cpfTitular" class="form-label">CPF Titular</label>
-                      <b-form-input type="text" v-model="cpfTitular" name="cpfTitular" class="form-control" id="cpfTitular"></b-form-input>
-                    </b-col>
-
-                    <b-col lg="4">
-                      <label for="tipoConta" class="form-label">Tipo conta</label>
-                      <b-form-select type="text" v-model="tipoConta" name="tipoConta" :options="optionsTipoConta" class="form-control" id="tipoConta"></b-form-select>
-                    </b-col>
-
-                  </b-row>
-
-                  <b-row class="my-3">
+              <b-tab title="Dados Pessoais" id="dadosPessoais" active no-body>
+                <b-row class="my-3">
                   
-                    <b-col lg="3">
-                      <label for="pix">Escolha o tipo da chave</label>
-                      <b-form-select type="text" :options="optionsFormasPix" v-model="formasPix" class="form-control" id="pix"></b-form-select>
-                    </b-col>
+                  <b-col lg="2">
+                    <label for="id">ID Funcionário</label>
+                    <b-form-input type="text" v-model="codFuncionario" disabled></b-form-input>
+                  </b-col>
 
-                    <b-col lg="3" v-if="this.formasPix != null">
-                      <label for="chave">PIX</label>
-                      <b-form-input type="text" v-model="chave" class="form-control" id="chave"></b-form-input>
-                    </b-col>
+                  <b-col lg="4">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input v-model="nome" type="text" name="nome" class="form-control" id="nome">
+                  </b-col>
 
-                  </b-row>
-                </b-tab>
+                  <b-col lg="3">
+                    <label for="cpf">CPF</label>
+                    <b-form-input v-model="cpf" name="cpf" id="cpf"></b-form-input>
+                  </b-col>
 
-                <b-tab title="Anexos" no-body>
-                  <b-row>
+                  <b-col lg="3">
+                    <label for="nascimento">Dt. nascimento</label>
+                    <b-form-input type="date" id="nascimento" v-model="nascimento" name="nascimento" max="9999-12-31"></b-form-input>
+                  </b-col>
 
-                    <b-col lg="3" class="mt-4">
-                      <b-input-group>
-                        <b-form-select v-model="tipoDoc" :options="optionsTipoDocumentoAnexo">
-                          <template #first>
-                            <b-form-select-option :value="null" disabled>Tipo documento</b-form-select-option>
-                          </template>
-                        </b-form-select>
-                        <b-input-group-append>
-                            <b-button data-bs-toggle="tooltip" title="Limpar documento" variant="outline-primary" @click="limpaTipoDocumento()">
-                                <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
-                            </b-button>
-                        </b-input-group-append>
-                      </b-input-group>
-                    </b-col>
+                </b-row>
 
-                    <b-col lg="7">
-                      <label for=""></label><br>
-                      <b-form-file
-                        v-model="file1"
-                        :state="Boolean(file1)"
-                        placeholder="Selecione um arquivo ou solte aqui..."
-                        drop-placeholder="Solte o arquivo aqui..."
-                        enctype="multipart/form-data"
-                        accept=".jpg, .png, .pdf, .jpeg"
-                      ></b-form-file>
-                    </b-col>
+                <b-row class="my-3">
+
+                  <b-col lg="4">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" v-model="email" name="email" class="form-control" id="email">
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" v-model="telefone" name="telefone" class="form-control" id="telefone">
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <b-form-select type="text" :options="optionsSexo" v-model="sexo" name="sexo" class="form-control" id="sexo"></b-form-select>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-3">
+
+                  <b-col lg="2">
+                    <label for="cep">CEP</label>
+                    <b-form-input @change="buscaCep()" v-model="cep" id="cep"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="logradouro">Endereço</label>
+                    <b-form-input v-model="logradouro" id="logradouro"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="2">
+                    <label for="numero">Número</label>
+                    <b-form-input type="number" v-model="numero" id="numero"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="complemento">Complemento</label>
+                    <b-form-input v-model="complemento" id="complemento"></b-form-input>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-3 mb-4">
+
+                  <b-col lg="2">
+                    <label for="uf">UF</label>
+                    <b-form-input type="text" v-model="uf" id="uf"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="5">
+                    <label for="municipio">Município</label>
+                    <b-form-input type="text" v-model="municipio" id="municipio"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="bairro">Bairro</label>
+                    <b-form-input type="text" id="bairro" v-model="bairro"></b-form-input>
+                  </b-col>
+
+                </b-row>
                     
-                    <b-col lg="2" class="mt-4">
-                      <b-button title="Save file" @click.prevent="uploadProfileImage()" variant="outline-primary">
-                        <b-icon icon="cloud-upload" aria-hidden="true"></b-icon>
-                      </b-button>
-                    </b-col>
-                  </b-row>
+                <h5 class="mb-4">Contatos adicionais</h5>
 
-                  <b-row class="my-3">
-                    
-                        <div class="col-lg-12 p-1">
-                            <b-table hover outlined responsive
-                                id="anexos-table"
-                                head-variant="light"
-                                :busy="isBusyTableAnexos"
-                                :fields="fieldsAnexos"
-                                :items="arrayFotos"
-                                per-page="10"
-                                :current-page="currentPageAnexos">
-                                <template #table-busy>
-                                    <div class="text-center text-primary my-2">
-                                        <b-spinner class="align-middle"></b-spinner>
-                                        <strong>Carregando...</strong>
-                                    </div>
-                                </template>
+                <b-row class="my-3">
 
-                                <template #cell(acoes)="row">
-                                    <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Visualizar arquivo" variant="outline-primary" v-b-modal.modal-view-anexo>
-                                      <b-icon icon="eye" @click.prevent="selecionaAnexo(row)"></b-icon>
-                                    </b-button>
-                                    
-                                    <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Deletar arquivo" variant="outline-primary">
-                                      <b-icon icon="trash" @click.prevent="deletaAnexo(row)"></b-icon>
-                                    </b-button>
+                  <b-col lg="3">
+                    <label for="parentescoContatoAdicional1" class="form-label">Grau de parentesco</label>
+                    <b-form-select id="parentescoContatoAdicional1" :options="optionsParentesco" v-model="parentescoContatoAdicional1"></b-form-select>
+                  </b-col>
 
-                                    <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Baixar arquivo" variant="outline-primary">
-                                      <b-icon icon="download" @click.prevent="downloadAnexo(row)"></b-icon>
-                                    </b-button>
-                                </template>
-                            </b-table>
-                        </div>
-                        <div class="col col-lg-12 mt-0 pt-0">
-                            <div class="justify-content-end d-flex mt-0 pt-0">
-                                <small class="text-muted mt-0 pt-0"><p>{{rowsAnexos}} registros encontrados.</p></small>
-                            </div>
-                        </div>
-                        <div class="col col-lg-12 mt-1" >
-                            <div class="justify-content-center d-flex">
-                                <b-pagination
-                                    v-model="currentPageAnexos"
-                                    :total-rows="rowsAnexos"
-                                    per-page="10"
-                                    aria-controls="produtos-desativados-table">
-                                </b-pagination>
-                            </div>
-                        </div>
-                   
-                  </b-row>
+                  <b-col lg="4">
+                    <label for="nomeContatoAdicional1" class="form-label">Nome</label>
+                    <b-form-input type="text" id="nomeContatoAdicional1" v-model="nomeContatoAdicional1"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="telefoneContatoAdicional1" class="form-label">Telefone</label>
+                    <b-form-input type="text" id="telefoneContatoAdicional1" v-model="telefoneContatoAdicional1"></b-form-input>
+                  </b-col>
                   
-                </b-tab>
+                  <b-col lg="2" class="mt-2"><br>
+                    <b-row class="m-0">
+                      <b-col lg="12">
+                        <b-form-checkbox @change="addCampoDeContato()" value="1" unchecked-value="0" v-model="contatoAdicional">Add Contato</b-form-checkbox>
+                      </b-col>
+                    </b-row>
+                  </b-col>
 
-              </b-tabs>
-            </b-card>
-          </div>
+                </b-row>
 
-          <div class="row">
-            <div class="col">
-              <div class="mb-3">
-                <b-button variant="light" v-if="temFuncionarioSelecionado == false" @click.prevent="salvaFuncionario()" id="btn-cadastrar">Cadastrar</b-button>
-                <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="editaFuncionario()" id="btn-editar">Editar</b-button>
-                <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="excluiFuncionario()" id="btn-excluir">Deletar</b-button>
-                <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true || this.nome != null">
-                  <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-cadastrar">Limpar</b-button>
-                </div>
+                <b-row class="my-3" v-if="contatoAdicional == 1">
+
+                  <b-col lg="4">
+                    <label for="parentescoContatoAdicional2" class="form-label">Grau de parentesco</label>
+                    <b-form-select id="parentescoContatoAdicional2" :options="optionsParentesco" v-model="parentescoContatoAdicional2"></b-form-select>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="nomeContatoAdicional2" class="form-label">Nome</label>
+                    <b-form-input type="text" id="nomeContatoAdicional2" v-model="nomeContatoAdicional2"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="telefoneContatoAdicional2" class="form-label">Telefone</label>
+                    <b-form-input type="text" id="telefoneContatoAdicional2" v-model="telefoneContatoAdicional2"></b-form-input>
+                  </b-col>
+                  
+                </b-row>
+
+                <b-row class="my-3">
+
+                  <b-col lg="12">
+                    <label for="obs" class="form-label">Observação</label>
+                    <br><textarea name="obs" v-model="obs" id="obs" rows="5" class="w-100" style="border-radius: 1.0rem;"></textarea>
+                  </b-col>
+                  
+                </b-row>
+              </b-tab>
+
+              <b-tab title="Dados Contratuais" no-body>
+                <b-row class="my-3">
+
+                  <b-col lg="3">
+                    <label for="dtAdmissao" class="form-label">Dt. admissao</label>
+                    <b-form-input type="date" v-model="dtAdmissao" name="dtAdmissao" class="form-control" id="dtAdmissao" max="9999-12-31"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="cargo">Cargo</label>
+                    <b-form-input type="text" id="cargo" v-model="cargo"></b-form-input>
+                  </b-col>                  
+
+                  <b-col lg="3">
+                    <label for="tipoContrato">Tipo de contrato</label>
+                    <b-form-select :options="optionsContrato" v-model="tipoContrato" id="tipoContrato"></b-form-select>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="comissaoFixa" class="form-label">Comissão fixa</label>
+                    <b-input-group append="%">
+                      <b-form-input v-model="comissaoFixa" id="comissaoFixa"></b-form-input>
+                    </b-input-group>
+                  </b-col>
+                    
+                </b-row>
+
+                <b-row class="my-3">
+
+                  <b-col lg="4">
+                    <label for="ctps">CTPS</label>
+                    <b-form-input v-model="ctps" id="ctps"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="pispasep">PIS/PASEP</label>
+                    <b-form-input v-model="pispasep" id="pispasep"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="passagem" class="form-label">Passagem</label>
+                    <b-input-group prepend="R$">
+                      <b-form-input v-model="passagem" id="passagem"></b-form-input>
+                    </b-input-group>
+                  </b-col>
+                  
+                </b-row>
+              </b-tab>
+
+              <b-tab title="Informações financeiras" no-body>
+                <b-row class="my-3">
+
+                  <b-col lg="3">
+                    <label for="nmrBanco" class="form-label">N° Banco</label>
+                    <b-form-input type="text" v-model="nmrbanco" name="nmrBanco" class="form-control" id="nmrBanco"></b-form-input>
+                  </b-col>
+
+                    <b-col lg="3">
+                    <label for="banco" class="form-label">Banco</label>
+                    <b-form-input v-model="banco" id="banco"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="agencia">Agencia</label>
+                    <b-form-input type="text" id="agencia" v-model="agencia"></b-form-input>
+                  </b-col>                  
+
+                  <b-col lg="3">
+                    <label for="conta" class="form-label">Conta</label>
+                    <b-form-input type="text" v-model="conta" name="conta" class="form-control" id="conta"></b-form-input>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-3">
+
+                  <b-col lg="5">
+                    <label for="titular" class="form-label">Titular</label>
+                    <b-form-input type="text" v-model="titular" name="titular" class="form-control" id="titular"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="cpfTitular" class="form-label">CPF Titular</label>
+                    <b-form-input type="text" v-model="cpfTitular" name="cpfTitular" class="form-control" id="cpfTitular"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="4">
+                    <label for="tipoConta" class="form-label">Tipo conta</label>
+                    <b-form-select type="text" v-model="tipoConta" name="tipoConta" :options="optionsTipoConta" class="form-control" id="tipoConta"></b-form-select>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-3">
+                
+                  <b-col lg="3">
+                    <label for="pix">Escolha o tipo da chave</label>
+                    <b-form-select type="text" :options="optionsFormasPix" v-model="formasPix" class="form-control" id="pix"></b-form-select>
+                  </b-col>
+
+                  <b-col lg="3" v-if="this.formasPix != null">
+                    <label for="chave">PIX</label>
+                    <b-form-input type="text" v-model="chave" class="form-control" id="chave"></b-form-input>
+                  </b-col>
+
+                </b-row>
+              </b-tab>
+
+              <b-tab title="Anexos" no-body>
+                <b-row>
+
+                  <b-col lg="3" class="mt-4">
+                    <b-input-group>
+                      <b-form-select v-model="tipoDoc" :options="optionsTipoDocumentoAnexo">
+                        <template #first>
+                          <b-form-select-option :value="null" disabled>Tipo documento</b-form-select-option>
+                        </template>
+                      </b-form-select>
+                      <b-input-group-append>
+                          <b-button data-bs-toggle="tooltip" title="Limpar documento" variant="outline-primary" @click="limpaTipoDocumento()">
+                              <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
+                          </b-button>
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-col>
+
+                  <b-col lg="7">
+                    <label for=""></label><br>
+                    <b-form-file
+                      v-model="file1"
+                      :state="Boolean(file1)"
+                      placeholder="Selecione um arquivo ou solte aqui..."
+                      drop-placeholder="Solte o arquivo aqui..."
+                      enctype="multipart/form-data"
+                      accept=".jpg, .png, .pdf, .jpeg"
+                    ></b-form-file>
+                  </b-col>
+                  
+                  <b-col lg="2" class="mt-4">
+                    <b-button title="Save file" @click.prevent="uploadProfileImage()" variant="outline-primary">
+                      <b-icon icon="cloud-upload" aria-hidden="true"></b-icon>
+                    </b-button>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-3">
+
+                  <div class="col-lg-12 p-1" v-if="temFuncionarioSelecionado == true">
+                    <b-table hover outlined responsive
+                      id="anexos-table"
+                      head-variant="light"
+                      :busy="isBusyTableAnexos"
+                      :fields="fieldsAnexos"
+                      :items="arrayFotos"
+                      per-page="10"
+                      :current-page="currentPageAnexos">
+                      <template #table-busy>
+                        <div class="text-center text-primary my-2">
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Carregando...</strong>
+                        </div>
+                      </template>
+
+                      <template #cell(acoes)="row">
+                        <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Visualizar arquivo" variant="outline-primary" v-b-modal.modal-view-anexo>
+                          <b-icon icon="eye" @click.prevent="selecionaAnexo(row)"></b-icon>
+                        </b-button>
+                        
+                        <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Deletar arquivo" variant="outline-primary">
+                          <b-icon icon="trash" @click.prevent="deletaAnexo(row)"></b-icon>
+                        </b-button>
+                        
+                        <!--<b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Baixar arquivo" variant="outline-primary">
+                          <b-icon icon="download" @click.prevent="downloadAnexo(row)"></b-icon>
+                        </b-button> -->
+                      </template>
+                    </b-table>
+                  </div> 
+                  <div class="col col-lg-12 mt-0 pt-0" v-if="temFuncionarioSelecionado == true">
+                    <div class="justify-content-end d-flex mt-0 pt-0">
+                      <small class="text-muted mt-0 pt-0"><p>{{rowsAnexos}} registros encontrados.</p></small>
+                    </div>
+                  </div>
+                  <div class="col col-lg-12 mt-1" v-if="temFuncionarioSelecionado == true">
+                    <div class="justify-content-center d-flex">
+                      <b-pagination
+                          v-model="currentPageAnexos"
+                          :total-rows="rowsAnexos"
+                          per-page="10"
+                          aria-controls="produtos-desativados-table">
+                      </b-pagination>
+                    </div>
+                  </div>
+                </b-row>
+
+              </b-tab>
+
+            </b-tabs>
+          </b-card>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="mb-3">
+              <b-button variant="light" v-if="temFuncionarioSelecionado == false" @click.prevent="salvaFuncionario()" id="btn-cadastrar">Cadastrar</b-button>
+              <b-button variant="success" v-if="temFuncionarioSelecionado == true" @click.prevent="editaFuncionario()" id="btn-editar">Editar</b-button>
+              <b-button variant="danger" v-if="temFuncionarioSelecionado == true" @click.prevent="excluiFuncionario()" id="btn-excluir">Deletar</b-button>
+              <div style="font-size: 3.3rem;" v-if="temFuncionarioSelecionado == true || this.nome != null">
+                <b-button pill variant="primary" @click.prevent="limpaDados()" id="btn-cadastrar">Limpar</b-button>
               </div>
             </div>
           </div>
-
-        </form>
-      
-        <div>
-          <b-button variant="light" id="btn-cadastrar" v-b-modal.info-Funcionarios>Consultar Funcionários</b-button>
         </div>
 
+      </form>
+    
+      <div>
+        <b-button variant="light" id="btn-cadastrar" v-b-modal.info-Funcionarios>Consultar Funcionários</b-button>
       </div>
+
+    </div>
 
     <b-modal id="info-Funcionarios" size="lg">
       <h1 class="text-center">Consulta de Funcionarios</h1>
@@ -1094,8 +1116,13 @@
     </b-modal>
 
     
-    <b-modal id="modal-view-anexo" hide-footer size="xl">
+    <b-modal id="modal-view-anexo" hide-footer size="xl" scrollable>
       <div class="container-fluid">
+        <b-row class="m-2 mt-5">
+          <b-col>
+            <h4><b>Arquivo: {{arquivo}}</b></h4>
+          </b-col>
+        </b-row>
         <b-img :src="documentoEscolhido" fluid v-if="tipoDocumentoPdf == false"></b-img>
 
         <b-embed

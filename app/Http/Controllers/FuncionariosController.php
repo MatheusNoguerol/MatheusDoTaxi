@@ -420,13 +420,13 @@ class FuncionariosController extends Controller
     
     }
 
-    public function downloadAnexo(Request $request){
-        // dd('images/'. $request->caminho);
-        $myFile = storage_path("app/public/images/". $request->caminho);
-        return response()->download($myFile);
-        // $query = download(public_path('storage/'. $request->caminho));
+    // public function downloadAnexo(Request $request){
+    //     // dd('images/'. $request->caminho);
+    //     $myFile = storage_path("app/public/images/". $request->caminho);
+    //     return response()->download($myFile);
+    //     // $query = download(public_path('storage/'. $request->caminho));
         
-        // return $query;
+    //     // return $query;
      
-    }
+    // }
 }
