@@ -91,6 +91,8 @@ export default {
       ],
       tipoChave: null,
       chave: null,
+      hoje: null,
+      hojeNoFormat: null,
     }
   },
 
@@ -159,6 +161,32 @@ export default {
     let self = this
 
     self.preLoad()
+
+    function formatDate(date) {
+      var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+      if (month.length < 2){
+        month = '0' + month;
+      } 
+      if (day.length < 2) {
+        day = '0' + day;
+      }
+
+      return [year, month, day].join('-');
+    }
+
+    var today = new Date();
+          
+    self.hoje = formatDate(today)
+    self.hoje = self.hoje.split('-').reverse().join('/')
+    self.hojeNoFormat = formatDate(today)
+    self.nascimento = self.hojeNoFormat
+
+    console.log('data: ', self.hoje)
+    console.log('data2: ', self.hojeNoFormat)
   },
 
   methods:{
@@ -841,8 +869,8 @@ export default {
             <div class="mb-3">
               <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()" id="btn-selecao">Cadastrar</b-button>
 
-              <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="editaCliente()">Editar</b-button>
-              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="excluiCliente()">Deletar</b-button>
+              <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="editaCliente()" id="btn-selecao">Editar</b-button>
+              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="excluiCliente()" id="btn-selecao" >Deletar</b-button>
               <div style="font-size: 3.3rem;" v-if="this.nome != null || this.temClienteSelecionado == true">
 
                 <div style="font-size: 3.3rem;" v-if="this.nome != null">
