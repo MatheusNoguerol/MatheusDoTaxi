@@ -618,7 +618,7 @@
       limpaTipoDocumento(){
         let self = this
 
-        self.selected = null
+        self.tipoDoc = null
       },
 
       makeToastUpload(append = false) {

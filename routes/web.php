@@ -78,13 +78,25 @@ Route::post('adicionar-produto', 'UserController@adicionarProduto')->name('adici
 
 Route::post('salva-cliente', 'ClientesController@salvaCliente')->name('save-cliente');
 
-Route::get('all_clientes', 'ClientesController@all_clientes')->name('all-clientes');
+Route::get('all-clientes', 'ClientesController@allClientes')->name('all-clientes');
 
-Route::post('exclui-cliente', 'ClientesController@exclui_cliente')->name('exclui-cliente');
+Route::post('exclui-cliente', 'ClientesController@excluiCliente')->name('exclui-cliente');
 
-Route::post('edita-cliente', 'ClientesController@edita_cliente')->name('edita-cliente');
+Route::post('edita-cliente', 'ClientesController@editaCliente')->name('edita-cliente');
 
 Route::post('seleciona-cliente', 'ClientesController@selecionaCliente')->name('seleciona-cliente');
+
+Route::post('storage/upload/cliente', 'ClientesController@upLoadCliente')->name('storage/upload/cliente');
+
+Route::post('deleta-anexo-cliente', 'ClientesController@deletaAnexoCliente')->name('deleta-anexo-cliente');
+
+Route::post('seleciona-anexos-cliente', 'ClientesController@selecionaAnexoCliente')->name('seleciona-anexos-cliente');
+
+Route::post('busca-cliente', 'ClientesController@buscaCliente')->name('busca-cliente');
+
+
+
+
 
 
 
@@ -109,4 +121,4 @@ Route::post('storage/upload', 'FuncionariosController@upLoad')->name('storage-up
 
 Route::post('deleta-anexo', 'FuncionariosController@deletaAnexo')->name('deleta-anexo');
 
-Route::post('download-anexo', 'FuncionariosController@downloadAnexo')->name('download-anexo');
+// Route::post('download-anexo', 'FuncionariosController@downloadAnexo')->name('download-anexo');

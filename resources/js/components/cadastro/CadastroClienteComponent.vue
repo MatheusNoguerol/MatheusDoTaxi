@@ -62,8 +62,7 @@ export default {
       { value: 'cc', text: 'Conta Corrente' },
       { value: 'cp', text: 'Conta Poupança'}
       ],
-      status: false,
-      temComplemento: false,
+      status: 0,
       idDC: null,
       nomeDC: null,
       cpfCnpjDC: null,
@@ -93,6 +92,48 @@ export default {
       chave: null,
       hoje: null,
       hojeNoFormat: null,
+      tipoDoc: null,
+      isBusyTableAnexos: false, 
+      fieldsAnexos: [
+        {
+          key: 'TIPODOCUMENTO',
+          label: 'Tipo',
+          sortable: true
+        },
+        {
+          key: 'CAMINHO',
+          label: 'Arquivo',
+          sortable: true
+        },
+        {
+          key: 'acoes',
+          label: 'Ações',
+          sortable: true
+        }
+      ],
+      currentPageAnexos: null,
+      tipoDocumentoEscolhido: null,
+      tipoDocumentoPdf: false,
+      extensao: null,
+      optionsTipoDocumentoAnexo: [
+        { value: 'CNH' , text: 'CNH'},
+        { value: 'Residência' , text: 'Residência'},
+        { value: 'Identidade' , text: 'Identidade'},
+        { value: 'CPF' , text: 'CPF'},
+        { value: 'APOLICE' , text: 'Apólice'},
+        { value: 'CRLV' , text: 'CRLV'},
+        { value: 'DUTRECIBO' , text: 'DUT Recibo'},
+        { value: 'GNV' , text: 'GNV'},
+        { value: 'CNIS' , text: 'CNIS'},
+      ],
+      selected: null,
+      file1: null,
+      documentoEscolhido: null,
+      arrayFotos: [],
+      dtCadastro: null,
+      arquivo: null,
+      campoBuscaClientes: null,
+      buscaExata: 0
     }
   },
 
@@ -101,7 +142,7 @@ export default {
       return this.itemsClientes.length
     },
 
-    DadosCriaCliente() {
+    dadosCriaCliente() {
       let self = this
       return [{
         user: this.user,
@@ -110,13 +151,12 @@ export default {
         cpfCnpj : self.cpfCnpj,
         nascimento : self.nascimento,
         email : self.email,
+        dtCadastro : self.dtCadastro,
         telefone : self.telefone,
         tipoCliente : self.tipoCliente,
         cep : self.cep,
         logradouro : self.logradouro,
         numero : self.numero,
-        status : self.status,
-        complemento : self.complemento,
         complemento : self.complemento,
         uf : self.uf,
         municipio : self.municipio,
@@ -147,6 +187,10 @@ export default {
         chave : self.chave,
       }]
     },
+
+    rowsAnexos() {
+      return this.arrayFotos.length
+    }
   },
 
   props: {
@@ -183,10 +227,8 @@ export default {
     self.hoje = formatDate(today)
     self.hoje = self.hoje.split('-').reverse().join('/')
     self.hojeNoFormat = formatDate(today)
-    self.nascimento = self.hojeNoFormat
+    self.dtCadastro = self.hojeNoFormat
 
-    console.log('data: ', self.hoje)
-    console.log('data2: ', self.hojeNoFormat)
   },
 
   methods:{
@@ -205,6 +247,7 @@ export default {
             codCliente: response.data[i]['CODCLIENTE'],
             nascimento: response.data[i]['NASCIMENTO'],
             email: response.data[i]['EMAIL'],
+            dtCadastro: response.data[i]['DTCADASTRO'],
             telefone: response.data[i]['TELEFONE'],
             tipoCliente: response.data[i]['TIPOCLIENTE'],
             cep: response.data[i]['CEP'],
@@ -228,7 +271,7 @@ export default {
       if(self.nome == null || self.nome == ''){
         self.makeToastErroSemNome()
       }else{
-        axios.post('salva-cliente',{dados: self.DadosCriaCliente})
+        axios.post('salva-cliente',{dados: self.dadosCriaCliente})
         .then((response) => {
   
           self.preLoad()
@@ -260,8 +303,7 @@ export default {
       self.logradouro = null
       self.numero = null
       self.complemento = null
-      self.temComplemento = false
-      self.status = false
+      self.status = 0
       self.uf = null
       self.municipio = null
       self.bairro = null
@@ -292,7 +334,16 @@ export default {
       self.ultimoLa = null
       self.tipoChave = null
       self.chave = null
+
+      self.tipoDoc = null
+      self.file1 = null
+      self.arrayFotos = []
+      self.arquivo = null
+      self.documentoEscolhido = null
+      self.tipoDocumentoPdf = false
+      self.isBusyTableAnexos = false
         
+      self.dtCadastro = self.hojeNoFormat
 
       self.temClienteSelecionado = false
     },
@@ -303,10 +354,11 @@ export default {
 
     selecionaCliente(row){
       let self = this
-
+      console.log('row',row.item)
       self.codCliente = row.item.codCliente
       self.nome = row.item.nome
       self.email = row.item.email
+      self.dtCadastro = row.item.dtCadastro
       self.placa = row.item.placa
       self.telefone = row.item.telefone
       self.nascimento = row.item.nascimento
@@ -323,11 +375,9 @@ export default {
       self.bairro = row.item.bairro
 
       if(self.complemento != null){
-        self.temComplemento = true
-        self.status = 'possui'
+        self.status = 1
       }else{
-        self.temComplemento = false
-        self.status = 'nao_possui'
+        self.status = 0
       }
 
       this.$bvModal.hide('info-cliente')
@@ -433,6 +483,22 @@ export default {
       }).catch((error) => {
           console.log('Error: ', error)
       })
+
+      axios.post('seleciona-anexos-cliente', {codCliente: self.codCliente})
+      .then((response) => {
+        for (let x = 0; x < response.data.length; x++) {
+
+          self.arrayFotos.push({
+            CODCLIENTE: response.data[x].CODCLIENTE,
+            TIPODOCUMENTO: response.data[x].TIPODOCUMENTO,
+            CAMINHO: response.data[x].CAMINHO,
+            EXTENSAO: response.data[x].EXTENSAO
+          })
+
+        }
+      }).catch((error)=>{
+        console.log('Error: ', error)
+      })
       
       self.temClienteSelecionado = true
       
@@ -454,7 +520,7 @@ export default {
     editaCliente(){
         let self = this
 
-        axios.post('edita-cliente',{dados: self.DadosCriaCliente})
+        axios.post('edita-cliente',{dados: self.dadosCriaCliente})
         .then((response) => {
           
           self.preLoad()
@@ -473,7 +539,7 @@ export default {
         title: 'ATENÇÃO!',
         autoHideDelay: 2500,
         appendToast: append,
-        variant: 'danger',
+        variant: 'warning',
       })
 
     },
@@ -542,16 +608,6 @@ export default {
         console.log("Error: ", error)
       })
     },
-  
-    possuiComplemento(){
-      let self = this
-
-      if(self.status === true){
-        self.temComplemento = true
-      }else{
-        self.temComplemento = false
-      }
-    },
 
     alteraGnv(){
       let self = this
@@ -571,6 +627,165 @@ export default {
       }else{
         self.temAlienacao = false
       }
+    },
+
+    upload(){
+      let self = this
+
+      if(self.temClienteSelecionado == false){
+        self.makeToastNoClienteSelecionado()
+      }else{
+        
+        if(self.tipoDoc == null || self.tipoDoc == ''){
+          self.makeToastNoFile()
+        }else{
+          self.arrayFotos = []
+
+          self.isBusyTableAnexos = true
+          const formData = new FormData();
+          formData.append("file", self.file1);
+          formData.append("cod", self.codCliente);
+          formData.append("tipoDoc", self.tipoDoc);
+
+          axios.post("storage/upload/cliente", formData,{
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }).then((response) => {
+            
+            self.makeToastUpload()
+            self.rechargeAnexos()
+
+            self.file1 = null
+            self.tipoDoc = null
+          }).catch((error) => {
+            console.log('Error: ', error)
+          });
+        }
+      }
+    },
+
+    selecionaAnexo(row){
+      let self = this
+
+      self.documentoEscolhido = null
+      self.tipoDocumentoEscolhido = null
+      self.extensao = null
+      self.arquivo = null
+
+      console.log('row ->',row)
+      self.documentoEscolhido = '../storage/app/public/images/' + row.item.CAMINHO
+      self.arquivo = row.item.CAMINHO
+      self.tipoDocumentoEscolhido = row.item.TIPODOCUMENTO
+      self.extensao = row.item.EXTENSAO
+
+      if(self.extensao == 'pdf'){
+        self.tipoDocumentoPdf = true
+      }else{
+        self.tipoDocumentoPdf = false
+      }      
+    },
+    
+    limpaTipoDocumento(){
+      let self = this
+
+      self.tipoDoc = null
+    },
+
+    makeToastUpload(append = false) {
+        let self = this
+
+        this.$bvToast.toast(`Documento adicionado.`, {
+        title: 'SUCESSO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'success',
+      })
+    },
+
+    makeToastNoFile(append = false) {
+      let self = this
+
+      this.$bvToast.toast(`selecione o tipo de documento a ser anexado...`, {
+        title: 'ATENÇÃO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'warning',
+      })
+    },
+
+    deletaAnexo(row){
+      let self = this
+
+      self.isBusyTableAnexos = true
+
+      self.arrayFotos = []
+
+      axios.post('deleta-anexo-cliente', {codCliente: self.codCliente, tipoDocumento: row.item.TIPODOCUMENTO, caminho: row.item.CAMINHO})
+      .then((response) => {
+        console.log(Response)
+        axios.post('seleciona-anexos-cliente', {codCliente: self.codCliente})
+        .then((response) => {
+          for (let x = 0; x < response.data.length; x++) {
+
+            self.arrayFotos.push({
+              CODCLIENTE: response.data[x].CODCLIENTE,
+              TIPODOCUMENTO: response.data[x].TIPODOCUMENTO,
+              CAMINHO: response.data[x].CAMINHO,
+              EXTENSAO: response.data[x].EXTENSAO
+            })
+
+          }
+          self.isBusyTableAnexos = false
+        }).catch((error)=>{
+          console.log('Error: ', error)
+        })
+      }).catch((error) => {
+        console.log('Error: ', error)
+      })
+    },
+
+    rechargeAnexos(){
+      let self = this
+
+      axios.post('seleciona-anexos-cliente', {codCliente: self.codCliente})
+      .then((response) => {
+        for (let x = 0; x < response.data.length; x++) {
+
+          self.arrayFotos.push({
+            CODCLIENTE: response.data[x].CODCLIENTE,
+            TIPODOCUMENTO: response.data[x].TIPODOCUMENTO,
+            CAMINHO: response.data[x].CAMINHO,
+            EXTENSAO: response.data[x].EXTENSAO
+          })
+
+        }
+        self.isBusyTableAnexos = false
+      }).catch((error)=>{
+        console.log('Error: ', error)
+      })
+    },
+
+    makeToastNoClienteSelecionado(append = false){
+      let self = this
+
+      this.$bvToast.toast(`Para anexar um arquivo, selecione um cliente...`, {
+        title: 'ATENÇÃO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'warning',
+      })
+    },
+
+    buscaClientes(){
+      let self = this
+
+      axios.post('busca-cliente', {busca: self.buscaClientes})
+      .then((response) => {
+        console.log('Response: ', response)
+      }).catch((error) => {
+        console.log('Error:', error)
+      })
     }
   },   
 }
@@ -630,8 +845,13 @@ export default {
                     <input type="text" v-model="email" name="email" class="form-control" id="email">
                   </b-col>
 
-                  <b-col lg="4">
-                    <label for="telefone" class="form-label">telefone</label>
+                  <b-col lg="3">
+                    <label for="dtCadastro">Dt. cadastro</label>
+                    <b-form-input type="date" id="dtCadastro" v-model="dtCadastro" name="dtCadastro" max="9999-12-31"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="2">
+                    <label for="telefone" class="form-label">Telefone</label>
                     <input type="text" v-model="telefone" name="telefone" class="form-control" id="telefone">
                   </b-col>
 
@@ -664,11 +884,11 @@ export default {
                     <b-input-group>
                       <b-input-group-prepend is-text>
                         <input type="checkbox" v-model="status"
-                        value="possui"
-                        unchecked-value="nao_possui" @change="possuiComplemento()">
+                        value="1"
+                        unchecked-value="0">
                       </b-input-group-prepend>
-                      <b-form-input type="text" disabled v-if="temComplemento == false" v-model="complemento"></b-form-input>
-                      <b-form-input type="text" v-if="temComplemento == true" v-model="complemento"></b-form-input>
+                      <b-form-input type="text" disabled v-if="status == 0" v-model="complemento"></b-form-input>
+                      <b-form-input type="text" v-if="status == 1" v-model="complemento"></b-form-input>
                     </b-input-group>
                   </b-col>
 
@@ -859,6 +1079,98 @@ export default {
                 </b-row>
                 
               </b-tab>
+
+
+              <b-tab title="Anexos" no-body>
+                <b-row>
+
+                  <b-col lg="3" class="mt-4">
+                    <b-input-group>
+                      <b-form-select v-model="tipoDoc" :options="optionsTipoDocumentoAnexo">
+                        <template #first>
+                          <b-form-select-option :value="null" disabled>Tipo documento</b-form-select-option>
+                        </template>
+                      </b-form-select>
+                      <b-input-group-append>
+                          <b-button data-bs-toggle="tooltip" title="Limpar documento" variant="outline-primary" @click="limpaTipoDocumento()">
+                              <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
+                          </b-button>
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-col>
+
+                  <b-col lg="7">
+                    <label for=""></label><br>
+                    <b-form-file
+                      v-model="file1"
+                      :state="Boolean(file1)"
+                      placeholder="Selecione um arquivo ou solte aqui..."
+                      drop-placeholder="Solte o arquivo aqui..."
+                      enctype="multipart/form-data"
+                      accept=".jpg, .png, .pdf, .jpeg"
+                    ></b-form-file>
+                  </b-col>
+                  
+                  <b-col lg="2" class="mt-4">
+                    <b-button title="Save file" @click.prevent="upload()" variant="outline-primary">
+                      <b-icon icon="cloud-upload" aria-hidden="true"></b-icon>
+                    </b-button>
+                  </b-col>
+
+                </b-row>
+
+                <b-row class="my-3">
+
+                  <div class="col-lg-12 p-1" v-if="temClienteSelecionado == true">
+                    <b-table hover outlined responsive
+                      id="anexos-table"
+                      head-variant="light"
+                      :busy="isBusyTableAnexos"
+                      :fields="fieldsAnexos"
+                      :items="arrayFotos"
+                      per-page="10"
+                      :current-page="currentPageAnexos">
+                      <template #table-busy>
+                        <div class="text-center text-primary my-2">
+                          <b-spinner class="align-middle"></b-spinner>
+                          <strong>Carregando...</strong>
+                        </div>
+                      </template>
+
+                      <template #cell(acoes)="row">
+                        <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Visualizar arquivo" variant="outline-primary" v-b-modal.modal-view-anexo>
+                          <b-icon icon="eye" @click.prevent="selecionaAnexo(row)"></b-icon>
+                        </b-button>
+                        
+                        <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Deletar arquivo" variant="outline-primary">
+                          <b-icon icon="trash" @click.prevent="deletaAnexo(row)"></b-icon>
+                        </b-button>
+                        
+                        <!--<b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Baixar arquivo" variant="outline-primary">
+                          <b-icon icon="download" @click.prevent="downloadAnexo(row)"></b-icon>
+                        </b-button> -->
+                      </template>
+                    </b-table>
+                  </div> 
+                  <div class="col col-lg-12 mt-0 pt-0" v-if="temClienteSelecionado == true">
+                    <div class="justify-content-end d-flex mt-0 pt-0">
+                      <small class="text-muted mt-0 pt-0"><p>{{rowsAnexos}} registros encontrados.</p></small>
+                    </div>
+                  </div>
+                  <div class="col col-lg-12 mt-1" v-if="temClienteSelecionado == true">
+                    <div class="justify-content-center d-flex">
+                      <b-pagination
+                          v-model="currentPageAnexos"
+                          :total-rows="rowsAnexos"
+                          per-page="10"
+                          aria-controls="produtos-desativados-table">
+                      </b-pagination>
+                    </div>
+                  </div>
+                </b-row>
+
+              </b-tab>
+
             </b-tabs>
           </b-card>
         </div>  
@@ -891,6 +1203,19 @@ export default {
 
     <b-modal v-model="modalShow" id="info-cliente" size="lg" hide-footer>
       <h1 class="text-center mb-3">Consulta de Clientes</h1>
+      <b-row class="m-2">
+        <b-col class="p-1">
+            <b-input-group>
+              <b-input-group-prepend is-text>
+                <input type="checkbox" value="1" unchecked-value="0" v-model="buscaExata" data-bs-toggle="tooltip" title="Consulta exata.">
+              </b-input-group-prepend>
+              <b-form-input id="campoBuscaCliente" placeholder="Busca por código, nome ou CPF/CNPJ" v-model="campoBuscaClientes"></b-form-input>
+              <b-input-group-append>
+                <b-button @click="buscaClientes()" variant="outline-secondary"><b-icon icon="search"></b-icon></b-button>
+              </b-input-group-append>
+            </b-input-group>
+        </b-col>
+      </b-row>
       <div class="container">
 
         <b-table
@@ -921,6 +1246,24 @@ export default {
 
       </div>
     </b-modal>
+
+    <b-modal id="modal-view-anexo" hide-footer size="xl" scrollable>
+      <div class="container-fluid">
+        <b-row class="m-2 mt-5">
+          <b-col>
+            <h4><b>Arquivo: {{arquivo}}</b></h4>
+          </b-col>
+        </b-row>
+        <b-img :src="documentoEscolhido" fluid v-if="tipoDocumentoPdf == false"></b-img>
+
+        <b-embed
+          v-if="tipoDocumentoPdf == true"
+          type="iframe"
+          :src="documentoEscolhido"
+        ></b-embed>
+      </div>
+    </b-modal>
+
 
   </div>
 </template>

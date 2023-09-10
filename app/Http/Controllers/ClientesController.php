@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Clientes;
 use App\Models\InfoFiClientes;
 use App\Models\DadosVeiculares;
+use App\Models\AnexosClientes;
 use App\Models\User;
 
 class ClientesController extends Controller
 {
-    public function all_clientes(){
+    public function allClientes(){
     
         $query = Clientes::all();
     
@@ -26,6 +28,7 @@ class ClientesController extends Controller
         $cliente->CPFCNPJ = $request['dados'][0]['cpfCnpj'];
         $cliente->NASCIMENTO = $request['dados'][0]['nascimento'];
         $cliente->EMAIL = $request['dados'][0]['email'];
+        $cliente->DTCADASTRO = $request['dados'][0]['dtCadastro'];
         $cliente->TELEFONE = $request['dados'][0]['telefone'];
         $cliente->TIPOCLIENTE = $request['dados'][0]['tipoCliente'];
         $cliente->CEP = $request['dados'][0]['cep'];
@@ -129,7 +132,7 @@ class ClientesController extends Controller
         }
     }    
 
-    public function exclui_cliente(Request $request){
+    public function excluiCliente(Request $request){
         $queryClientes = Clientes::where('CODCLIENTE', '=', $request->codigo)->delete();
         
         $temDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request->codigo)->get();
@@ -155,19 +158,20 @@ class ClientesController extends Controller
         }
     }
 
-    public function edita_cliente(Request $request){
+    public function editaCliente(Request $request){
         
         $updateCliente = Clientes::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
             'NOME' => $request['dados'][0]['nome'],
             'CPFCNPJ' => $request['dados'][0]['cpfCnpj'],
             'NASCIMENTO' => $request['dados'][0]['nascimento'] ,
             'EMAIL' => $request['dados'][0]['email'],
+            'DTCADASTRO' => $request['dados'][0]['dtCadastro'],
             'TELEFONE' => $request['dados'][0]['telefone'],
             'TIPOCLIENTE' => $request['dados'][0]['tipoCliente'],
             'CEP' => $request['dados'][0]['cep'],
             'LOGRADOURO' => $request['dados'][0]['logradouro'],
             'NUMERO' => $request['dados'][0]['numero'],
-            'COMPLEMENTO' => $request['dados'][0]['nascimento'],
+            'COMPLEMENTO' => $request['dados'][0]['complemento'],
             'UF' => $request['dados'][0]['uf'],
             'MUNICIPIO' => $request['dados'][0]['municipio'],
             'BAIRRO' => $request['dados'][0]['bairro'],
@@ -412,5 +416,54 @@ class ClientesController extends Controller
             return ['success' => 4 , $query];
         }
 
+    }
+
+    public function upLoadCliente(Request $request){ 
+        $name = 'C' . $request->cod . $request->file('file')->getClientOriginalName();
+        $extensao = $request->file('file')->getClientOriginalExtension();
+
+        $request->file('file')->storeAs('public/images/', $name);
+
+        $query = new AnexosClientes;
+
+        $query->CODCLIENTE = $request->cod;
+        $query->CAMINHO = $name;
+        $query->EXTENSAO = $extensao;
+        $query->TIPODOCUMENTO = $request->tipoDoc;
+
+        $query->save();
+        return $query;
+    
+    }
+
+    public function selecionaAnexoCliente(Request $request){ 
+        
+        $query = AnexosClientes::where('CODCLIENTE', '=', $request->codCliente)->get();
+
+        return $query;
+    
+    }
+
+    public function deletaAnexoCliente(Request $request){ 
+        
+        if(Storage::exists('public/images/' . $request->caminho)){
+            $query = AnexosClientes::where('CODCLIENTE', '=', $request->codCliente)->where('CAMINHO','=', $request->caminho)->where('TIPODOCUMENTO','=', $request->tipoDocumento)->delete();
+            Storage::delete('public/images/' . $request->caminho);
+            return $query;
+        }else{
+            return ['error' => 1, 'msg' => 'O arquivo não existe na aplicação.'];
+        }
+        
+    
+    }
+
+    public function buscaCliente(Request $request){ 
+        $query = Clientes::where('CODCLIENTE', '=', $request->busca)->orWhere('NOME', '=', $request->busca)->orWhere('CPFCNPJ', '=', $request->busca)->get();
+        
+        if(count($query) == 0){
+            return ['error' => 1, 'msg' => 'Cliente não encontrado na base de dados.'];
+        }else{
+            return $query;
+        }
     }
 }

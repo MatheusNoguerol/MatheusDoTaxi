@@ -25,6 +25,7 @@ class Clientes extends Model
         'MUNICIPIO',
         'BAIRRO',
         'MSG',
+        'DTCADASTRO',
         'RESPONSAVEL'
     ];
 

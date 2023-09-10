@@ -382,7 +382,7 @@ class FuncionariosController extends Controller
     }
 
     public function upLoad(Request $request){ 
-        $name = $request->cod . $request->file('file')->getClientOriginalName();
+        $name = 'F' . $request->cod . $request->file('file')->getClientOriginalName();
         $extensao = $request->file('file')->getClientOriginalExtension();
 
         $request->file('file')->storeAs('public/images/', $name);
