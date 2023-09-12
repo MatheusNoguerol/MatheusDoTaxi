@@ -133,7 +133,9 @@ export default {
       dtCadastro: null,
       arquivo: null,
       campoBuscaClientes: null,
-      buscaExata: 0
+      isBusyTableClientes: false,
+      permissao: null,
+      ratr: null
     }
   },
 
@@ -149,6 +151,7 @@ export default {
         codCliente : self.codCliente,
         nome : self.nome,
         cpfCnpj : self.cpfCnpj,
+        ratr : self.ratr,
         nascimento : self.nascimento,
         email : self.email,
         dtCadastro : self.dtCadastro,
@@ -167,6 +170,7 @@ export default {
         chassi : self.chassi,
         anoModelo : self.anoModelo,
         anoFab : self.anoFab,
+        permissao: self.permissao,
         combustivel : self.combustivel,
         possuiGnv : self.possuiGnv,
         gnv : self.gnv,
@@ -236,8 +240,9 @@ export default {
       let self = this 
 
       self.itemsClientes = []
+      self.isBusyTableClientes = true
 
-      axios.get('all_clientes')
+      axios.get('all-clientes')
       .then((response) =>{
         
         for(var i = 0 ; i < response.data.length ; i++){
@@ -246,6 +251,7 @@ export default {
             cpfCnpj: response.data[i]['CPFCNPJ'],
             codCliente: response.data[i]['CODCLIENTE'],
             nascimento: response.data[i]['NASCIMENTO'],
+            ratr: response.data[i]['RATR'],
             email: response.data[i]['EMAIL'],
             dtCadastro: response.data[i]['DTCADASTRO'],
             telefone: response.data[i]['TELEFONE'],
@@ -260,7 +266,7 @@ export default {
             msg: response.data[i]['MSG']
           })
         }
-
+        self.isBusyTableClientes = false
       }).catch((error) =>{
         console.log('Error: ', error)
       })
@@ -346,6 +352,8 @@ export default {
       self.dtCadastro = self.hojeNoFormat
 
       self.temClienteSelecionado = false
+      self.permissao = null
+      self.ratr = null
     },
 
     abreModal(){
@@ -360,6 +368,7 @@ export default {
       self.email = row.item.email
       self.dtCadastro = row.item.dtCadastro
       self.placa = row.item.placa
+      self.ratr = row.item.ratr
       self.telefone = row.item.telefone
       self.nascimento = row.item.nascimento
       self.vencApolice = row.item.vencApolice
@@ -388,6 +397,7 @@ export default {
         if(response.data.success === 2){
 
           self.placa = response.data[0][0]['PLACA']
+          self.permissao = response.data[0][0]['PERMISSAO']
           self.renavan = response.data[0][0]['RENAVAN']
           self.chassi = response.data[0][0]['CHASSI']
           self.anoModelo = response.data[0][0]['ANOMODELO']
@@ -435,6 +445,7 @@ export default {
         }else if(response.data.success === 4){
 
           self.placa = response.data[0][0]['PLACA']
+          self.permissao = response.data[0][0]['PERMISSAO']
           self.renavan = response.data[0][0]['RENAVAN']
           self.chassi = response.data[0][0]['CHASSI']
           self.anoModelo = response.data[0][0]['ANOMODELO']
@@ -777,17 +788,69 @@ export default {
       })
     },
 
+    makeToastNoCliente(append = false){
+      let self = this
+
+      self.$bvToast.toast(`Cliente não existe na base de dados.`, {
+        title: 'ATENÇÃO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'warning',
+      })
+    },
+
+    makeToastCampoBuscaVazio(append = false){
+      let self = this
+
+      self.$bvToast.toast(`Digite algo no campo de busca.`, {
+        title: 'ATENÇÃO!',
+        autoHideDelay: 2500,
+        appendToast: append,
+        variant: 'warning',
+      })
+    },
+
     buscaClientes(){
       let self = this
 
-      axios.post('busca-cliente', {busca: self.buscaClientes})
+      if(self.campoBuscaClientes == null || self.campoBuscaClientes == ''){
+        self.makeToastCampoBuscaVazio()
+      }else{
+        self.isBusyTableClientes = true
+
+        self.itemsClientes = []
+
+        axios.post('busca-cliente', {busca: self.campoBuscaClientes})
       .then((response) => {
-        console.log('Response: ', response)
-      }).catch((error) => {
-        console.log('Error:', error)
-      })
+        console.log(response.data.error)
+
+        if(response.data.error == 1){
+          self.makeToastNoCliente()
+          self.limpaBuscaClientes()
+          self.isBusyTableClientes = true
+        }else{
+          for(var i = 0 ; i < response.data.length ; i++){
+            self.itemsClientes.push({
+              nome: response.data[i]['NOME'],
+              cpfCnpj: response.data[i]['CPFCNPJ'],
+            })
+          }
+          self.isBusyTableClientes = false
+        }
+        }).catch((error) => {
+          console.log('Error:', error)
+        })
+      }
+    }, 
+
+    limpaBuscaClientes(){
+      let self = this
+
+      self.campoBuscaClientes = null
+
+      self.preLoad()
     }
-  },   
+  },
 }
 </script>
 
@@ -807,7 +870,6 @@ export default {
     
     <h1 v-if="temClienteSelecionado == false" class="text-center">Cadastrar Cliente</h1>
     <h1 v-if="temClienteSelecionado == true" class="text-center">Editar Cliente</h1>
-    
     <div class="container text-center mt-3" id="formulário-de-cadastro">
       <form method="POST">
         <div class="container">
@@ -826,16 +888,20 @@ export default {
                     <input v-model="nome" type="text" name="nome" class="form-control" id="nome">
                   </b-col>
 
-                  <b-col lg="3">
+                  <b-col lg="2">
                     <label for="cpfCnpj">CPF / CNPJ</label>
                     <b-form-input v-model="cpfCnpj" name="cpfCnpj" id="cpfCnpj"></b-form-input>
                   </b-col>
 
-                  <b-col lg="3">
+                  <b-col lg="2">
                     <label for="nascimento">Dt. nascimento</label>
                     <b-form-input type="date" id="nascimento" v-model="nascimento" name="nascimento" max="9999-12-31"></b-form-input>
                   </b-col>
 
+                  <b-col lg="2">
+                    <label for="ratr">RATR</label>
+                    <b-form-input type="text" id="ratr" v-model="ratr" name="ratr"></b-form-input>
+                  </b-col>
                 </b-row>
 
                 <b-row class="my-2">
@@ -846,11 +912,6 @@ export default {
                   </b-col>
 
                   <b-col lg="3">
-                    <label for="dtCadastro">Dt. cadastro</label>
-                    <b-form-input type="date" id="dtCadastro" v-model="dtCadastro" name="dtCadastro" max="9999-12-31"></b-form-input>
-                  </b-col>
-
-                  <b-col lg="2">
                     <label for="telefone" class="form-label">Telefone</label>
                     <input type="text" v-model="telefone" name="telefone" class="form-control" id="telefone">
                   </b-col>
@@ -858,6 +919,11 @@ export default {
                   <b-col lg="3">
                     <label for="tipoCliente">Tipo</label>
                     <b-form-select :options="optionsClientes" v-model="tipoCliente" id="tipoCliente"></b-form-select>
+                  </b-col>
+
+                  <b-col lg="2">
+                    <label for="dtCadastro">Dt. cadastro</label>
+                    <b-form-input type="date" id="dtCadastro" v-model="dtCadastro" name="dtCadastro" max="9999-12-31"></b-form-input>
                   </b-col>
 
                 </b-row>
@@ -927,17 +993,22 @@ export default {
               <b-tab title="Veículo" no-body>
                 <b-row class="my-2">      
 
-                  <b-col lg="3">
+                  <b-col lg="2">
                     <label for="placa" class="form-label">Placa</label>
                     <b-form-input type="text" v-model="placa" name="placa" class="form-control" id="placa"></b-form-input>
                   </b-col>
 
-                  <b-col lg="4">
+                  <b-col lg="3">
+                    <label for="PERMISSAO" class="form-label">Permissão</label>
+                    <b-form-input type="text" v-model="permissao" class="form-control" id="PERMISSAO" ></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
                     <label for="renavan" class="form-label">Renavan</label>
                     <b-form-input type="text" v-model="renavan" name="renavan" class="form-control" id="renavan"></b-form-input>
                   </b-col> 
 
-                  <b-col lg="5">
+                  <b-col lg="4">
                     <label for="chassi" class="form-label">Chassi</label>
                     <b-form-input v-model="chassi" id="chassi"></b-form-input>
                   </b-col>
@@ -946,12 +1017,12 @@ export default {
 
                 <b-row class="my-2">
                   
-                  <b-col lg="3">
+                  <b-col lg="2">
                     <label for="ANOMODELO" class="form-label">Ano Modelo</label>
                     <b-form-input type="text" v-model="anoModelo" class="form-control" maxLength="4" id="ANOMODELO" ></b-form-input>
                   </b-col>
 
-                  <b-col lg="3">
+                  <b-col lg="2">
                     <label for="ANOFAB" class="form-label">Ano Fab.</label>
                     <b-form-input type="text" v-model="anoFab" class="form-control" maxLength="4" id="ANOFAB" ></b-form-input>
                   </b-col>
@@ -975,15 +1046,15 @@ export default {
                     </b-input-group>
                   </b-col>
 
-                </b-row>
-
-                <b-row class="my-2">
-                  
-                  <b-col lg="3">
+                  <b-col lg="2">
                     <label for="categoria" class="form-label">Categoria</label>
                     <b-form-input type="text" v-model="categoria" class="form-control" id="categoria" ></b-form-input>
                   </b-col>
 
+                </b-row>
+
+                <b-row class="my-2">
+                  
                   <b-col lg="3">
                     <label for="alienacao" id="alienacao" class="form-label">Alienação</label>
                     <b-input-group>
@@ -1001,15 +1072,6 @@ export default {
                   <b-col lg="3">
                     <label for="ultimoLa">Último L.A</label>
                     <b-form-input type="date" id="ultimoLa" v-model="ultimoLa" max="9999-12-31"></b-form-input>
-                  </b-col> 
-
-                </b-row>
-
-                <b-row class="my-2">
-
-                  <b-col lg="3">
-                    <label for="vencimentoApolice" class="form-label">Venc. Apolice</label>
-                    <b-form-input type="date" v-model="vencApolice" class="form-control" id="vencimentoApolice" max="9999-12-31"></b-form-input>
                   </b-col>
 
                   <b-col lg="3">
@@ -1017,7 +1079,13 @@ export default {
                     <b-form-input type="text" id="atualSeguradora" v-model="atualSeguradora"></b-form-input>
                   </b-col> 
 
+                  <b-col lg="3">
+                    <label for="vencimentoApolice" class="form-label">Venc. Apolice</label>
+                    <b-form-input type="date" v-model="vencApolice" class="form-control" id="vencimentoApolice" max="9999-12-31"></b-form-input>
+                  </b-col>
+
                 </b-row>
+
               </b-tab>
 
 
@@ -1170,7 +1238,6 @@ export default {
                 </b-row>
 
               </b-tab>
-
             </b-tabs>
           </b-card>
         </div>  
@@ -1203,48 +1270,61 @@ export default {
 
     <b-modal v-model="modalShow" id="info-cliente" size="lg" hide-footer>
       <h1 class="text-center mb-3">Consulta de Clientes</h1>
-      <b-row class="m-2">
+      <b-row class="m-1">
         <b-col class="p-1">
             <b-input-group>
-              <b-input-group-prepend is-text>
-                <input type="checkbox" value="1" unchecked-value="0" v-model="buscaExata" data-bs-toggle="tooltip" title="Consulta exata.">
-              </b-input-group-prepend>
               <b-form-input id="campoBuscaCliente" placeholder="Busca por código, nome ou CPF/CNPJ" v-model="campoBuscaClientes"></b-form-input>
               <b-input-group-append>
-                <b-button @click="buscaClientes()" variant="outline-secondary"><b-icon icon="search"></b-icon></b-button>
+                <b-button @click="buscaClientes()" variant="outline-primary" data-bs-toggle="tooltip" title="Busca cliente"><b-icon icon="search"></b-icon></b-button>
+                <b-button @click="limpaBuscaClientes()" variant="outline-primary" data-bs-toggle="tooltip" title="Limpa busca"><b-icon icon="brush"></b-icon></b-button>
               </b-input-group-append>
             </b-input-group>
         </b-col>
       </b-row>
-      <div class="container">
+      <b-row class="my-3">
 
-        <b-table
-        id="lista-clientes" 
-        striped hover 
-        :items="itemsClientes" 
-        :fields="fieldsClientes" 
-        houver  
-        outlined 
-        responsive
-        :per-page="perPageClientes"
-        :current-page="currentPageClientes">
+        <div class="col-lg-12 p-1">
+          <b-table hover outlined responsive
+            id="lista-clientes"
+            head-variant="light"
+            :busy="isBusyTableClientes"
+            :fields="fieldsClientes"
+            :items="itemsClientes"
+            :per-page="perPageClientes"
+            :current-page="currentPageClientes">
+            <template #table-busy>
+              <div class="text-center text-primary my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Carregando...</strong>
+              </div>
+            </template>
 
-          <template #cell(acoes) ="row">
-            <a><b-icon cursor="pointer" variant="info" icon="pencil" font-scale="1" data-bs-toggle="tooltip" title="Selecionar cliente" @click.prevent="selecionaCliente(row)"></b-icon></a>
-          </template>
-
-        </b-table>
-        
-        <b-pagination
-          align="center"
-          v-model="currentPageClientes"
-          :total-rows="rowsClientes"
-          :per-page="perPageClientes"
-          aria-controls="lista-clientes"
-        >
-        </b-pagination>
-
-      </div>
+            <template #cell(acoes)="row">
+              <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Seleciona cliente" variant="outline-primary" @click.prevent="selecionaCliente(row)">
+                <b-icon icon="plus-lg"></b-icon>
+              </b-button>
+            </template>
+          </b-table>
+        </div> 
+        <div class="col col-lg-12 mt-0 pt-0">
+          <div class="justify-content-end d-flex mt-0 pt-0">
+            <small class="text-muted mt-0 pt-0"><p>{{rowsClientes}} registros encontrados.</p></small>
+          </div>
+        </div>
+        <div class="col col-lg-12 mt-1">
+          <div class="justify-content-center d-flex">
+            <b-pagination
+              align="center"
+              v-model="currentPageClientes"
+              :total-rows="rowsClientes"
+              :per-page="perPageClientes"
+              aria-controls="lista-clientes"
+            >
+            </b-pagination>
+          </div>
+        </div>
+      </b-row>
+      
     </b-modal>
 
     <b-modal id="modal-view-anexo" hide-footer size="xl" scrollable>

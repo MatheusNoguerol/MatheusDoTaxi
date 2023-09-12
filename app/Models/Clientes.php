@@ -14,6 +14,7 @@ class Clientes extends Model
         'NOME',
         'CPFCNPJ',
         'NASCIMENTO',
+        'RATR',
         'EMAIL',
         'TELEFONE',
         'TIPOCLIENTE',

@@ -22,11 +22,13 @@ class ClientesController extends Controller
     }
     
     public function salvaCliente(Request $request){
+        // dd($request);
         $cliente = new Clientes;
         
         $cliente->NOME = $request['dados'][0]['nome'];
         $cliente->CPFCNPJ = $request['dados'][0]['cpfCnpj'];
         $cliente->NASCIMENTO = $request['dados'][0]['nascimento'];
+        $cliente->RATR = $request['dados'][0]['ratr'];
         $cliente->EMAIL = $request['dados'][0]['email'];
         $cliente->DTCADASTRO = $request['dados'][0]['dtCadastro'];
         $cliente->TELEFONE = $request['dados'][0]['telefone'];
@@ -43,11 +45,11 @@ class ClientesController extends Controller
 
         $cliente->save();
 
-        if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
+        if($request['dados'][0]['placa'] == null && $request['dados'][0]['permissao'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
             
             return $cliente;
 
-        }else if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null){
+        }else if($request['dados'][0]['placa'] == null && $request['dados'][0]['permissao'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null){
             
             $queryInfoFi = new InfoFiClientes;
         
@@ -72,6 +74,7 @@ class ClientesController extends Controller
 
             $dadosVeiculares->CODCLIENTE = $cliente['id'];
             $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+            $dadosVeiculares->PERMISSAO = $request['dados'][0]['permissao'];
             $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
             $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
             $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
@@ -87,13 +90,13 @@ class ClientesController extends Controller
             $dadosVeiculares->ATUALSEGURADORA = $request['dados'][0]['atualSeguradora'];
             
             $dadosVeiculares->save();
-
+            
             return [$cliente, $dadosVeiculares];
-
+            
         }else{
 
             $queryInfoFi = new InfoFiClientes;
-        
+            
             $queryInfoFi->CODCLIENTE = $cliente['id'];
             $queryInfoFi->NOBANCO = $request['dados'][0]['nmrbanco'];
             $queryInfoFi->BANCO = $request['dados'][0]['banco'];
@@ -104,13 +107,14 @@ class ClientesController extends Controller
             $queryInfoFi->TIPOCONTA = $request['dados'][0]['tipoConta'];
             $queryInfoFi->TIPOCHAVE = $request['dados'][0]['tipoChave'];
             $queryInfoFi->CHAVE = $request['dados'][0]['chave'];
-        
+            
             $queryInfoFi->save();
-
+            
             $dadosVeiculares = new DadosVeiculares;
-
+            
             $dadosVeiculares->CODCLIENTE = $cliente['id'];
             $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+            $dadosVeiculares->PERMISSAO = $request['dados'][0]['permissao'];
             $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
             $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
             $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
@@ -166,6 +170,7 @@ class ClientesController extends Controller
             'NASCIMENTO' => $request['dados'][0]['nascimento'] ,
             'EMAIL' => $request['dados'][0]['email'],
             'DTCADASTRO' => $request['dados'][0]['dtCadastro'],
+            'RATR' => $request['dados'][0]['ratr'],
             'TELEFONE' => $request['dados'][0]['telefone'],
             'TIPOCLIENTE' => $request['dados'][0]['tipoCliente'],
             'CEP' => $request['dados'][0]['cep'],
@@ -185,11 +190,11 @@ class ClientesController extends Controller
         
         if(count($existeCodDv) == 0 && count($existeCodInfoFi) == 0){
 
-            if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null && $request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
+            if($request['dados'][0]['placa'] == null && $request['dados'][0]['permissao'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null && $request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
                 
                 return $updateCliente;
 
-            }else if($request['dados'][0]['placa'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null && $request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null){
+            }else if($request['dados'][0]['placa'] == null && $request['dados'][0]['permissao'] == null  && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null && $request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null){
                 
                 $dadosFinanceiros = new InfoFiClientes;
 
@@ -214,6 +219,7 @@ class ClientesController extends Controller
 
                 $dadosVeiculares->CODCLIENTE = $request['dados'][0]['codCliente'];
                 $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+                $dadosVeiculares->PERMISSAO = $request['dados'][0]['permissao'];
                 $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
                 $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
                 $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
@@ -254,6 +260,7 @@ class ClientesController extends Controller
 
                 $dadosVeiculares->CODCLIENTE = $request['dados'][0]['codCliente'];
                 $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+                $dadosVeiculares->PERMISSAO = $request['dados'][0]['permissao'];
                 $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
                 $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
                 $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
@@ -279,6 +286,7 @@ class ClientesController extends Controller
 
             $dadosVeiculares->CODCLIENTE = $request['dados'][0]['codCliente'];
             $dadosVeiculares->PLACA = $request['dados'][0]['placa'];
+            $dadosVeiculares->PERMISSAO = $request['dados'][0]['permissao'];
             $dadosVeiculares->CHASSI = $request['dados'][0]['chassi'];
             $dadosVeiculares->RENAVAN = $request['dados'][0]['renavan'];
             $dadosVeiculares->ANOMODELO = $request['dados'][0]['anoModelo'];
@@ -329,6 +337,7 @@ class ClientesController extends Controller
 
             $updateDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
                 'PLACA' => $request['dados'][0]['placa'],
+                'PERMISSAO' => $request['dados'][0]['permissao'],
                 'CHASSI' => $request['dados'][0]['chassi'],
                 'RENAVAN' => $request['dados'][0]['renavan'],
                 'ANOMODELO' => $request['dados'][0]['anoModelo'],
@@ -349,6 +358,7 @@ class ClientesController extends Controller
 
             $updateDadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $request['dados'][0]['codCliente'])->update([
                 'PLACA' => $request['dados'][0]['placa'],
+                'PERMISSAO' => $request['dados'][0]['permissao'],
                 'CHASSI' => $request['dados'][0]['chassi'],
                 'RENAVAN' => $request['dados'][0]['renavan'],
                 'ANOMODELO' => $request['dados'][0]['anoModelo'],
@@ -461,7 +471,7 @@ class ClientesController extends Controller
         $query = Clientes::where('CODCLIENTE', '=', $request->busca)->orWhere('NOME', '=', $request->busca)->orWhere('CPFCNPJ', '=', $request->busca)->get();
         
         if(count($query) == 0){
-            return ['error' => 1, 'msg' => 'Cliente não encontrado na base de dados.'];
+            return ['error' => '1' , 'msg' => 'Cliente não encontrado na base de dados.'];
         }else{
             return $query;
         }

@@ -16,6 +16,7 @@ class DadosVeiculares extends Model
         'RENAVAN',
         'ANOMODELO',
         'ANOFAB',
+        'PERMISSAO',
         'COMBUSTIVEL',
         'TEMGAS',
         'CILINDRO',
