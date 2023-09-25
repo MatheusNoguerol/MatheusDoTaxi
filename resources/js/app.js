@@ -7,6 +7,9 @@
 import Vue from  'vue' 
 import { BootstrapVue, IconsPlugin } from  'bootstrap-vue'
 
+
+import VMask from 'v-mask'
+Vue.use(VMask);
 // Importa arquivos CSS Bootstrap e BootstrapVue (a ordem é importante) 
 import  'bootstrap/dist/css/bootstrap.css' 
 import  'bootstrap-vue/dist/bootstrap-vue.css'

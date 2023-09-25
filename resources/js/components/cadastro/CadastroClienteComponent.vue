@@ -237,7 +237,7 @@ export default {
     self.hojeNoFormat = formatDate(today)
     self.dtCadastro = self.hojeNoFormat
 
-  },
+  },  
 
   methods:{
     preLoad(){
@@ -279,13 +279,15 @@ export default {
     salvaCliente(){
       let self = this
       if(self.nome == null || self.nome == ''){
-        self.makeToastErroSemNome()
+        
+        toastr.warning(`Digite um nome para cadastrar o cliente.`, 'Atenção!',{timeOut: 3000, progesseBar: true})
+        
       }else{
         axios.post('salva-cliente',{dados: self.dadosCriaCliente})
         .then((response) => {
   
           self.preLoad()
-          self.makeToastSave()
+          toastr.success(`Cliente  ${self.nome }  criado.`, 'Atenção!' ,{timeOut: 3000, progesseBar: true})
           self.limpaDados()
   
         })
@@ -415,7 +417,6 @@ export default {
           self.ultimoLa = response.data[0][0]['ULTIMOLA']
           self.vencApolice = response.data[0][0]['VENCAPOLICE']
           self.atualSeguradora = response.data[0][0]['ATUALSEGURADORA']
-          self.makeToastNoInfo()
           
           if(self.gnv != null){
             self.temGnv = true
@@ -432,7 +433,7 @@ export default {
             self.temAlienacao = true
             self.possuiAlienacao = 0
           }
-        
+          toastr.warning(`Cliente  ${self.nome } está com o cadastro incompleto.`, 'Atenção!',{timeOut: 3000, progesseBar: true})
         }else if(response.data.success === 3){
 
           self.nmrbanco = response.data[0][0]['NOBANCO']
@@ -444,7 +445,7 @@ export default {
           self.tipoConta = response.data[0][0]['TIPOCONTA']
           self.tipoChave = response.data[0][0]['TIPOCHAVE']
           self.chave = response.data[0][0]['CHAVE']
-          self.makeToastNoInfo()
+          toastr.warning(`Cliente  ${self.nome } está com o cadastro incompleto.`, 'Atenção!',{timeOut: 3000, progesseBar: true})
 
         }else if(response.data.success === 4){
 
@@ -490,8 +491,8 @@ export default {
           }
 
         }else if(response.data.error === 1){
-
-          self.makeToastNoInfo()
+          
+          toastr.warning(`Cliente  ${self.nome } está com o cadastro incompleto.`,'Atenção!', {timeOut: 3000, progesseBar: true})
 
         }
 
@@ -525,7 +526,7 @@ export default {
         axios.post('exclui-cliente',{codigo: self.codCliente})
         .then((response) => {
           self.preLoad()
-          self.makeToastExclui()
+          toastr.success(`Cliente  ${self.nome }  deletado.`,'Sucesso!' ,{timeOut: 3000, progesseBar: true})
           self.limpaDados()
         }).catch((error) => {
           console.log("Error: ", error)
@@ -539,72 +540,13 @@ export default {
         .then((response) => {
           
           self.preLoad()
-          self.makeToastEdita()
+          
+          toastr.success(`Cliente ${self.nome }  editado.`, 'Sucesso!',{timeOut: 3000, progesseBar: true})
           self.limpaDados()
 
         }).catch((error) => {
           console.log("Error: ", error)
       })
-    },
-
-    makeToastErroSemNome(append = false) {
-      let self = this
-
-      this.$bvToast.toast(`Digite um nome para cadastrar o cliente.`, {
-        title: 'ATENÇÃO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'warning',
-      })
-
-    },
-
-    makeToastEdita(append = false) {
-      let self = this
-
-      this.$bvToast.toast(`Cliente ${self.nome }  editado.`, {
-        title: 'SUCESSO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'success',
-      })
-
-    },
-
-    makeToastSave(append = false) {
-      let self = this
-
-      this.$bvToast.toast(`Cliente  ${self.nome }  criado.`, {
-        title: 'SUCESSO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'success',
-      })
-
-    },
-  
-    makeToastExclui(append = false) {
-      let self = this
-
-      this.$bvToast.toast(`Cliente  ${self.nome }  deletado.`, {
-        title: 'SUCESSO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'success',
-      })
-
-    },
-
-    makeToastNoInfo(append = false) {
-      let self = this
-
-      this.$bvToast.toast(`Cliente  ${self.nome } está com o cadastro incompleto.`, {
-        title: 'ATENÇÃO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'warning',
-      })
-
     },
 
     buscaCep(){
@@ -648,11 +590,17 @@ export default {
       let self = this
 
       if(self.temClienteSelecionado == false){
-        self.makeToastNoClienteSelecionado()
+        
+        toastr.warning(`Para anexar um arquivo, selecione um cliente...`, 'Atenção!',{timeOut: 3000, progesseBar: true})
+
       }else{
         
         if(self.tipoDoc == null || self.tipoDoc == ''){
-          self.makeToastNoFile()
+
+          toastr.warning(`selecione o tipo de documento a ser anexado...`, 'Atenção!',{timeOut: 3000, progesseBar: true})
+          
+        }else if(self.file1 == null || self.file1 == ''){
+          toastr.warning('Selecione um arquivo para anexar', 'Atenção!', {timeOut: 3000, progesseBar: true})
         }else{
           self.arrayFotos = []
 
@@ -668,7 +616,7 @@ export default {
             },
           }).then((response) => {
             
-            self.makeToastUpload()
+            toastr.success(`Anexo adicionado.`, 'Sucesso!',{timeOut: 3000, progesseBar: true})
             self.rechargeAnexos()
 
             self.file1 = null
@@ -707,28 +655,6 @@ export default {
       self.tipoDoc = null
     },
 
-    makeToastUpload(append = false) {
-        let self = this
-
-        this.$bvToast.toast(`Documento adicionado.`, {
-        title: 'SUCESSO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'success',
-      })
-    },
-
-    makeToastNoFile(append = false) {
-      let self = this
-
-      this.$bvToast.toast(`selecione o tipo de documento a ser anexado...`, {
-        title: 'ATENÇÃO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'warning',
-      })
-    },
-
     deletaAnexo(row){
       let self = this
 
@@ -752,6 +678,7 @@ export default {
 
           }
           self.isBusyTableAnexos = false
+          toastr.success('Anexo deletado.', 'Sucesso!',{timeOut: 3000, progesseBar: true})
         }).catch((error)=>{
           console.log('Error: ', error)
         })
@@ -781,66 +708,36 @@ export default {
       })
     },
 
-    makeToastNoClienteSelecionado(append = false){
-      let self = this
-
-      this.$bvToast.toast(`Para anexar um arquivo, selecione um cliente...`, {
-        title: 'ATENÇÃO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'warning',
-      })
-    },
-
-    makeToastNoCliente(append = false){
-      let self = this
-
-      self.$bvToast.toast(`Cliente não existe na base de dados.`, {
-        title: 'ATENÇÃO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'warning',
-      })
-    },
-
-    makeToastCampoBuscaVazio(append = false){
-      let self = this
-
-      self.$bvToast.toast(`Digite algo no campo de busca.`, {
-        title: 'ATENÇÃO!',
-        autoHideDelay: 2500,
-        appendToast: append,
-        variant: 'warning',
-      })
-    },
-
     buscaClientes(){
       let self = this
 
       if(self.campoBuscaClientes == null || self.campoBuscaClientes == ''){
-        self.makeToastCampoBuscaVazio()
+        
+        toastr.warning(`Digite algo no campo de busca.`, 'Atenção!',{timeOut: 3000, progesseBar: true})
+        
       }else{
         self.isBusyTableClientes = true
 
         self.itemsClientes = []
 
         axios.post('busca-cliente', {busca: self.campoBuscaClientes})
-      .then((response) => {
-        console.log(response.data.error)
+        .then((response) => {
+          console.log(response.data.error)
 
-        if(response.data.error == 1){
-          self.makeToastNoCliente()
-          self.limpaBuscaClientes()
-          self.isBusyTableClientes = true
-        }else{
-          for(var i = 0 ; i < response.data.length ; i++){
-            self.itemsClientes.push({
-              nome: response.data[i]['NOME'],
-              cpfCnpj: response.data[i]['CPFCNPJ'],
-            })
+          if(response.data.error == 1){
+            
+            toastr.warning(`Cliente não existe na base de dados.`, 'Atenção!',{timeOut: 3000, progesseBar: true})
+            self.limpaBuscaClientes()
+            self.isBusyTableClientes = true
+          }else{
+            for(var i = 0 ; i < response.data.length ; i++){
+              self.itemsClientes.push({
+                nome: response.data[i]['NOME'],
+                cpfCnpj: response.data[i]['CPFCNPJ'],
+              })
+            }
+            self.isBusyTableClientes = false
           }
-          self.isBusyTableClientes = false
-        }
         }).catch((error) => {
           console.log('Error:', error)
         })
@@ -894,7 +791,7 @@ export default {
 
                   <b-col lg="2">
                     <label for="cpfCnpj">CPF / CNPJ</label>
-                    <b-form-input v-model="cpfCnpj" name="cpfCnpj" id="cpfCnpj"></b-form-input>
+                    <b-form-input v-model="cpfCnpj" name="cpfCnpj" id="cpfCnpj" v-mask="'###.###.###-##'" ></b-form-input>
                   </b-col>
 
                   <b-col lg="2">
