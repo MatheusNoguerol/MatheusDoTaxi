@@ -62,6 +62,10 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
+
+        #####     BLOCK DO REGISTER  ########
+
+
     // protected function create(array $data)
     // {
     //     return User::create([

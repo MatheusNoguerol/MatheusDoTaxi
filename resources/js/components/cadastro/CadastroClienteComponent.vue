@@ -80,6 +80,10 @@ export default {
       anoFab: null,
       combustivel: null,
       categoria: null,
+      optionsCategoria: [
+        {value: 'taxi', text: 'Táxi'},
+        {value: 'particular', text: 'Particular'}
+      ],
       ultimoLa: null,
       optionsFormasPix: [
         { value: 'cpf' , text: 'CPF'},
@@ -1048,7 +1052,7 @@ export default {
 
                   <b-col lg="2">
                     <label for="categoria" class="form-label">Categoria</label>
-                    <b-form-input type="text" v-model="categoria" class="form-control" id="categoria" ></b-form-input>
+                    <b-form-select :options="optionsCategoria" v-model="categoria" class="form-control" id="categoria" ></b-form-select>
                   </b-col>
 
                 </b-row>
