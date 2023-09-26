@@ -750,19 +750,21 @@ export default {
       self.campoBuscaClientes = null
 
       self.preLoad()
-    }
+    },
+
+    
   },
 }
 </script>
 
 <style scoped>
 
-#btn-selecao:hover{
-  background-color: blue;
-  color: white;
-  font-weight: bolder;
-  border: none;
-}
+  #btn-selecao:hover{
+    background-color: blue;
+    color: white;
+    font-weight: bolder;
+    border: none;
+  }
 
 </style>
 
@@ -814,7 +816,7 @@ export default {
 
                   <b-col lg="3">
                     <label for="telefone" class="form-label">Telefone</label>
-                    <input type="text" v-model="telefone" name="telefone" class="form-control" id="telefone">
+                    <input type="text" v-model="telefone" name="telefone" v-mask="'(##)# ####-####'" class="form-control" id="telefone">
                   </b-col>
 
                   <b-col lg="3">
@@ -833,7 +835,7 @@ export default {
 
                   <b-col lg="2">
                     <label for="cep">CEP</label>
-                    <b-form-input v-model="cep" id="cep" @change="buscaCep()"></b-form-input>
+                    <b-form-input v-model="cep" id="cep" v-mask="'#####-###'" @change="buscaCep()"></b-form-input>
                   </b-col>
 
                   <b-col lg="4">
@@ -901,7 +903,7 @@ export default {
 
                   <b-col lg="3">
                     <label for="PERMISSAO" class="form-label">Permissão</label>
-                    <b-form-input type="text" v-model="permissao" class="form-control" id="PERMISSAO" ></b-form-input>
+                    <b-form-input type="text" v-model="permissao" class="form-control" v-mask="'##.######-#'" id="PERMISSAO" ></b-form-input>
                   </b-col>
 
                   <b-col lg="3">
@@ -920,12 +922,12 @@ export default {
                   
                   <b-col lg="2">
                     <label for="ANOMODELO" class="form-label">Ano Modelo</label>
-                    <b-form-input type="text" v-model="anoModelo" class="form-control" maxLength="4" id="ANOMODELO" ></b-form-input>
+                    <b-form-input type="text" v-model="anoModelo" class="form-control" v-mask="'####'" maxLength="4" id="ANOMODELO" ></b-form-input>
                   </b-col>
 
                   <b-col lg="2">
                     <label for="ANOFAB" class="form-label">Ano Fab.</label>
-                    <b-form-input type="text" v-model="anoFab" class="form-control" maxLength="4" id="ANOFAB" ></b-form-input>
+                    <b-form-input type="text" v-model="anoFab" class="form-control" v-mask="'####'" maxLength="4" id="ANOFAB" ></b-form-input>
                   </b-col>
 
                   <b-col lg="3">
@@ -1024,7 +1026,7 @@ export default {
 
                   <b-col lg="3">
                     <label for="cpfTitular" class="form-label">CPF Titular</label>
-                    <b-form-input type="text" v-model="cpfTitular" name="cpfTitular" class="form-control" id="cpfTitular"></b-form-input>
+                    <b-form-input type="text" v-model="cpfTitular" name="cpfTitular" class="form-control" v-mask="'###.###.###-##'" id="cpfTitular"></b-form-input>
                   </b-col>
 
                   <b-col lg="4">
