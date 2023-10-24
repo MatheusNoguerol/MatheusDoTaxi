@@ -750,9 +750,7 @@ export default {
       self.campoBuscaClientes = null
 
       self.preLoad()
-    },
-
-    
+    }    
   },
 }
 </script>

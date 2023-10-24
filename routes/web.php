@@ -71,6 +71,8 @@ Route::post('cadastro-funcionario', 'UserController@cadastroFuncionario')->name(
 
 Route::post('adicionar-produto', 'UserController@adicionarProduto')->name('adicionar-produto');
 
+Route::post('consultar-cadastro', 'UserController@consultarCadastro')->name('consultar-cadastro');
+
 
 
 

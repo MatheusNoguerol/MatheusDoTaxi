@@ -37,12 +37,6 @@ class UserController extends Controller
             return view('/cadastro/cadastroFuncionario');
         }
         
-        public function consultarCadastro(Request $request)
-        {
-            return view('/cadastro/consultarCadastro');
-        }
-
-
     #########################################################################################################################################
 
 
@@ -64,6 +58,25 @@ class UserController extends Controller
         public function adicionarProduto(Request $request)
         {
             return view('/estoque/adicionarProduto');
+        }
+
+
+    #########################################################################################################################################
+
+
+
+
+
+    ############################################################## CONSULTAR ##################################################################
+
+
+        public function consultarCadastro(Request $request)
+        {
+            return view('/cadastro/consultarCadastro');
+            //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            //}else{
+            //    return view('auth.login');//redirect()->route('/auth');
+            //}
         }
 
 

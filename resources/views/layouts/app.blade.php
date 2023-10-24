@@ -93,6 +93,17 @@
                                                 @csrf
                                             </form>
                                         </b-dropdown-item>
+
+                                        <b-dropdown-item>
+                                            <a class="dropdown-item" href="{{ route('consultar-cadastro') }}"
+                                                onclick="event.preventDefault();
+                                                document.getElementById('consultar-cadastro').submit();">
+                                                Consultar Cadastros
+                                            </a>
+                                            <form id="consultar-cadastro" action="{{ route('consultar-cadastro') }}" method="POST" class="d-none">
+                                                @csrf
+                                            </form>
+                                        </b-dropdown-item>
                                         
                                     </b-nav-item-dropdown>
 

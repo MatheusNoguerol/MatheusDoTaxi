@@ -17,7 +17,6 @@ use App\Models\AnexosFuncionarios;
 class FuncionariosController extends Controller
 {
     public function salvaFuncionario(Request $request){
-
         $funcionario = new Funcionarios;
 
         $funcionario->NOME = $request->nome;

@@ -60,6 +60,8 @@ Vue.component('cadastro-funcionario-component', require('./components/cadastro/C
 
 Vue.component('adicionar-produto-component', require('./components/AdicionarProdutoComponent.vue').default);
 
+Vue.component('consultar-cadastro-component', require('./components/cadastro/ConsultarCadastroComponent.vue').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

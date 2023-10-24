@@ -220,7 +220,7 @@
         let self = this
         
         if(self.nome == null || self.nome == ''){
-          self.makeToastNoSaveFuncionario()
+          toastr.warning('Digite o nome do funcionário.', 'Atenção!', {timeout: 3000, progesseBar})
         }else{
           axios.post('salva-funcionario', {
             id: self.codFuncionario,
@@ -265,7 +265,7 @@
           }).then((response) => {
             
             self.preLoad()
-            self.makeToastSalvaFuncionario()
+            toastr.success('Funcionário criado com sucesso!', {timeout: 3000, progesseBar: true})
             self.limpaDados()
                 
           }).catch((error) => {
@@ -313,7 +313,7 @@
         .then((response) => {
 
           
-          if(response.data.success === 2){
+          if(response.data.success === 2){// sem info fi
 
             self.dtAdmissao = response.data[0][0]['DTADMISSAO']
             self.cargo = response.data[0][0]['CARGO']
@@ -323,9 +323,9 @@
             self.pispasep = response.data[0][0]['PISPASEP']
             self.passagem = response.data[0][0]['PASSAGEM']
             
-            self.makeToastNoInfo()
+            toastr.warning('Funcionário ' + self.nome + ' está com o cadastro incompleto.', 'Atenção!', {timeOut: 3000 , progesseBar: true})
         
-          }else if(response.data.success === 3){
+          }else if(response.data.success === 3){// sem dados contratuais
 
             self.nmrbanco = response.data[0][0]['NOBANCO']
             self.agencia = response.data[0][0]['AGENCIA']
@@ -333,13 +333,13 @@
             self.banco = response.data[0][0]['BANCO']
             self.titular = response.data[0][0]['TITULAR']
             self.cpfTitular = response.data[0][0]['CPFTITULAR']
-            self.tipoConta = response.data[0][0]['TIPOCONTA']
+            self.tipoConta = response.data[0][0]['TIPO']
             self.formasPix = response.data[0][0]['TIPOCHAVE']
             self.chave = response.data[0][0]['CHAVEPIX']
 
-            self.makeToastNoInfo()
+            toastr.warning('Funcionário ' + self.nome + ' está com o cadastro incompleto.', 'Atenção!', {timeOut: 3000 , progesseBar: true})
 
-          }else if(response.data.success === 4){
+          }else if(response.data.success === 4){// completo
 
             self.dtAdmissao = response.data[0][0]['DTADMISSAO']
             self.cargo = response.data[0][0]['CARGO']
@@ -354,13 +354,13 @@
             self.banco = response.data[0][0]['BANCO']
             self.titular = response.data[0][0]['TITULAR']
             self.cpfTitular = response.data[0][0]['CPFTITULAR']
-            self.tipoConta = response.data[0][0]['TIPOCONTA']
+            self.tipoConta = response.data[0][0]['TIPO']
             self.formasPix = response.data[0][0]['TIPOCHAVE']
             self.chave = response.data[0][0]['CHAVEPIX']
 
-          }else if(response.data.error === 1){
+          }else if(response.data.error === 1){// somente dados pessoais
 
-            self.makeToastNoInfo()
+            toastr.warning('Funcionário ' + self.nome + ' está com o cadastro incompleto.', 'Atenção!', {timeOut: 3000 , progesseBar: true})
 
           }
           self.temFuncionarioSelecionado = true
@@ -429,7 +429,8 @@
           formasPix: self.formasPix
         }).then((response) => {
           self.preLoad()
-          self.makeToastEditaFuncionario()
+
+          toastr.success('Funcionário editado com sucesso!',{timeout: 3000, progesseBar: true})
           self.limpaDados()
         }).catch((error) => {
           console.log("Error: ", error)
@@ -443,7 +444,7 @@
         .then((response) => {
           
           self.preLoad()
-          self.makeToastExcluiFuncionario()
+          toastr.success('Funcionário deletado com sucesso!', {timeout: 3000, progesseBar: true})
           self.limpaDados()
           
         }).catch((error) => {
@@ -502,71 +503,16 @@
 
       },
 
-      makeToastEditaFuncionario(append = false) {
-        let self = this
-
-        this.$bvToast.toast(`Funcionário  ${self.nome }  editado.`, {
-          title: 'SUCESSO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'success',
-        })
-      },
-
-      makeToastSalvaFuncionario(append = false) {
-        let self = this
-
-        this.$bvToast.toast(`Funcionário  ${self.nome }  registrado.`, {
-          title: 'SUCESSO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'success',
-        })
-
-      },
-
-      makeToastNoSaveFuncionario(append = false){
-        let self = this
-
-        this.$bvToast.toast(`Digite pelo menos o nome do funcionário.`, {
-          title: 'ATENÇÃO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'warning',
-        })
-      },
-
-      makeToastExcluiFuncionario(append = false) {
-        let self = this
-
-        this.$bvToast.toast(`Funcionário  ${self.nome }  excluído.`, {
-          title: 'SUCESSO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'success',
-        })
-      },
-
-      makeToastNoInfo(append = false) {
-        let self = this
-
-        this.$bvToast.toast(`Funcionário ${self.nome } está com o cadastro incompleto.`, {
-          title: 'ATENÇÃO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'warning',
-        })
-      },
-
       uploadProfileImage(){
         let self = this
 
         if(self.temFuncionarioSelecionado == false){
-          self.makeToastNoFuncionarioSelecionado()
+          toastr.warning('Selecione um funcionário antes de incluir um anexo.', 'Atenção!', {timeout: 3000, progesseBar: true})
         }else{
           
           if(self.tipoDoc == null || self.tipoDoc == ''){
-            self.makeToastNoFile()
+
+            toastr.warning('Selecione o tipo do documento a ser anexado.', {timeout: 3000, progesseBar: true})
           }else{
             self.arrayFotos = []
   
@@ -581,9 +527,7 @@
                 "Content-Type": "multipart/form-data",
               },
             }).then((response) => {
-              
-              self.makeToastUpload()
-              self.rechargeAnexos()
+              toastr.success('Documento anexado.','Sucesso!', {timeout: 3000, progesseBar: true})
   
               self.file1 = null
               self.tipoDoc = null
@@ -619,28 +563,6 @@
         let self = this
 
         self.tipoDoc = null
-      },
-
-      makeToastUpload(append = false) {
-         let self = this
-
-          this.$bvToast.toast(`Documento adicionado.`, {
-          title: 'SUCESSO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'success',
-        })
-      },
-
-      makeToastNoFile(append = false) {
-        let self = this
-
-        this.$bvToast.toast(`selecione o tipo de documento a ser anexado...`, {
-          title: 'ATENÇÃO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'warning',
-        })
       },
 
       deletaAnexo(row){
@@ -693,31 +615,7 @@
         }).catch((error)=>{
           console.log('Error: ', error)
         })
-      },
-
-      makeToastNoFuncionarioSelecionado(append = false){
-        let self = this
-
-        this.$bvToast.toast(`Para anexar um arquivo, selecione um funcionário...`, {
-          title: 'ATENÇÃO!',
-          autoHideDelay: 2500,
-          appendToast: append,
-          variant: 'warning',
-        })
-      },
-
-      
-
-      // downloadAnexo(row){
-      //   let self = this
-      //   console.log('->',row)
-      //   axios.post('download-anexo', {caminho: row.item.CAMINHO})
-      //   .then((response)=>{
-      //     console.log('response aqui:', response)
-      //   }).catch((error)=> {
-      //     console.log('Error: ', error)
-      //   })
-      // }
+      }
     }
   }
   
