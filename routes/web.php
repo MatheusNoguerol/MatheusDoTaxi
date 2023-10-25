@@ -124,3 +124,9 @@ Route::post('storage/upload', 'FuncionariosController@upLoad')->name('storage-up
 Route::post('deleta-anexo', 'FuncionariosController@deletaAnexo')->name('deleta-anexo');
 
 // Route::post('download-anexo', 'FuncionariosController@downloadAnexo')->name('download-anexo');
+
+
+
+##################### CADASTROS ##########################
+
+Route::post('consulta-cadastro-cliente', 'ConsultarCadastrosController@consultarCadastroCliente')->name('consulta-cadastro-cliente');

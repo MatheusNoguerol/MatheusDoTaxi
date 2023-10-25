@@ -428,4 +428,7 @@ class FuncionariosController extends Controller
     //     // return $query;
      
     // }
+
+
+    
 }
