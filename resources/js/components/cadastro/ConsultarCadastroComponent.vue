@@ -92,7 +92,7 @@
                 itemsConsultaCliente: [],
                 perPageConsultaCliente: 5,
                 currentPageConsultaCliente: 1,
-                temClienteSelecionado: false,
+                temCliente: false,
                 temFuncionarioSelecionado: false,
 
                 isBusyTableConsultaFuncionario: false,
@@ -127,30 +127,26 @@
 
         computed: {
             rowsConsultaCliente() {
-                return this.length.itemsConsultaCliente
-            },
-
-            rowsConsultaFuncionario() {
-                return this.length.itemsConsultaFuncionario
+                return this.itemsConsultaCliente.length
             },
 
             arrayBusca() {
-            let self = this
-            return [{
-                tipoConsulta: this.tipoConsulta,
-                pesquisaCliente: this.pesquisaCliente,
-                pesquisaFuncionario: this.pesquisaFuncionario,
-                nomeConsulta: this.nomeConsulta,
-                dtCadastroDe: this.dtCadastroDe,
-                dtCadastroAte: this.dtCadastroAte,
-                ratrConsulta: this.ratrConsulta,
-                cpfConsulta: this.cpfConsulta,
-                dtNascimentoDe: this.dtNascimentoDe,
-                dtNascimentoAte: this.dtNascimentoAte,
-                permissaoConsulta: this.permissaoConsulta,
-                placaConsulta: this.placaConsulta,
-                categoriaConsulta: this.categoriaConsulta
-            }]
+                let self = this
+                return [{
+                    tipoConsulta: this.tipoConsulta,
+                    pesquisaCliente: this.pesquisaCliente,
+                    pesquisaFuncionario: this.pesquisaFuncionario,
+                    nomeConsulta: this.nomeConsulta,
+                    dtCadastroDe: this.dtCadastroDe,
+                    dtCadastroAte: this.dtCadastroAte,
+                    ratrConsulta: this.ratrConsulta,
+                    cpfConsulta: this.cpfConsulta,
+                    dtNascimentoDe: this.dtNascimentoDe,
+                    dtNascimentoAte: this.dtNascimentoAte,
+                    permissaoConsulta: this.permissaoConsulta,
+                    placaConsulta: this.placaConsulta,
+                    categoriaConsulta: this.categoriaConsulta
+                }]
             }
         },
         mounted() {
@@ -165,19 +161,48 @@
                     .then((response)=> {
                         console.log('Response:', response.data)
                         if(response.data.ref == 0){
-                            for(var t = 0 ; t < response.data.length ; t++){
-                                // self.itemsConsultaCliente.push({
-                                //     nome: response.data[t].,
-                                //     ratr: response.data.,
-                                //     cpf: response.data.,
-                                //     dtNascimento: response.data.,
-                                //     dtCadastro: response.data.,
-                                //     permissao: response.data.,
-                                //     placa: response.data.,
-                                //     categoria: response.data.,
-                                // })
-                            }
                             
+                            self.itemsConsultaCliente.push({
+                                nome: response.data[0][0].NOME,
+                                ratr: response.data[0][0].RATR,
+                                cpf: response.data[0][0].CPFCNPJ,
+                                dtNascimento: response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
+                                dtCadastro: response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
+                                permissao: null,
+                                placa: null,
+                                categoria: null,
+                            })
+                            self.temCliente = true
+
+                        }else if(response.data.ref == 1){
+                            self.itemsConsultaCliente.push({
+                                nome: response.data[0][0].NOME,
+                                ratr: response.data[0][0].RATR,
+                                cpf: response.data[0][0].CPFCNPJ,
+                                dtNascimento: response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
+                                dtCadastro: response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
+                                permissao: response.data[1][0].PERMISSAO,
+                                placa: response.data[1][0].PLACA,
+                                categoria: response.data[1][0].CATEGORIA,
+                            })
+                            self.temCliente = true
+                        }else if(response.data.ref == 2){
+                            console.log('aqui: ',self.itemsConsultaCliente)
+                            console.log('aqui: ',response.data.length)
+                            for(var n = 0 ; n < response.data[0].length ; n++){
+                                self.itemsConsultaCliente.push({
+                                    nome: response.data[0][n].NOME,
+                                    ratr: response.data[0][n].RATR,
+                                    cpf: response.data[0][n].CPFCNPJ,
+                                    dtNascimento: response.data[0][n].NASCIMENTO.split('-').reverse().join('/'),
+                                    dtCadastro: response.data[0][n].DTCADASTRO.split('-').reverse().join('/'),
+                                    permissao: response.data[1][n][0].PERMISSAO,
+                                    placa: response.data[1][n][0].PLACA,
+                                    categoria: response.data[1][n][0].CATEGORIA,
+                                })
+                                self.temCliente = true
+                                    console.log('aquiDps: ',self.itemsConsultaCliente)
+                            }
                         }
                     }).catch((error) => {
                         console.log('Error:', error)
@@ -186,6 +211,10 @@
                 }else{
 
                 }
+            },
+
+            selecionaCliente(row){
+
             }
         }
     }
@@ -285,7 +314,7 @@
 
             <hr variant="primary">
 
-            <b-row v-if="temClienteSelecionado == true">
+            <b-row v-if="temCliente == true">
 
                 <div class="col-lg-12">
                     <b-table hover outlined responsive

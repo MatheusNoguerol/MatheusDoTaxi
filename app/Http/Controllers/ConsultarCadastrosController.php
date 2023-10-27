@@ -72,31 +72,34 @@ class ConsultarCadastrosController extends Controller
         
         if($request['arrayBusca'][0]['tipoConsulta'] == 'cliente'){
             
-            // dd($request);
             if($request['arrayBusca'][0]['pesquisaCliente'] == 'nome'){
                 
                 $query = Clientes::where('NOME', 'like', '%' . $request['arrayBusca'][0]['nomeConsulta'] . '%')->get();
 
-                dd(count($query));
+                // dd(count($query));
+
+                // dd($query);
 
                 if(count($query) == 1){
                     $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[0]['CODCLIENTE'])->get();
 
                     if(count($dadosVeiculares) == 0){
-                        return;
+                        return ['ref' => 0 , $query];
+                    }else{
+                        return ['ref' => 1, $query , $dadosVeiculares];
                     }
-                }
-
-                // if(count())
-                
-                
-
-                if(count($dadosVeiculares) == 0){
-                    return ['ref' => 1 , $query];
                 }else{
-                    return ['ref' => 0, $query , $dadosVeiculares];
+                    // dd($query);
+                    $arrayVeic = array();
+                    for($b = 0 ; $b < count($query) ; $b++){
+                        $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[$b]['CODCLIENTE'])->get();
+
+                        if(count($dadosVeiculares) != 0){
+                            array_push($arrayVeic, $dadosVeiculares);
+                        }
+                    }
+                    return [$query , $arrayVeic, 'ref' => 2];
                 }
-                // dd($dadosVeiculares);
             }
         }else{
 
