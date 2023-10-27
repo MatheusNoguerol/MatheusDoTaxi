@@ -75,12 +75,9 @@ class ConsultarCadastrosController extends Controller
             if($request['arrayBusca'][0]['pesquisaCliente'] == 'nome'){
                 
                 $query = Clientes::where('NOME', 'like', '%' . $request['arrayBusca'][0]['nomeConsulta'] . '%')->get();
-
-                // dd(count($query));
-
-                // dd($query);
-
-                if(count($query) == 1){
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else if(count($query) == 1){
                     $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[0]['CODCLIENTE'])->get();
 
                     if(count($dadosVeiculares) == 0){
@@ -88,8 +85,9 @@ class ConsultarCadastrosController extends Controller
                     }else{
                         return ['ref' => 1, $query , $dadosVeiculares];
                     }
+
                 }else{
-                    // dd($query);
+
                     $arrayVeic = array();
                     for($b = 0 ; $b < count($query) ; $b++){
                         $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[$b]['CODCLIENTE'])->get();
@@ -100,6 +98,30 @@ class ConsultarCadastrosController extends Controller
                     }
                     return [$query , $arrayVeic, 'ref' => 2];
                 }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'ratr'){
+
+                $query = Clientes::where('RATR', '=', $request['arrayBusca'][0]['ratrConsulta'])->get();
+
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else{
+
+                    $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[0]['CODCLIENTE'])->get();
+
+                    if(count($dadosVeiculares) == 0){
+
+                        return [$query, 'ref' => 0];
+
+                    }else{
+
+                        return[$query, $dadosVeiculares];
+                    }
+    
+                }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'cpf'){
+
             }
         }else{
 

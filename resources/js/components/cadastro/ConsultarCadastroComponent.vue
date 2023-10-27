@@ -155,62 +155,112 @@
         methods:{
             consultar(){
                 let self = this
+
                 if(self.tipoConsulta == 'cliente'){
+                    if(self.pesquisaCliente == null || self.pesquisaCliente == ''){
+                        toastr.warning('Selecione o tipo de pesquisa por cliente.', 'Atenção!', {timeout: 3000, progressBar: true})
+                    }else{
 
-                    axios.post('consulta-cadastro-cliente',{arrayBusca: self.arrayBusca})
-                    .then((response)=> {
-                        console.log('Response:', response.data)
-                        if(response.data.ref == 0){
-                            
-                            self.itemsConsultaCliente.push({
-                                nome: response.data[0][0].NOME,
-                                ratr: response.data[0][0].RATR,
-                                cpf: response.data[0][0].CPFCNPJ,
-                                dtNascimento: response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
-                                dtCadastro: response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
-                                permissao: null,
-                                placa: null,
-                                categoria: null,
-                            })
-                            self.temCliente = true
-
-                        }else if(response.data.ref == 1){
-                            self.itemsConsultaCliente.push({
-                                nome: response.data[0][0].NOME,
-                                ratr: response.data[0][0].RATR,
-                                cpf: response.data[0][0].CPFCNPJ,
-                                dtNascimento: response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
-                                dtCadastro: response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
-                                permissao: response.data[1][0].PERMISSAO,
-                                placa: response.data[1][0].PLACA,
-                                categoria: response.data[1][0].CATEGORIA,
-                            })
-                            self.temCliente = true
-                        }else if(response.data.ref == 2){
-                            console.log('aqui: ',self.itemsConsultaCliente)
-                            console.log('aqui: ',response.data.length)
-                            for(var n = 0 ; n < response.data[0].length ; n++){
-                                self.itemsConsultaCliente.push({
-                                    nome: response.data[0][n].NOME,
-                                    ratr: response.data[0][n].RATR,
-                                    cpf: response.data[0][n].CPFCNPJ,
-                                    dtNascimento: response.data[0][n].NASCIMENTO.split('-').reverse().join('/'),
-                                    dtCadastro: response.data[0][n].DTCADASTRO.split('-').reverse().join('/'),
-                                    permissao: response.data[1][n][0].PERMISSAO,
-                                    placa: response.data[1][n][0].PLACA,
-                                    categoria: response.data[1][n][0].CATEGORIA,
-                                })
-                                self.temCliente = true
-                                    console.log('aquiDps: ',self.itemsConsultaCliente)
+                        self.itemsConsultaCliente = []
+                        self.isBusyTableConsultaCliente = true
+                        axios.post('consulta-cadastro-cliente',{arrayBusca: self.arrayBusca})
+                        .then((response)=> {
+    
+                            if(self.pesquisaCliente == 'nome'){
+                                if(response.data.error == 1){
+                                    toastr.warning('Nome não encontrado na base de dados.', 'Atenção!', {timeout: 3000, progesseBar: true})
+                                    self.nomeConsulta = null
+                                    $("input#nomeConsulta").addClass('modal-primary-focus').focus()
+                                    self.isBusyTableConsultaCliente = false
+                                }else if(response.data.ref == 0){
+                                    
+                                    self.itemsConsultaCliente.push({
+                                        nome: response.data[0][0].NOME,
+                                        ratr: response.data[0][0].RATR,
+                                        cpf: response.data[0][0].CPFCNPJ,
+                                        dtNascimento: response.data[0][0].NASCIMENTO == null ? response.data[0][0].NASCIMENTO : response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
+                                        dtCadastro: response.data[0][0].DTCADASTRO == null ? response.data[0][0].DTCADASTRO : response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
+                                        permissao: null,
+                                        placa: null,
+                                        categoria: null,
+                                    })
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+    
+                                }else if(response.data.ref == 1){
+                                    self.itemsConsultaCliente.push({
+                                        nome: response.data[0][0].NOME,
+                                        ratr: response.data[0][0].RATR,
+                                        cpf: response.data[0][0].CPFCNPJ,
+                                        dtNascimento: response.data[0][0].NASCIMENTO == null ? response.data[0][0].NASCIMENTO : response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
+                                        dtCadastro: response.data[0][0].DTCADASTRO == null ? response.data[0][0].DTCADASTRO : response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
+                                        permissao: response.data[1][0].PERMISSAO,
+                                        placa: response.data[1][0].PLACA,
+                                        categoria: response.data[1][0].CATEGORIA,
+                                    })
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }else if(response.data.ref == 2){
+                                    for(var n = 0 ; n < response.data[0].length ; n++){
+                                        self.itemsConsultaCliente.push({
+                                            nome: response.data[0][n].NOME,
+                                            ratr: response.data[0][n].RATR,
+                                            cpf: response.data[0][n].CPFCNPJ,
+                                            dtNascimento: response.data[0][n].NASCIMENTO == null ? response.data[0][n].NASCIMENTO : response.data[0][n].NASCIMENTO.split('-').reverse().join('/'),
+                                            dtCadastro: response.data[0][n].DTCADASTRO == null ? response.data[0][n].DTCADASTRO : response.data[0][n].DTCADASTRO.split('-').reverse().join('/'),
+                                            permissao: response.data[1][n][0].PERMISSAO,
+                                            placa: response.data[1][n][0].PLACA,
+                                            categoria: response.data[1][n][0].CATEGORIA,
+                                        })
+                                        self.temCliente = true
+                                        self.isBusyTableConsultaCliente = false
+                                    }
+                                }
+    
+                            }else if(self.pesquisaCliente == 'ratr'){
+                                if(response.data.error == 1){
+                                    toastr.warning('RATR não encontrado na base de dados.', 'Atenção!', {timeout: 3000, progesseBar: true})
+                                    $("input#ratrConsulta").addClass('modal-primary-focus').focus()
+                                    self.ratrConsulta = null
+                                    self.isBusyTableConsultaCliente = false
+                                }else if(response.data.ref == 0){
+                                    self.itemsConsultaCliente.push({
+                                        nome: response.data[0][0].NOME,
+                                        ratr: response.data[0][0].RATR,
+                                        cpf: response.data[0][0].CPFCNPJ,
+                                        dtNascimento: response.data[0][0].NASCIMENTO == null ? response.data[0][0].NASCIMENTO : response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
+                                        dtCadastro: response.data[0][0].DTCADASTRO == null ? response.data[0][0].DTCADASTRO : response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
+                                        permissao: null,
+                                        placa: null,
+                                        categoria: null,
+                                    })
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+                                    self.itemsConsultaCliente.push({
+                                        nome: response.data[0][0].NOME,
+                                        ratr: response.data[0][0].RATR,
+                                        cpf: response.data[0][0].CPFCNPJ,
+                                        dtNascimento: response.data[0][0].NASCIMENTO == null ? response.data[0][0].NASCIMENTO : response.data[0][0].NASCIMENTO.split('-').reverse().join('/'),
+                                        dtCadastro: response.data[0][0].DTCADASTRO == null ? response.data[0][0].DTCADASTRO : response.data[0][0].DTCADASTRO.split('-').reverse().join('/'),
+                                        permissao: response.data[1][0].PERMISSAO,
+                                        placa: response.data[1][0].PLACA,
+                                        categoria: response.data[1][0].CATEGORIA,
+                                    })
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
                             }
-                        }
-                    }).catch((error) => {
-                        console.log('Error:', error)
-                    })
+                        }).catch((error) => {
+                            console.log('Error:', error)
+                        })
+
+                    }
 
                 }else{
 
                 }
+                
             },
 
             selecionaCliente(row){
@@ -233,6 +283,7 @@
                 </b-col>
 
             </b-row>
+
             <b-row class="m-2">
 
                 <b-col>
@@ -246,6 +297,7 @@
                 </b-col>
 
             </b-row>
+
             <b-row class="m-2" v-if="tipoConsulta != null" id="consulta">
 
                 <b-col lg="2" class="mt-1">
@@ -308,7 +360,7 @@
 
             <b-row class="m-2 justify-content-end">
                 <b-col lg="3">
-                    <b-button variant="primary" v-if="tipoConsulta != '' && (this.optionsPesquisaCliente != null || this.optionsPesquisaFuncionario != null)" @click="consultar()">Consultar</b-button>
+                    <b-button variant="primary" v-if="tipoConsulta != null" @click="consultar()">Consultar</b-button>
                 </b-col>
             </b-row>
 
