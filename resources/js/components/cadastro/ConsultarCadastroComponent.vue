@@ -150,7 +150,29 @@
             }
         },
         mounted() {
+            let self = this
             console.log('Component mounted.')
+
+            function formatDate(date) {
+                var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+                if (month.length < 2){
+                    month = '0' + month;
+                } 
+                if (day.length < 2) {
+                    day = '0' + day;
+                }
+
+                return [year, month, day].join('-');
+            }
+
+            var today = new Date();
+                
+            self.dtCadastroAte = formatDate(today)
+            self.dtNascimentoAte = formatDate(today)
         },
         methods:{
             consultar(){
@@ -160,13 +182,14 @@
                     if(self.pesquisaCliente == null || self.pesquisaCliente == ''){
                         toastr.warning('Selecione o tipo de pesquisa por cliente.', 'Atenção!', {timeout: 3000, progressBar: true})
                     }else{
-
+                        self.limpaConsulta()
                         self.itemsConsultaCliente = []
                         self.isBusyTableConsultaCliente = true
                         axios.post('consulta-cadastro-cliente',{arrayBusca: self.arrayBusca})
                         .then((response)=> {
     
                             if(self.pesquisaCliente == 'nome'){
+
                                 if(response.data.error == 1){
                                     toastr.warning('Nome não encontrado na base de dados.', 'Atenção!', {timeout: 3000, progesseBar: true})
                                     self.nomeConsulta = null
@@ -218,6 +241,7 @@
                                 }
     
                             }else if(self.pesquisaCliente == 'ratr'){
+
                                 if(response.data.error == 1){
                                     toastr.warning('RATR não encontrado na base de dados.', 'Atenção!', {timeout: 3000, progesseBar: true})
                                     $("input#ratrConsulta").addClass('modal-primary-focus').focus()
@@ -250,6 +274,150 @@
                                     self.temCliente = true
                                     self.isBusyTableConsultaCliente = false
                                 }
+
+                            }else if(self.pesquisaCliente == 'cpf'){
+
+                                if(response.data.error == 1){
+                                    toastr.warning('CPF não encontrado na base de dados.', 'Atenção!', {timeout: 3000, progesseBar: true})
+                                    $("input#cpfConsulta").addClass('modal-primary-focus').focus()
+                                    self.cpfConsulta = null
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+
+                                    self.itemsConsultaCliente.push({
+                                        nome: response.data[0].NOME,
+                                        ratr: response.data[0].RATR == null ? null : response.data[0].RATR,
+                                        cpf: response.data[0].CPFCNPJ,
+                                        dtNascimento: response.data[0].NASCIMENTO == null ? response.data[0].NASCIMENTO : response.data[0].NASCIMENTO.split('-').reverse().join('/'),
+                                        dtCadastro: response.data[0].DTCADASTRO == null ? response.data[0].DTCADASTRO : response.data[0].DTCADASTRO.split('-').reverse().join('/'),
+                                        permissao: response.data[0].PERMISSAO == null ? null : response.data[0].PERMISSAO,
+                                        placa: response.data[0].PLACA == null ? null : response.data[0].PLACA,
+                                        categoria: response.data[0].CATEGORIA == null ? null : response.data[0].CATEGORIA,
+                                    })
+
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
+                            }else if(self.pesquisaCliente == 'dtNascimento'){
+
+                                if(response.data.error == 1){
+                                    toastr.warning('Não há registro no período selecionado.','Atenção!', {timeOut: 3000, progresseBar: true})
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+
+                                    for(var r = 0 ; r < response.data.length ; r++){
+                                        self.itemsConsultaCliente.push({
+                                            nome: response.data[r].NOME,
+                                            ratr: response.data[r].RATR,
+                                            cpf: response.data[r].CPFCNPJ,
+                                            dtNascimento: response.data[r].NASCIMENTO == null ? response.data[r].NASCIMENTO : response.data[r].NASCIMENTO.split('-').reverse().join('/'),
+                                            dtCadastro: response.data[r].DTCADASTRO == null ? response.data[r].DTCADASTRO : response.data[r].DTCADASTRO.split('-').reverse().join('/'),
+                                            permissao: response.data[r].PERMISSAO,
+                                            placa: response.data[r].PLACA,
+                                            categoria: response.data[r].CATEGORIA,
+                                        })
+                                    }
+    
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
+
+                            }else if(self.pesquisaCliente == 'dtCadastro'){
+
+                                if(response.data.error == 1){
+                                    toastr.warning('Não há registro no período selecionado.','Atenção!', {timeOut: 3000, progresseBar: true})
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+
+                                    for(var r = 0 ; r < response.data.length ; r++){
+                                        self.itemsConsultaCliente.push({
+                                            nome: response.data[r].NOME,
+                                            ratr: response.data[r].RATR,
+                                            cpf: response.data[r].CPFCNPJ,
+                                            dtNascimento: response.data[r].NASCIMENTO == null ? response.data[r].NASCIMENTO : response.data[r].NASCIMENTO.split('-').reverse().join('/'),
+                                            dtCadastro: response.data[r].DTCADASTRO == null ? response.data[r].DTCADASTRO : response.data[r].DTCADASTRO.split('-').reverse().join('/'),
+                                            permissao: response.data[r].PERMISSAO,
+                                            placa: response.data[r].PLACA,
+                                            categoria: response.data[r].CATEGORIA,
+                                        })
+                                    }
+    
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
+
+                            }else if(self.pesquisaCliente == 'permissao'){
+
+                                if(response.data.error == 1){
+                                    toastr.warning('Não existe essa permissao na base de dados.','Atenção!', {timeOut: 3000, progresseBar: true})
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+
+                                    for(var r = 0 ; r < response.data.length ; r++){
+                                        self.itemsConsultaCliente.push({
+                                            nome: response.data[r].NOME,
+                                            ratr: response.data[r].RATR,
+                                            cpf: response.data[r].CPFCNPJ,
+                                            dtNascimento: response.data[r].NASCIMENTO == null ? response.data[r].NASCIMENTO : response.data[r].NASCIMENTO.split('-').reverse().join('/'),
+                                            dtCadastro: response.data[r].DTCADASTRO == null ? response.data[r].DTCADASTRO : response.data[r].DTCADASTRO.split('-').reverse().join('/'),
+                                            permissao: response.data[r].PERMISSAO,
+                                            placa: response.data[r].PLACA,
+                                            categoria: response.data[r].CATEGORIA,
+                                        })
+                                    }
+    
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
+                                
+                            }else if(self.pesquisaCliente == 'placa'){
+
+                                if(response.data.error == 1){
+                                    toastr.warning('Não existe essa placa na base de dados.','Atenção!', {timeOut: 3000, progresseBar: true})
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+
+                                    for(var r = 0 ; r < response.data.length ; r++){
+                                        self.itemsConsultaCliente.push({
+                                            nome: response.data[r].NOME,
+                                            ratr: response.data[r].RATR,
+                                            cpf: response.data[r].CPFCNPJ,
+                                            dtNascimento: response.data[r].NASCIMENTO == null ? response.data[r].NASCIMENTO : response.data[r].NASCIMENTO.split('-').reverse().join('/'),
+                                            dtCadastro: response.data[r].DTCADASTRO == null ? response.data[r].DTCADASTRO : response.data[r].DTCADASTRO.split('-').reverse().join('/'),
+                                            permissao: response.data[r].PERMISSAO,
+                                            placa: response.data[r].PLACA,
+                                            categoria: response.data[r].CATEGORIA,
+                                        })
+                                    }
+    
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
+                                
+                            }else if(self.pesquisaCliente == 'categoria'){
+
+                                if(response.data.error == 1){
+                                    toastr.warning('Não existe cadastros nessa categoria.','Atenção!', {timeOut: 3000, progresseBar: true})
+                                    self.isBusyTableConsultaCliente = false
+                                }else{
+
+                                    for(var r = 0 ; r < response.data.length ; r++){
+                                        self.itemsConsultaCliente.push({
+                                            nome: response.data[r].NOME,
+                                            ratr: response.data[r].RATR,
+                                            cpf: response.data[r].CPFCNPJ,
+                                            dtNascimento: response.data[r].NASCIMENTO == null ? response.data[r].NASCIMENTO : response.data[r].NASCIMENTO.split('-').reverse().join('/'),
+                                            dtCadastro: response.data[r].DTCADASTRO == null ? response.data[r].DTCADASTRO : response.data[r].DTCADASTRO.split('-').reverse().join('/'),
+                                            permissao: response.data[r].PERMISSAO,
+                                            placa: response.data[r].PLACA,
+                                            categoria: response.data[r].CATEGORIA,
+                                        })
+                                    }
+    
+                                    self.temCliente = true
+                                    self.isBusyTableConsultaCliente = false
+                                }
+                                
                             }
                         }).catch((error) => {
                             console.log('Error:', error)
@@ -265,6 +433,21 @@
 
             selecionaCliente(row){
 
+            },
+
+            limpaConsulta(){
+                let self = this
+
+                self.nomeConsulta = null
+                self.dtCadastroDe = null
+                self.dtCadastroAte = null
+                self.ratrConsulta = null
+                self.cpfConsulta = null
+                self.dtNascimentoDe = null
+                self.dtNascimentoAte = null
+                self.permissaoConsulta = null
+                self.placaConsulta = null
+                self.categoriaConsulta = null
             }
         }
     }

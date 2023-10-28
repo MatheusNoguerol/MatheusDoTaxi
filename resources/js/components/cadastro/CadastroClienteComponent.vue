@@ -16,6 +16,11 @@ export default {
       cliente : '',
       fieldsClientes: [
         {
+          key: 'codCliente',
+          label: 'Cod',
+          sortable: true
+        },
+        {
           key: 'nome',
           label: 'Nome',
           sortable: true
@@ -270,6 +275,8 @@ export default {
             msg: response.data[i]['MSG']
           })
         }
+
+        console.log('items: ', self.itemsClientes)
         self.isBusyTableClientes = false
       }).catch((error) =>{
         console.log('Error: ', error)
@@ -369,7 +376,11 @@ export default {
     selecionaCliente(row){
       let self = this
       console.log('row',row.item)
+
       self.codCliente = row.item.codCliente
+      console.log('rowitenm:', row.item.codCliente)
+
+      console.log('codcliente:', self.codCliente)
       self.nome = row.item.nome
       self.email = row.item.email
       self.dtCadastro = row.item.dtCadastro
@@ -732,6 +743,7 @@ export default {
           }else{
             for(var i = 0 ; i < response.data.length ; i++){
               self.itemsClientes.push({
+                codCliente: response.data[i]['CODCLIENTE'],
                 nome: response.data[i]['NOME'],
                 cpfCnpj: response.data[i]['CPFCNPJ'],
               })

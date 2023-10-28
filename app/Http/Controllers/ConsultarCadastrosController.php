@@ -121,6 +121,70 @@ class ConsultarCadastrosController extends Controller
                 }
 
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'cpf'){
+                $query = Clientes::where('CPFCNPJ', '=', $request['arrayBusca'][0]['cpfConsulta'])->join('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                if(count($query) == 0){
+                    $query2 = clientes::where('CPFCNPJ', '=', $request['arrayBusca'][0]['cpfConsulta'])->get();
+
+                    if(count($query2) == 0){
+                        return ['error' => 1];
+                    }else{
+                        return $query2;
+                    }
+                }else{
+                    return $query;
+                }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'dtNascimento'){
+
+                $query = Clientes::whereBetween('clientes.NASCIMENTO', [$request['arrayBusca'][0]['dtNascimentoDe'], $request['arrayBusca'][0]['dtNascimentoAte']])->leftJoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else{
+                    return $query;
+                }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'dtCadastro'){
+
+                $query = Clientes::whereBetween('clientes.DTCADASTRO', [$request['arrayBusca'][0]['dtCadastroDe'], $request['arrayBusca'][0]['dtCadastroAte']])->leftJoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else{
+                    return $query;
+                }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'permissao'){
+                dd($request);
+
+                $query = DadosVeiculares::where('PERMISSAO', '=' , $request['arrayBusca'][0]['permissaoConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else{
+                    return $query;
+                }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'placa'){
+
+                $query = DadosVeiculares::where('PLACA', '=' , $request['arrayBusca'][0]['placaConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else{
+                    return $query;
+                }
+
+            }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'categoria'){
+
+                $query = DadosVeiculares::where('CATEGORIA', '=' , $request['arrayBusca'][0]['categoriaConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                if(count($query) == 0){
+                    return ['error' => 1];
+                }else{
+                    return $query;
+                }
 
             }
         }else{
