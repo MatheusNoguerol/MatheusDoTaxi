@@ -23,6 +23,11 @@ class ClientesController extends Controller
     
     public function salvaCliente(Request $request){
         // dd($request);
+        $verificaNomeRepetido = Clientes::where('NOME', '=', $request['dados'][0]['nome'])->get();
+
+        if(count($verificaNomeRepetido) != 0){
+            return ['error' => 1 , 'msg' => 'Cliente já cadastrado.'];
+        }
         $cliente = new Clientes;
         
         $cliente->NOME = $request['dados'][0]['nome'];
@@ -47,7 +52,7 @@ class ClientesController extends Controller
 
         if($request['dados'][0]['placa'] == null && $request['dados'][0]['permissao'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null && $request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
             
-            return $cliente;
+            return [$cliente, 'error' => 0];
 
         }else if($request['dados'][0]['placa'] == null && $request['dados'][0]['permissao'] == null && $request['dados'][0]['chassi'] == null && $request['dados'][0]['renavan'] == null && $request['dados'][0]['anoModelo'] == null && $request['dados'][0]['anoFab'] == null && $request['dados'][0]['combustivel'] == null && $request['dados'][0]['possuiGnv'] == null && $request['dados'][0]['gnv'] == null && $request['dados'][0]['categoria'] == null && $request['dados'][0]['ultimoLa'] == null &&$request['dados'][0]['possuiAlienacao'] == null && $request['dados'][0]['bancoAlienado'] == null && $request['dados'][0]['vencApolice'] == null && $request['dados'][0]['atualSeguradora'] == null){
             
@@ -66,7 +71,7 @@ class ClientesController extends Controller
         
             $queryInfoFi->save();
             
-            return [$cliente, $queryInfoFi];
+            return [$cliente, $queryInfoFi, 'error' => 0];
 
         }else if($request['dados'][0]['nmrbanco'] == null && $request['dados'][0]['banco'] == null && $request['dados'][0]['agencia'] == null && $request['dados'][0]['conta'] == null && $request['dados'][0]['titular'] == null && $request['dados'][0]['cpfTitular'] == null && $request['dados'][0]['tipoConta'] == null && $request['dados'][0]['tipoChave'] == null && $request['dados'][0]['chave'] == null){
 
@@ -91,7 +96,7 @@ class ClientesController extends Controller
             
             $dadosVeiculares->save();
             
-            return [$cliente, $dadosVeiculares];
+            return [$cliente, $dadosVeiculares, 'error' => 0];
             
         }else{
 
@@ -131,7 +136,7 @@ class ClientesController extends Controller
             
             $dadosVeiculares->save();
 
-            return [$cliente, $queryInfoFi, $dadosVeiculares];
+            return [$cliente, $queryInfoFi, $dadosVeiculares, 'error' => 0];
 
         }
     }    
@@ -468,7 +473,7 @@ class ClientesController extends Controller
     }
 
     public function buscaCliente(Request $request){ 
-        $query = Clientes::where('CODCLIENTE', '=', $request->busca)->orWhere('NOME', '=', $request->busca)->orWhere('CPFCNPJ', '=', $request->busca)->get();
+        $query = Clientes::where('clientes.CODCLIENTE', '=', $request->busca)->orWhere('clientes.NOME', '=', $request->busca)->orWhere('clientes.CPFCNPJ', '=', $request->busca)->leftjoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->leftjoin('info_fi_clientes', 'clientes.CODCLIENTE', '=', 'info_fi_clientes.CODCLIENTE')->get();
         
         if(count($query) == 0){
             return ['error' => '1' , 'msg' => 'Cliente não encontrado na base de dados.'];

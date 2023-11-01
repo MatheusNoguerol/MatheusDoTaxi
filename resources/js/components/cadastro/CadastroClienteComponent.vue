@@ -275,8 +275,6 @@ export default {
             msg: response.data[i]['MSG']
           })
         }
-
-        console.log('items: ', self.itemsClientes)
         self.isBusyTableClientes = false
       }).catch((error) =>{
         console.log('Error: ', error)
@@ -292,10 +290,15 @@ export default {
       }else{
         axios.post('salva-cliente',{dados: self.dadosCriaCliente})
         .then((response) => {
-  
-          self.preLoad()
-          toastr.success(`Cliente  ${self.nome }  criado.`, 'Atenção!' ,{timeOut: 3000, progesseBar: true})
-          self.limpaDados()
+          
+          if(response.data.error == 1){
+            toastr.warning('Cliente já cadastrado.', 'Atenção!', { timeOut: 3000, progesseBar: true})
+          }else{
+
+            self.preLoad()
+            toastr.success(`Cliente  ${self.nome }  criado.`, 'Atenção!' ,{timeOut: 3000, progesseBar: true})
+            self.limpaDados()
+          }
   
         })
         .catch((error) => {
@@ -733,22 +736,61 @@ export default {
 
         axios.post('busca-cliente', {busca: self.campoBuscaClientes})
         .then((response) => {
-          console.log(response.data.error)
 
           if(response.data.error == 1){
             
             toastr.warning(`Cliente não existe na base de dados.`, 'Atenção!',{timeOut: 3000, progesseBar: true})
             self.limpaBuscaClientes()
             self.isBusyTableClientes = true
+
           }else{
             for(var i = 0 ; i < response.data.length ; i++){
               self.itemsClientes.push({
                 codCliente: response.data[i]['CODCLIENTE'],
                 nome: response.data[i]['NOME'],
                 cpfCnpj: response.data[i]['CPFCNPJ'],
+                nascimento: response.data[i]['NASCIMENTO'],
+                ratr: response.data[i]['RATR'],
+                email: response.data[i]['EMAIL'],
+                telefone: response.data[i]['TELEFONE'],
+                tipoCliente: response.data[i]['TIPOCLIENTE'],
+                dtCadastro: response.data[i]['DTCADASTRO'],
+                cep: response.data[i]['CEP'],
+                logradouro: response.data[i]['LOGRADOURO'],
+                numero: response.data[i]['NUMERO'],
+                complemento: response.data[i]['COMPLEMENTO'],
+                uf: response.data[i]['UF'],
+                municipio: response.data[i]['MUNICIPIO'],
+                bairro: response.data[i]['BAIRRO'],
+                msg: response.data[i]['MSG'],
+                placa: response.data[i]['PLACA'],
+                permissao: response.data[i]['PERMISSAO'],
+                renavan: response.data[i]['RENAVAN'],
+                chassi: response.data[i]['CHASSI'],
+                anoModelo: response.data[i]['ANOMODELO'],
+                anoFab: response.data[i]['ANOFAB'],
+                combustivel: response.data[i]['COMBUSTIVEL'],
+                possuiGnv: response.data[i]['TEMGAS'],
+                gnv: response.data[i]['CILINDRO'],
+                categoria: response.data[i]['CATEGORIA'],
+                possuiAlienacao: response.data[i]['TEMALIENACAO'],
+                bancoAlienado: response.data[i]['BANCOALIENADO'],
+                ultimoLa: response.data[i]['ULTIMOLA'],
+                atualSeguradora: response.data[i]['ATUALSEGURADORA'],
+                vencApolice: response.data[i]['VENCAPOLICE'],
+                nmrbanco: response.data[i]['NOBANCO'],
+                banco: response.data[i]['BANCO'],
+                agencia: response.data[i]['AGENCIA'],
+                conta: response.data[i]['CONTA'],
+                titular: response.data[i]['TITULAR'],
+                cpfTitular: response.data[i]['CPFTITULAR'],
+                tipoConta: response.data[i]['TIPOCONTA'],
+                tipoChave: response.data[i]['TIPOCHAVE'],
+                chave: response.data[i]['CHAVE'],
               })
             }
             self.isBusyTableClientes = false
+
           }
         }).catch((error) => {
           console.log('Error:', error)
