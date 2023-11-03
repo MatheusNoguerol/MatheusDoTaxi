@@ -144,7 +144,9 @@ export default {
       campoBuscaClientes: null,
       isBusyTableClientes: false,
       permissao: null,
-      ratr: null
+      ratr: null,
+      modalConfimacaoEdita: false,
+      modalConfimacaoDeleta: false
     }
   },
 
@@ -829,7 +831,7 @@ export default {
       <form method="POST">
         <div class="container">
           <b-card>
-            <b-tabs content-class="mt-3" no-body>
+            <b-tabs content-class="mt-3" class="rounded" no-body>
               <b-tab title="Dados Pessoais" active no-body>
                 <b-row class="my-2">
                   
@@ -1034,10 +1036,41 @@ export default {
                     <b-form-input type="text" id="atualSeguradora" v-model="atualSeguradora"></b-form-input>
                   </b-col> 
 
+                </b-row>
+
+                <b-row class="my-2">
+                  <hr class="secondary m-4 w-100">
+                </b-row>
+
+                <b-row>
+                  <h3 class="pl-4 text-primary"><b>Área securitária</b></h3>
+                </b-row>
+
+                <b-row class="my-2">
+
                   <b-col lg="3">
                     <label for="vencimentoApolice" class="form-label">Venc. Apolice</label>
                     <b-form-input type="date" v-model="vencApolice" class="form-control" id="vencimentoApolice" max="9999-12-31"></b-form-input>
                   </b-col>
+
+                  <b-col lg="4">
+                    <label for="nomeSegurado">Segurado</label>
+                    <b-form-input type="text" id="nomeSegurado" v-model="nomeSegurado"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="3">
+                    <label for="apolice">Apólice</label>
+                    <b-form-input type="text" id="apolice" v-model="apolice"></b-form-input>
+                  </b-col>
+
+                  <b-col lg="2">
+                    <label for="comissao">Comissão</label>
+                    <b-input-group append="%">
+                      <b-form-input v-model="comissao" id="comissao"></b-form-input>
+                    </b-input-group>
+                  </b-col>
+
+
 
                 </b-row>
 
@@ -1078,7 +1111,7 @@ export default {
 
                   <b-col lg="3">
                     <label for="cpfTitular" class="form-label">CPF Titular</label>
-                    <b-form-input type="text" v-model="cpfTitular" name="cpfTitular" class="form-control" v-mask="'###.###.###-##'" id="cpfTitular"></b-form-input>
+                    <b-form-input v-model="cpfTitular" name="cpfTitular" class="form-control" v-mask="'###.###.###-##'" id="cpfTitular"></b-form-input>
                   </b-col>
 
                   <b-col lg="4">
@@ -1203,8 +1236,8 @@ export default {
             <div class="mb-3">
               <b-button variant="light" v-if="temClienteSelecionado == false" @click.prevent="salvaCliente()" id="btn-selecao">Cadastrar</b-button>
 
-              <b-button variant="success" v-if="temClienteSelecionado == true" @click.prevent="editaCliente()" id="btn-selecao">Editar</b-button>
-              <b-button variant="danger" v-if="temClienteSelecionado == true" @click.prevent="excluiCliente()" id="btn-selecao" >Deletar</b-button>
+              <b-button variant="success" v-if="temClienteSelecionado == true" v-b-modal.modal-confimacao-edita id="btn-selecao">Editar</b-button>
+              <b-button variant="danger" v-if="temClienteSelecionado == true" v-b-modal.modal-confimacao-deleta id="btn-selecao" >Deletar</b-button>
               <div style="font-size: 3.3rem;" v-if="this.nome != null || this.temClienteSelecionado == true">
 
                 <div style="font-size: 3.3rem;" v-if="this.nome != null">
@@ -1299,6 +1332,13 @@ export default {
       </div>
     </b-modal>
 
+    <b-modal v-model="modalConfimacaoEdita" id="modal-confimacao-edita" size="md" ok-title="Sim" ok-only @ok="editaCliente()" no-close-on-backdrop no-close-on-esc>
+      <h4 class="text-center"><b>Você deseja realmente <span class="text-danger" style="text-transform: uppercase;">editar</span> o cadastro do cliente?</b></h4>
+    </b-modal>
+
+    <b-modal v-model="modalConfimacaoDeleta" id="modal-confimacao-deleta" size="md" ok-title="Sim" ok-only @ok="excluiCliente()" no-close-on-backdrop no-close-on-esc>
+      <h4 class="text-center"><b>Você deseja realmente <span class="text-danger" style="text-transform: uppercase;">deletar</span> o cadastro do cliente?</b></h4>
+    </b-modal>
 
   </div>
 </template>
