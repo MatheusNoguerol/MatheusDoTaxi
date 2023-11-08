@@ -127,7 +127,48 @@
                 perPageConsultaFuncionario: 5,
                 currentPageConsultaFuncionario: 1,
                 temFuncionarioSelecionado: false,
-                hoje: null
+                hoje: null,
+                modalInfoCadastro: false,
+                codClienteSelecionado: null,
+                nomeSelecionado: null,
+                cpfCnpjSelecionado: null,
+                nascimentoSelecionado: null,
+                ratrSelecionado: null,
+                emailSelecionado: null,
+                telefoneSelecionado: null,
+                tipoClienteSelecionado: null,
+                dtCadastroSelecionado: null,
+                cepSelecionado: null,
+                logradouroSelecionado: null,
+                numeroSelecionado: null,
+                complementoSelecionado: null,
+                ufSelecionado: null,
+                municipioSelecionado: null,
+                bairroSelecionado: null,
+                msgSelecionado: null,
+                placaSelecionado: null,
+                permissaoSelecionado: null,
+                renavanSelecionado: null,
+                chassiSelecionado: null,
+                anoModelo: null,
+                anoFab: null,
+                combustivel: null,
+                possuiGnv: null,
+                gnv: null,
+                categoria: null,
+                possuiAlienacaoSelecionado: null,
+                bancoAlienadoSelecionado: null,
+                ultimoLaSelecionado: null,
+                atualSeguradoraSelecionado: null,
+                nmrbancoSelecionado: null,
+                bancoSelecionado: null,
+                agenciaSelecionado: null,
+                contaSelecionado: null,
+                titularSelecionado: null,
+                cpfTitularSelecionado: null,
+                tipoContaSelecionado: null,
+                tipoChaveSelecionado: null,
+                chaveSelecionado: null,
             }
         },
 
@@ -223,13 +264,13 @@
                                             conta: response.data[t].CONTA,
                                             cpfCnpj: response.data[t].CPFCNPJ,
                                             cpfTitular: response.data[t].cpfTitular,
-                                            dtCadastro: response.data[t].DTCADASTRO,
+                                            dtCadastro: response.data[t].DTCADASTRO == null ? null : response.data[t].DTCADASTRO.split('-').reverse().join('/'),
                                             email: response.data[t].EMAIL,
                                             id: response.data[t].ID,
                                             logradouro: response.data[t].LOGRADOURO,
                                             msg: response.data[t].MSG,
                                             municipio: response.data[t].MUNICIPIO,
-                                            nascimento: response.data[t].NASCIMENTO,
+                                            nascimento: response.data[t].NASCIMENTO == null ? null : response.data[t].NASCIMENTO.split('-').reverse().join('/'),
                                             noBanco: response.data[t].NOBANCO,
                                             nome: response.data[t].NOME,
                                             numero: response.data[t].NUMERO,
@@ -247,7 +288,7 @@
                                             titular: response.data[t].TITULAR,
                                             uf: response.data[t].UF,
                                             ultimoLa: response.data[t].ULTIMOLA,
-                                            vencApolice: response.data[t].VENCAPOLICE,
+                                            vencApolice: response.data[t].VENCAPOLICE == null ? null : response.data[t].VENCAPOLICE.split('-').reverse().join('/'),
                                         })
 
                                     }
@@ -447,6 +488,49 @@
                 let self = this
 
                 console.log('row:', row.item)
+
+
+
+                self.codClienteSelecionado = row.item.codCliente
+                self.nomeSelecionado = row.item.nome
+                self.cpfCnpjSelecionado = row.item.cpfCnpj
+                self.nascimentoSelecionado = row.item.nascimento
+                self.ratrSelecionado = row.item.ratr
+                self.emailSelecionado = row.item.email
+                self.telefoneSelecionado = row.item.telefone
+                self.tipoClienteSelecionado = row.item.tipoCliente
+                self.dtCadastroSelecionado = row.item.dtCadastro
+                self.cepSelecionado = row.item.cep
+                self.logradouroSelecionado = row.item.logradouro
+                self.numeroSelecionado = row.item.numero
+                self.complementoSelecionado = row.item.complemento
+                self.ufSelecionado = row.item.uf
+                self.municipioSelecionado = row.item.municipio
+                self.bairroSelecionado = row.item.bairro
+                self.msgSelecionado = row.item.msg
+                self.placaSelecionado = row.item.placa
+                self.permissaoSelecionado = row.item.permissao
+                self.renavanSelecionado = row.item.renavan
+                self.chassiSelecionado = row.item.chassi
+                self.anoModelo = row.item.anoModelo
+                self.anoFab = row.item.anoFab
+                self.combustivel = row.item.combustivel
+                self.possuiGnv = row.item.temGas
+                self.gnv = row.item.cilindro
+                self.categoria = row.item.categoria
+                self.possuiAlienacaoSelecionado = row.item.temAlienacao
+                self.bancoAlienadoSelecionado = row.item.bancoAlienado
+                self.ultimoLaSelecionado = row.item.ultimoLa
+                self.atualSeguradoraSelecionado = row.item.atualSeguradora
+                self.nmrbancoSelecionado = row.item.noBanco
+                self.bancoSelecionado = row.item.banco
+                self.agenciaSelecionado = row.item.agencia
+                self.contaSelecionado = row.item.conta
+                self.titularSelecionado = row.item.titular
+                self.cpfTitularSelecionado = row.item.cpfTitular
+                self.tipoContaSelecionado = row.item.tipoConta
+                self.tipoChaveSelecionado = row.item.tipoChave
+                self.chaveSelecionado = row.item.chave
             },
 
             limpaConsulta(){
@@ -604,7 +688,7 @@
                         </template>
 
                         <template #cell(acoes)="row">
-                            <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Visualizar cadastro" variant="outline-primary" @click.prevent="selecionaCliente(row)">
+                            <b-button size="sm" class="m-1 p-1" data-bs-toggle="tooltip" title="Visualizar cadastro" variant="outline-primary" v-b-modal.modal-info-cadastro @click.prevent="selecionaCliente(row)">
                                 <b-icon icon="eye"></b-icon>
                             </b-button>
                         </template>
@@ -675,9 +759,91 @@
 
             </b-row>
 
-            <b-modal id="modal-info-cadastro" hide-footer no-close-on-backdrop no-close-on-esc v-model="modalInfoCadastro">
+            <b-modal id="modal-info-cadastro" size="xl" hide-footer no-close-on-backdrop no-close-on-esc v-model="modalInfoCadastro" title="Detalhes do cadastro">
 
-            </b-modal>
+                <h4 class="text-primary">Dados Pessoais</h4>
+                <hr class="w-100 mt-0 mb-2 bg-primary">
+                
+                <b-row class="my-2 ml-1 pl-2">
+                    <b-col lg="2">
+                        <label for=""><b>Código Cliente: </b>{{codClienteSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="6">
+                        <label for=""><b>Nome: </b>{{nomeSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="4">
+                        <label for=""><b>Email: </b>{{emailSelecionado}}</label>
+                    </b-col>
+                </b-row>
+                <b-row class="my-2 ml-1 pl-2"> 
+                    <b-col lg="3"> 
+                        <label for=""><b>CPF: </b>{{cpfCnpjSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="3">
+                        <label for=""><b>Data Nascimento: </b>{{nascimentoSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="3">
+                        <label for=""><b>Data Cadastro: </b>{{dtCadastroSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="2">
+                        <label for=""><b>RATR: </b>{{ratrSelecionado}}</label>
+                    </b-col>
+                </b-row>
+
+                <b-row class="my-2 ml-1 pl-2">
+                    <b-col lg="3">
+                        <label for=""><b>Telefone: </b>{{telefoneSelecionado}}</label>
+                    </b-col>
+                    
+                    <b-col lg="2">
+                        <label for=""><b>Tipo Cliente: </b>{{tipoClienteSelecionado}}</label>
+                    </b-col>
+                </b-row>
+
+                <h4 class="text-primary">Endereço</h4>
+                <hr class="w-100 mt-0 mb-2 bg-primary">
+
+                <b-row class="my-2 ml-1 pl-2">
+                    <b-col lg="2">
+                        <label for=""><b>CEP: </b>{{cepSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="5">
+                        <label for=""><b>Logradouro: </b>{{logradouroSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="2">
+                        <label for=""><b>Número: </b>{{numeroSelecionado}}</label>
+                    </b-col>
+                </b-row>
+                <b-row class="my-2 ml-1 pl-2">
+                    <b-col lg="3">
+                        <label for=""><b>Complemento: </b>{{complementoSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="2">
+                        <label for=""><b>UF: </b>{{ufSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="3">
+                        <label for=""><b>Município: </b>{{municipioSelecionado}}</label>
+                    </b-col>
+
+                    <b-col lg="4">
+                        <label for=""><b>Bairro: </b>{{bairroSelecionado}}</label>
+                    </b-col>
+                </b-row>
+                <b-row class="my-2 ml-1 pl-2">
+                    <b-col>
+                        <label for=""><b>OBS: </b>{{msgSelecionado}}</label>
+                    </b-col>
+                </b-row>
+            </b-modal>  
         </div>
     </div>
 </template>
