@@ -1037,43 +1037,6 @@ export default {
                   </b-col> 
 
                 </b-row>
-
-                <b-row class="my-2">
-                  <hr class="secondary m-4 w-100">
-                </b-row>
-
-                <b-row>
-                  <h3 class="pl-4 text-primary"><b>Área securitária</b></h3>
-                </b-row>
-
-                <b-row class="my-2">
-
-                  <b-col lg="3">
-                    <label for="vencimentoApolice" class="form-label">Venc. Apolice</label>
-                    <b-form-input type="date" v-model="vencApolice" class="form-control" id="vencimentoApolice" max="9999-12-31"></b-form-input>
-                  </b-col>
-
-                  <b-col lg="4">
-                    <label for="nomeSegurado">Segurado</label>
-                    <b-form-input type="text" id="nomeSegurado" v-model="nomeSegurado"></b-form-input>
-                  </b-col>
-
-                  <b-col lg="3">
-                    <label for="apolice">Apólice</label>
-                    <b-form-input type="text" id="apolice" v-model="apolice"></b-form-input>
-                  </b-col>
-
-                  <b-col lg="2">
-                    <label for="comissao">Comissão</label>
-                    <b-input-group append="%">
-                      <b-form-input v-model="comissao" id="comissao"></b-form-input>
-                    </b-input-group>
-                  </b-col>
-
-
-
-                </b-row>
-
               </b-tab>
 
 

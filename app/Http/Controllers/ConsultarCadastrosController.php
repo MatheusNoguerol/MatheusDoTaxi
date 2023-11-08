@@ -15,177 +15,88 @@ use App\Models\User;
 class ConsultarCadastrosController extends Controller
 {
     public function consultarCadastroCliente(Request $request){
-        // dd($request['arrayBusca'][0]);
-        // if($request['arrayBusca'][0]['tipoConsulta'] == 'cliente'){
-            
-        //     $callbackSearch = function ($query) use ($request){
-        //         if ($request['arrayBusca'][0]['nomeConsulta'] <> null)
-        //         {
-        //             $query->where("clientes.NOME", "like", '%' . $request['arrayBusca'][0]['nomeConsulta']);
-        //         }
-                
-        //         if ($request['arrayBusca'][0]['dtCadastroDe'] <> null || $request['arrayBusca'][0]['dtCadastroAte'])
-        //         {
-        //             $query->whereBetween('clientes.DTCADASTRO', [$request['arrayBusca'][0]['dtCadastroDe'], $request['arrayBusca'][0]['dtCadastroAte']]);
-        //         }
-                
-        //         // if ($dados->ratrConsulta <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //         // if ($dados->cpfConsulta <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //         // if ($dados->dtNascimentoDe <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //         // if ($dados->dtNascimentoAte <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //         // if ($dados->permissaoConsulta <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //         // if ($dados->placaConsulta <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //         // if ($dados->categoriaConsulta <> null)
-        //         // {
-        //         //     $query->where("itenspedidovenda.FILIAL", '=', $dados->filial);
-        //         // }
-        //     };
-            
-        //     $query = Clientes::where($callbackSearch)
-        //     ->get();
-
-        //     dd($query);
-
-        //     return $query;
-
-        // }
-
-
-        
         if($request['arrayBusca'][0]['tipoConsulta'] == 'cliente'){
             
             if($request['arrayBusca'][0]['pesquisaCliente'] == 'nome'){
                 
-                $query = Clientes::where('NOME', 'like', '%' . $request['arrayBusca'][0]['nomeConsulta'] . '%')->get();
+                $query = Clientes::where('NOME', 'like', $request['arrayBusca'][0]['nomeConsulta'] . '%')->leftjoin('dados_veiculares', 'clientes.CODCLIENTE', 'dados_veiculares.CODCLIENTE')->leftjoin('info_fi_clientes', 'clientes.CODCLIENTE', '=', 'info_fi_clientes.CODCLIENTE')->orderBy('clientes.NOME', 'asc')->get();
+
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else if(count($query) == 1){
-                    $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[0]['CODCLIENTE'])->get();
-
-                    if(count($dadosVeiculares) == 0){
-                        return ['ref' => 0 , $query];
-                    }else{
-                        return ['ref' => 1, $query , $dadosVeiculares];
-                    }
-
-                }else{
-
-                    $arrayVeic = array();
-                    for($b = 0 ; $b < count($query) ; $b++){
-                        $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[$b]['CODCLIENTE'])->get();
-
-                        if(count($dadosVeiculares) != 0){
-                            array_push($arrayVeic, $dadosVeiculares);
-                        }
-                    }
-                    return [$query , $arrayVeic, 'ref' => 2];
                 }
+
+                return $query;
 
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'ratr'){
 
-                $query = Clientes::where('RATR', '=', $request['arrayBusca'][0]['ratrConsulta'])->get();
+                $query = Clientes::where('RATR', '=', $request['arrayBusca'][0]['ratrConsulta'])->leftjoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
 
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else{
-
-                    $dadosVeiculares = DadosVeiculares::where('CODCLIENTE', '=', $query[0]['CODCLIENTE'])->get();
-
-                    if(count($dadosVeiculares) == 0){
-
-                        return [$query, 'ref' => 0];
-
-                    }else{
-
-                        return[$query, $dadosVeiculares];
-                    }
-    
                 }
+
+                return $query;
 
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'cpf'){
-                $query = Clientes::where('CPFCNPJ', '=', $request['arrayBusca'][0]['cpfConsulta'])->join('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+
+                $query = Clientes::where('CPFCNPJ', '=', $request['arrayBusca'][0]['cpfConsulta'])->leftjoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
 
                 if(count($query) == 0){
-                    $query2 = clientes::where('CPFCNPJ', '=', $request['arrayBusca'][0]['cpfConsulta'])->get();
-
-                    if(count($query2) == 0){
-                        return ['error' => 1];
-                    }else{
-                        return $query2;
-                    }
-                }else{
-                    return $query;
+                    return ['error' => 1];
                 }
+
+                return $query;
 
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'dtNascimento'){
 
-                $query = Clientes::whereBetween('clientes.NASCIMENTO', [$request['arrayBusca'][0]['dtNascimentoDe'], $request['arrayBusca'][0]['dtNascimentoAte']])->leftJoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+                $query = Clientes::whereBetween('clientes.NASCIMENTO', [$request['arrayBusca'][0]['dtNascimentoDe'], $request['arrayBusca'][0]['dtNascimentoAte']])->leftJoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->orderBy('clientes.NOME', 'asc')->get();
 
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else{
-                    return $query;
                 }
-
+                
+                return $query;
+                
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'dtCadastro'){
 
-                $query = Clientes::whereBetween('clientes.DTCADASTRO', [$request['arrayBusca'][0]['dtCadastroDe'], $request['arrayBusca'][0]['dtCadastroAte']])->leftJoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+                $query = Clientes::whereBetween('clientes.DTCADASTRO', [$request['arrayBusca'][0]['dtCadastroDe'], $request['arrayBusca'][0]['dtCadastroAte']])->leftJoin('dados_veiculares', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->orderBy('clientes.NOME', 'asc')->get();
 
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else{
-                    return $query;
                 }
-
+                
+                return $query;
+                
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'permissao'){
-                dd($request);
 
-                $query = DadosVeiculares::where('PERMISSAO', '=' , $request['arrayBusca'][0]['permissaoConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+                $query = DadosVeiculares::where('PERMISSAO', '=' , $request['arrayBusca'][0]['permissaoConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->orderBy('clientes.NOME', 'asc')->get();
 
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else{
-                    return $query;
                 }
-
+                
+                return $query;
+                
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'placa'){
 
-                $query = DadosVeiculares::where('PLACA', '=' , $request['arrayBusca'][0]['placaConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+                $query = DadosVeiculares::where('PLACA', '=' , $request['arrayBusca'][0]['placaConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->orderBy('clientes.NOME', 'asc')->get();
 
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else{
-                    return $query;
                 }
-
+                
+                return $query;
+                
             }else if($request['arrayBusca'][0]['pesquisaCliente'] == 'categoria'){
 
-                $query = DadosVeiculares::where('CATEGORIA', '=' , $request['arrayBusca'][0]['categoriaConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->get();
+                $query = DadosVeiculares::where('CATEGORIA', '=' , $request['arrayBusca'][0]['categoriaConsulta'])->leftJoin('clientes', 'clientes.CODCLIENTE', '=', 'dados_veiculares.CODCLIENTE')->orderBy('clientes.NOME', 'asc')->get();
 
                 if(count($query) == 0){
                     return ['error' => 1];
-                }else{
-                    return $query;
                 }
-
+                
+                return $query;
+                
             }
         }else{
 
