@@ -14,6 +14,7 @@ Vue.use(VMask);
 import  'bootstrap/dist/css/bootstrap.css' 
 import  'bootstrap-vue/dist/bootstrap-vue.css'
 
+
 // Disponibiliza o BootstrapVue em todo o seu projeto
 Vue.use(BootstrapVue)
 // Opcionalmente, instale o plug-in de componentes de ícone BootstrapVue 
@@ -61,6 +62,8 @@ Vue.component('cadastro-funcionario-component', require('./components/cadastro/C
 Vue.component('adicionar-produto-component', require('./components/AdicionarProdutoComponent.vue').default);
 
 Vue.component('consultar-cadastro-component', require('./components/cadastro/ConsultarCadastroComponent.vue').default);
+
+Vue.component('painel-cadastro-component', require('./components/cadastro/PainelCadastroComponent.vue').default);
 
 
 /**

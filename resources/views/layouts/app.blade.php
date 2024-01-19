@@ -22,6 +22,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src ="https://code.highcharts.com/highcharts.js"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -32,8 +33,10 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/toastr.css') }}" rel="stylesheet">
+    
 
 </head>
+
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light shadow-sm" style="background-color: rgba(218, 218, 218, .8);" id="cabecalho">
@@ -94,13 +97,24 @@
                                             </form>
                                         </b-dropdown-item>
 
-                                        <b-dropdown-item>
+                                        <!-- <b-dropdown-item>
                                             <a class="dropdown-item" href="{{ route('consultar-cadastro') }}"
                                                 onclick="event.preventDefault();
                                                 document.getElementById('consultar-cadastro').submit();">
                                                 Consultar Cadastros
                                             </a>
                                             <form id="consultar-cadastro" action="{{ route('consultar-cadastro') }}" method="POST" class="d-none">
+                                                @csrf
+                                            </form>
+                                        </b-dropdown-item> -->
+
+                                        <b-dropdown-item>
+                                            <a class="dropdown-item" href="{{ route('painel-cadastro') }}"
+                                                onclick="event.preventDefault();
+                                                document.getElementById('painel-cadastro').submit();">
+                                                Painel
+                                            </a>
+                                            <form id="painel-cadastro" action="{{ route('painel-cadastro') }}" method="POST" class="d-none">
                                                 @csrf
                                             </form>
                                         </b-dropdown-item>

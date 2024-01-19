@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "bootstrap-vue": "^2.23.1",
+        "highcharts": "^11.3.0",
         "toastr": "^2.1.4",
         "v-mask": "^2.3.0"
     }

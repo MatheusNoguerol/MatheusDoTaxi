@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\FormController;
 
 use App\Http\Controllers\StudentController;
@@ -73,6 +75,8 @@ Route::post('adicionar-produto', 'UserController@adicionarProduto')->name('adici
 
 Route::post('consultar-cadastro', 'UserController@consultarCadastro')->name('consultar-cadastro');
 
+Route::post('painel-cadastro', 'UserController@painelCadastro')->name('painel-cadastro');
+
 
 
 
@@ -130,3 +134,15 @@ Route::post('deleta-anexo', 'FuncionariosController@deletaAnexo')->name('deleta-
 ##################### CADASTROS ##########################
 
 Route::post('consulta-cadastro-cliente', 'ConsultarCadastrosController@consultarCadastroCliente')->name('consulta-cadastro-cliente');
+
+
+
+
+
+
+
+
+
+##################### CHARTS ##########################
+
+Route::post('charging-charts-painel', 'HighchartController@chargingChartsPainel')->name('charging-charts-painel');

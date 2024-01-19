@@ -36,6 +36,11 @@ class UserController extends Controller
         {
             return view('/cadastro/cadastroFuncionario');
         }
+
+        public function painelCadastro(Request $request)
+        {
+            return view('/cadastro/painelCadastro');
+        }
         
     #########################################################################################################################################
 
