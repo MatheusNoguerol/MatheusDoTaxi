@@ -11,15 +11,71 @@ use App\Models\InfoFiClientes;
 use App\Models\DadosVeiculares;
 use App\Models\AnexosClientes;
 use App\Models\User;
+use DateTime;
 
 class HighchartController extends Controller
 {
-    public function chargingChartsPainel(Request $request){ 
-    //    $query = Clientes::where('nota_pesquisa','=', $dados->name)
-    //     ->whereBetween('data', [$dados->dtInicio == null ? date('2020-01-01 00:00:00') : $dados->dtInicio, $dados->dtFim == null ? date('Y-m-d H:i:s') : $dados->dtFim])
-    //     ->orderBy('id', 'desc')
-    //     ->get();
+    public function chargingChartsPainel(){ 
+        
+        $clientType = DB::table('clientes')
+        ->select('TIPOCLIENTE', DB::raw('count(TIPOCLIENTE) as qtd'))
+        // ->whereBetween('data', [$dtInicio, $dtFim])
+        ->groupBy('TIPOCLIENTE')
+        ->orderBy('qtd', 'desc')
+        ->get();
 
-    //     return $query;
+        
+        
+        $allClientes = Clientes::all();
+        
+        $dtHoje = new DateTime();
+
+        $arrayCliente = array();
+
+        $arrayCliente = array(
+            0 => array(),
+            1 => array(),
+            2 => array(),
+            3 => array(),
+        );
+
+
+        for($k = 0 ;$k < count($allClientes) ; $k++){
+            $dtNascimento = $allClientes[$k]['NASCIMENTO'];
+
+            if($dtNascimento == null){
+                array_push($arrayCliente[0], ['TIPO' => 'Sem Data']);
+            }else{
+                $dtNascimentoObj = new DateTime($dtNascimento);
+
+                $idade = $dtNascimentoObj->diff($dtHoje);
+
+                if($idade->y <= 20){
+                    array_push($arrayCliente[1], ['TIPO' => 'Adolescente']);
+                }else if($idade->y <= 65){
+                    array_push($arrayCliente[2], ['TIPO' => 'Adulto']);
+                }else{
+                    array_push($arrayCliente[3], ['TIPO' => 'Idoso']);
+                }
+            }
+        }
+        
+        
+        // $birthChart = DB::table('clientes')
+        // ->select('NASCIMENTO', DB::raw('count(TIPOCLIENTE) as qtd'))
+        // // ->whereBetween('data', [$dtInicio, $dtFim])
+        // ->groupBy('TIPOCLIENTE')
+        // ->orderBy('qtd', 'desc')
+        // ->get();
+
+        return ['chartClientType' => $clientType, 'birthChart' => $arrayCliente];
+    }
+
+    public function infoChartClientType(Request $request){
+        $dados = $request;
+
+        $query = Clientes::where('clientes.TIPOCLIENTE', '=', $dados->name)->leftJoin('dados_veiculares', 'dados_veiculares.CODCLIENTE', '=', 'clientes.CODCLIENTE')->leftJoin()->get();
+
+        return $query;
     }
 }

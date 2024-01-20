@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Clientes extends Model
 {
+
+    protected $connection = 'mysql';
+
+    protected $table = 'clientes';
+
+    public $incrementing = true;
+
+    public $timestamps = true;
     
     protected $fillable=[
         'CODCLIENTE',

@@ -145,4 +145,6 @@ Route::post('consulta-cadastro-cliente', 'ConsultarCadastrosController@consultar
 
 ##################### CHARTS ##########################
 
-Route::post('charging-charts-painel', 'HighchartController@chargingChartsPainel')->name('charging-charts-painel');
+Route::get('charging-charts-painel', 'HighchartController@chargingChartsPainel')->name('charging-charts-painel');
+
+Route::post('info-chart-client-type', 'HighchartController@infoChartClientType')->name('info-chart-client-type');
