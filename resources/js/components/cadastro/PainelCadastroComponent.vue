@@ -145,7 +145,7 @@ export default {
 
             for(var f=0; f < response.data.carCategory.length; f++){
 
-                self.arrayCategoria.push({name: response.data.carCategory[f].CATEGORIA, y: parseInt(response.data.carCategory[f].qtd)})
+                self.arrayCategoria.push({name: response.data.carCategory[f].TIPO, y: parseInt(response.data.carCategory[f].qtd)})
 
             }
 
@@ -440,7 +440,7 @@ export default {
                                 self.naoTemCliente = false
                                 self.currentPageClientes = 1
                                 self.$bvModal.show('modal-tipo-cliente')
-                                axios.post('info-chart-client-type', {name: e.point.name})
+                                axios.post('info-chart-car-category', {name: e.point.name})
                                 .then((response) =>{
 
                                     self.itemsClientes = []
@@ -510,7 +510,7 @@ export default {
                         }
                     }
                 }],
-                colors: ['#1D5DEC', '#67cb57']
+                colors: ['#1D5DEC', '#67cb57', '#800080']
             });
 
             Highcharts.chart('documentation-aliened', {
@@ -554,7 +554,7 @@ export default {
                                 self.naoTemCliente = false
                                 self.currentPageClientes = 1
                                 self.$bvModal.show('modal-tipo-cliente')
-                                axios.post('info-chart-client-type', {name: e.point.name})
+                                axios.post('info-chart-documentation-aliened', {name: e.point.name})
                                 .then((response) =>{
 
                                     self.itemsClientes = []
@@ -670,7 +670,7 @@ export default {
                                 self.naoTemCliente = false
                                 self.currentPageClientes = 1
                                 self.$bvModal.show('modal-tipo-cliente')
-                                axios.post('info-chart-client-type', {name: e.point.name})
+                                axios.post('info-chart-vehicle-date', {name: e.point.name})
                                 .then((response) =>{
 
                                     self.itemsClientes = []
@@ -986,7 +986,6 @@ export default {
                 </fieldset>
             </div>
         </b-modal>
-        
         
     </div>   
 </template>

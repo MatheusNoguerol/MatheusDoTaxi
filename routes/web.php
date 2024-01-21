@@ -150,3 +150,9 @@ Route::get('charging-charts-painel', 'HighchartController@chargingChartsPainel')
 Route::post('info-chart-client-type', 'HighchartController@infoChartClientType')->name('info-chart-client-type');
 
 Route::post('info-birth-chart', 'HighchartController@infoBirthChart')->name('info-birth-chart');
+
+Route::post('info-chart-car-category', 'HighchartController@infoChartCarCategory')->name('info-chart-car-category');
+
+Route::post('info-chart-documentation-aliened', 'HighchartController@infoChartDocumentationAliened')->name('info-chart-documentation-aliened');
+
+Route::post('info-chart-vehicle-date', 'HighchartController@infoChartVehicleDate')->name('info-chart-vehicle-date');
