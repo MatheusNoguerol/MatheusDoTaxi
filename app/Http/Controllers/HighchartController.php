@@ -19,18 +19,13 @@ class HighchartController extends Controller
         
         $clientType = DB::table('clientes')
         ->select('TIPOCLIENTE', DB::raw('count(TIPOCLIENTE) as qtd'))
-        // ->whereBetween('data', [$dtInicio, $dtFim])
         ->groupBy('TIPOCLIENTE')
         ->orderBy('qtd', 'desc')
         ->get();
 
-        
-        
         $allClientes = Clientes::all();
         
         $dtHoje = new DateTime();
-
-        $arrayCliente = array();
 
         $arrayCliente = array(
             0 => array(),
@@ -38,7 +33,6 @@ class HighchartController extends Controller
             2 => array(),
             3 => array(),
         );
-
 
         for($k = 0 ;$k < count($allClientes) ; $k++){
             $dtNascimento = $allClientes[$k]['NASCIMENTO'];
@@ -59,22 +53,185 @@ class HighchartController extends Controller
                 }
             }
         }
-        
-        
-        // $birthChart = DB::table('clientes')
-        // ->select('NASCIMENTO', DB::raw('count(TIPOCLIENTE) as qtd'))
-        // // ->whereBetween('data', [$dtInicio, $dtFim])
-        // ->groupBy('TIPOCLIENTE')
-        // ->orderBy('qtd', 'desc')
-        // ->get();
 
-        return ['chartClientType' => $clientType, 'birthChart' => $arrayCliente];
+        $carCategory = DB::table('dados_veiculares')
+        ->select('CATEGORIA', DB::raw('count(CATEGORIA) as qtd'))
+        ->groupBy('CATEGORIA')
+        ->orderBy('qtd', 'desc')
+        ->get();
+
+        $documentationAliened = DB::table('dados_veiculares')
+        ->select('TEMALIENACAO', DB::raw('count(TEMALIENACAO) as qtd'))
+        ->groupBy('TEMALIENACAO')
+        ->orderBy('qtd', 'desc')
+        ->get();
+
+        $allVeiculos = DadosVeiculares::select('ANOFAB')->get();
+
+        $arrayVehicle = array();
+        
+        $ano = date('Y');
+
+        for($k = 0 ;$k < count($allVeiculos) ; $k++){
+            $anoFab = $allVeiculos[$k]['ANOFAB'];
+
+            if($anoFab == null){
+                array_push($arrayVehicle, 'Sem Data');
+            }else{
+                if($anoFab == $ano - 10){
+                    array_push($arrayVehicle, 'Ultimo Ano');
+                }else if($anoFab == $ano - 5){
+                    array_push($arrayVehicle, '5 anos');
+                }else if($anoFab == $ano){
+                    array_push($arrayVehicle, '0Km');
+                }else{
+                    array_push($arrayVehicle, '10 anos');
+                }
+            }
+
+        }
+        
+        $contagem = array_count_values($arrayVehicle);
+        $arrayTeste = array();
+        foreach($contagem as $key=>$value){
+            $arrayTeste[] = ['TIPO' => $key, 'qtd' => $value];
+        }
+
+        return ['chartClientType' => $clientType, 'birthChart' => $arrayCliente, 'carCategory' => $carCategory, 'documentationAliened' => $documentationAliened, 'vehicleDate' => $arrayTeste];
     }
 
     public function infoChartClientType(Request $request){
         $dados = $request;
 
-        $query = Clientes::where('clientes.TIPOCLIENTE', '=', $dados->name)->leftJoin('dados_veiculares', 'dados_veiculares.CODCLIENTE', '=', 'clientes.CODCLIENTE')->leftJoin()->get();
+        $query = Clientes::select(
+            //client table
+        'clientes.CODCLIENTE',
+        'clientes.NOME',
+        'clientes.CPFCNPJ',
+        'clientes.NASCIMENTO',
+        'clientes.RATR',
+        'clientes.EMAIL',
+        'clientes.TELEFONE',
+        'clientes.TIPOCLIENTE',
+        'clientes.CEP',
+        'clientes.LOGRADOURO',
+        'clientes.NUMERO',
+        'clientes.COMPLEMENTO',
+        'clientes.UF',
+        'clientes.MUNICIPIO',
+        'clientes.BAIRRO',
+        'clientes.MSG',
+        'clientes.DTCADASTRO',
+        'clientes.RESPONSAVEL',
+            //vehicle data table
+        'dados_veiculares.PLACA',
+        'dados_veiculares.CHASSI',
+        'dados_veiculares.RENAVAN',
+        'dados_veiculares.ANOMODELO',
+        'dados_veiculares.ANOFAB',
+        'dados_veiculares.PERMISSAO',
+        'dados_veiculares.COMBUSTIVEL',
+        'dados_veiculares.TEMGAS',
+        'dados_veiculares.CILINDRO',
+        'dados_veiculares.CATEGORIA',
+        'dados_veiculares.ULTIMOLA',
+        'dados_veiculares.TEMALIENACAO',
+        'dados_veiculares.BANCOALIENADO',
+        'dados_veiculares.VENCAPOLICE',
+        'dados_veiculares.ATUALSEGURADORA',
+            //finance data table
+        'info_fi_clientes.NOBANCO',
+        'info_fi_clientes.BANCO',
+        'info_fi_clientes.AGENCIA',
+        'info_fi_clientes.CONTA',
+        'info_fi_clientes.TITULAR',
+        'info_fi_clientes.CPFTITULAR',
+        'info_fi_clientes.TIPOCONTA',
+        'info_fi_clientes.TIPOCHAVE',
+        'info_fi_clientes.CHAVE',
+
+        )->where('clientes.TIPOCLIENTE', '=', $dados->name)->leftJoin('dados_veiculares', 'dados_veiculares.CODCLIENTE', '=', 'clientes.CODCLIENTE')->leftJoin('info_fi_clientes', 'info_fi_clientes.CODCLIENTE', '=', 'clientes.CODCLIENTE')->get();
+
+        return $query;
+    }
+
+    public function infoBirthChart(Request $request){
+        $dados = $request;
+        
+        $callbackSearch = function ($query) use ($dados){
+            if ($dados->name == 'Sem Data')
+            {
+                $query->whereNull('clientes.NASCIMENTO');
+            }
+
+            if ($dados->name == '0-20')
+            {
+                $query->whereBetween('clientes.NASCIMENTO', [date('2004-m-d'), date('Y-m-d')]);
+            }
+
+            if ($dados->name == '21-65')
+            {
+                $query->whereBetween('clientes.NASCIMENTO', [date('1959-m-d'), date('Y-m-d')]);
+            }
+
+            if ($dados->name == '65+')
+            {
+                $query->whereBetween('clientes.NASCIMENTO', [date('1934-m-d'), date('Y-m-d')]);
+            }
+        };
+
+        $query = Clientes::select(
+            //client table
+        'clientes.CODCLIENTE',
+        'clientes.NOME',
+        'clientes.CPFCNPJ',
+        'clientes.NASCIMENTO',
+        'clientes.RATR',
+        'clientes.EMAIL',
+        'clientes.TELEFONE',
+        'clientes.TIPOCLIENTE',
+        'clientes.CEP',
+        'clientes.LOGRADOURO',
+        'clientes.NUMERO',
+        'clientes.COMPLEMENTO',
+        'clientes.UF',
+        'clientes.MUNICIPIO',
+        'clientes.BAIRRO',
+        'clientes.MSG',
+        'clientes.DTCADASTRO',
+        'clientes.RESPONSAVEL',
+            //vehicle data table
+        'dados_veiculares.PLACA',
+        'dados_veiculares.CHASSI',
+        'dados_veiculares.RENAVAN',
+        'dados_veiculares.ANOMODELO',
+        'dados_veiculares.ANOFAB',
+        'dados_veiculares.PERMISSAO',
+        'dados_veiculares.COMBUSTIVEL',
+        'dados_veiculares.TEMGAS',
+        'dados_veiculares.CILINDRO',
+        'dados_veiculares.CATEGORIA',
+        'dados_veiculares.ULTIMOLA',
+        'dados_veiculares.TEMALIENACAO',
+        'dados_veiculares.BANCOALIENADO',
+        'dados_veiculares.VENCAPOLICE',
+        'dados_veiculares.ATUALSEGURADORA',
+            //finance data table
+        'info_fi_clientes.NOBANCO',
+        'info_fi_clientes.BANCO',
+        'info_fi_clientes.AGENCIA',
+        'info_fi_clientes.CONTA',
+        'info_fi_clientes.TITULAR',
+        'info_fi_clientes.CPFTITULAR',
+        'info_fi_clientes.TIPOCONTA',
+        'info_fi_clientes.TIPOCHAVE',
+        'info_fi_clientes.CHAVE',
+
+        )
+        ->where($callbackSearch)
+        ->leftJoin('dados_veiculares', 'dados_veiculares.CODCLIENTE', '=', 'clientes.CODCLIENTE')
+        ->leftJoin('info_fi_clientes', 'info_fi_clientes.CODCLIENTE', '=', 'clientes.CODCLIENTE')
+        ->get();
 
         return $query;
     }

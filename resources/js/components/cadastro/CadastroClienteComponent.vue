@@ -1100,7 +1100,7 @@ export default {
               </b-tab>
 
 
-              <b-tab title="Anexos" no-body>
+              <b-tab title="Anexos" no-body v-if="temClienteSelecionado == true">
                 <b-row>
 
                   <b-col lg="3" class="mt-4">
