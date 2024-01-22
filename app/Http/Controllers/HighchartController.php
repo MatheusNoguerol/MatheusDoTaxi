@@ -104,13 +104,11 @@ class HighchartController extends Controller
             if($anoFab == null){
                 array_push($arrayVehicle, 'Sem Data');
             }else{
-                if($anoFab == $ano - 10){
-                    array_push($arrayVehicle, 'Ultimo Ano');
-                }else if($anoFab == $ano - 5){
+                if($anoFab == $ano - 5){
                     array_push($arrayVehicle, '5 anos');
                 }else if($anoFab == $ano){
                     array_push($arrayVehicle, '0Km');
-                }else{
+                }else if($anoFab == $ano - 10){
                     array_push($arrayVehicle, '10 anos');
                 }
             }
@@ -398,7 +396,6 @@ class HighchartController extends Controller
     public function infoChartVehicleDate(Request $request){
         $dados = $request;
 
-        // dd($dados);
         if($dados->name == '10 anos'){
             $tempo = 10;
         }else if($dados->name == '5 anos'){
@@ -410,9 +407,9 @@ class HighchartController extends Controller
         }
 
         $anoAtual = date('Y');
-
+        
         $diferenca = $anoAtual - $tempo;
-
+        
         $query = Clientes::select(
             //client table
         'clientes.CODCLIENTE',

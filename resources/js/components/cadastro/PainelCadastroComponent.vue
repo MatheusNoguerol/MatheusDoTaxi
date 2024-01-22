@@ -664,7 +664,6 @@ export default {
                     point: {
                         events: {
                             click: function (e) {
-                                console.log(e)
                                 self.isBusyClientes = true
                                 self.temCliente = false
                                 self.naoTemCliente = false
@@ -840,14 +839,6 @@ export default {
                                     <div id="vehicle-date" class="charts"></div>
                                 </b-col>
                             </b-row>
-                        </b-tab>
-
-                        <b-tab title="Financeiro">
-
-                        </b-tab>
-
-                        <b-tab title="Anexos">
-
                         </b-tab>
                     </b-tabs>
                 </b-col>
