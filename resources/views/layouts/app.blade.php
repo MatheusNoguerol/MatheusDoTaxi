@@ -148,6 +148,19 @@
                                         </b-dropdown-item>
                                     </b-nav-item-dropdown>
 
+                                    <b-nav-item-dropdown text="Área securitária">
+                                        <b-dropdown-item>
+                                            <a class="dropdown-item" href="{{ route('cadastrar-segurado') }}"
+                                                onclick="event.preventDefault();
+                                                document.getElementById('cadastrar-segurado').submit();">
+                                                Cadastrar segurado
+                                            </a>
+                                            <form id="cadastrar-segurado" action="{{ route('cadastrar-segurado') }}" method="POST" class="d-none">
+                                                @csrf
+                                            </form>
+                                        </b-dropdown-item>
+                                    </b-nav-item-dropdown>
+
                                     
                                     <b-nav-item-dropdown text="User">
                                         <a class="dropdown-item" href="{{ route('logout') }}"

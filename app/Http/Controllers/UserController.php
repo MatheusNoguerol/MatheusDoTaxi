@@ -94,13 +94,9 @@ class UserController extends Controller
     ############################################################## SEGUROS ##################################################################
         
 
-        public function seguros(Request $request)
+        public function cadastrarSegurado(Request $request)
         {
-            return view('/seguros');
-            //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-            //}else{
-            //    return view('auth.login');//redirect()->route('/auth');
-            //}
+            return view('/area_securitaria/cadastrarSegurado');
         }
     
         

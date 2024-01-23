@@ -77,6 +77,8 @@ Route::post('consultar-cadastro', 'UserController@consultarCadastro')->name('con
 
 Route::post('painel-cadastro', 'UserController@painelCadastro')->name('painel-cadastro');
 
+Route::post('cadastrar-segurado', 'UserController@cadastrarSegurado')->name('cadastrar-segurado');
+
 
 
 
@@ -134,6 +136,19 @@ Route::post('deleta-anexo', 'FuncionariosController@deletaAnexo')->name('deleta-
 ##################### CADASTROS ##########################
 
 Route::post('consulta-cadastro-cliente', 'ConsultarCadastrosController@consultarCadastroCliente')->name('consulta-cadastro-cliente');
+
+
+
+
+
+
+
+
+
+
+##################### Área Securitária ##########################
+
+Route::get('all-seguradoras', 'AreaSecuritaria\CadastrarSeguradoController@allSeguradoras')->name('all-seguradoras');
 
 
 

@@ -66,6 +66,9 @@ Vue.component('consultar-cadastro-component', require('./components/cadastro/Con
 Vue.component('painel-cadastro-component', require('./components/cadastro/PainelCadastroComponent.vue').default);
 
 
+Vue.component('cadastrar-segurado-component', require('./components/area_securitaria/CadastrarSeguradoComponent.vue').default);
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
