@@ -18,7 +18,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Serginho do Táxi</title>
+    <title>MATHEUS DO TAXI</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -34,7 +34,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/toastr.css') }}" rel="stylesheet">
 
-    <link rel="icon" href="{{ asset('images/logoBarra.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconeTeste.ico') }}" type="image/x-icon">
     
 
 </head>
@@ -47,7 +47,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <ul class="navbar-nav">
-                    <img src="{{URL('/images/logoBarra.png') }}" alt="">
+                    <img src="{{URL('/images/iconeTeste.png') }}" style="height: 100px; width: 100px;" alt="">
                 </ul>
                 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -62,7 +62,7 @@
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <!-- <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a> -->
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                     <li><a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a></li>
                                     <li><a class="nav-link" href="{{ route('quem-somos') }}">{{ __('Quem somos') }}</a></li>
                                     <li><a class="nav-link" href="{{ route('multimidia') }}">{{ __('Multimídia') }}</a></li>

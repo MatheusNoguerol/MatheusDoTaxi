@@ -71,8 +71,8 @@
         <div class="row m-2">
           <div id="bordado" class="col p-2">
             Contato<br>
-            (21)98144-3296<br>
-            (21)3936-4967
+            (21)95554-3555<br>
+            (21)3444-4555
           </div>
           <div id="bordado" class="col p-2">
             Horarios<br>
@@ -81,9 +81,9 @@
           </div>
           <div id="bordado" class="col p-2">
             Localizacao<br>
-            Rua Padre Manoel da Nobrega 1166<br>
-            quintino 
-            21321-009
+            Rua General do rosário 1166<br>
+            Barra da Tijuca 
+            21749-09
           </div>
           <div id="bordado" class="col p-2">
             Sigam a gente nas redes sociais:<br>

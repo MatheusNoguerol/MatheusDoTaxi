@@ -66,41 +66,21 @@ div#midias:hover{
 
         <hr class="bg-secondary w-100">
 
-        <div id="carousel" style="max-width: 800px;" class="m-auto">
-            <b-carousel
-            id="carousel-fade"
-            style="text-shadow: 0px 0px 2px #000"
-            fade
-            controls
-            img-width="1024"
-            img-height="480">
-                <b-carousel-slide
-                caption-html="<h2><b>SPIN</b></h2>"
-                :img-src="spinBranca"
-                ></b-carousel-slide>
-                <b-carousel-slide
-                caption-html="<h2><b>ONIX</b></h2>"
-                :img-src="onix"
-                ></b-carousel-slide>
-                <b-carousel-slide
-                caption-html="<h2><b>PULSE</b></h2>"
-                :img-src="pulse"
-                ></b-carousel-slide>
-            </b-carousel>
-        </div>
+        
+        <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/carro1.jpg')" alt="imagem">
         <div class="container mt-3 mb-5 rounded" id="carousel">
             <b-embed
             class="pr-3 pl-3"
             type="iframe"
             aspect="16by9"
-            src="https://www.youtube.com/embed/rd0li5LrHls"
+            src="https://www.youtube.com/embed/-18nbhivoc4?si=BjtfJza39SFM-xJz"
             allowfullscreen></b-embed>
         </div>
         <a href="https://wa.me/5521981443296?text=Adorei%20seu%20artigo" style="position:fixed;width:60px;height:60px;bottom:40px;right:40px;background-color:#25d366;color:#FFF; border-radius:50px;text-align:center;font-size:30px;box-shadow: 1px 1px 2px #888;
         z-index:1000;" target="_blank">
             <i style="margin-top:16px" class="fa fa-whatsapp"></i>
         </a>
-
+        
         <footer id="rodape">
             <section>
                 <div class="card text-center bg-dark bg-opacity-10">

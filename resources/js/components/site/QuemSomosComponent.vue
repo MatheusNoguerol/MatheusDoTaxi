@@ -117,7 +117,7 @@ div#cardFunc{
                 <hr class="bg-secondary">
 
                 <div id="historia">
-                    <h1 class="text-center" style="font-weight: bolder;">História da Serginho do Taxi</h1>
+                    <h1 class="text-center" style="font-weight: bolder;">História da Matheus do Taxi</h1>
                 </div>
 
                 <hr class="bg-secondary">
@@ -126,14 +126,14 @@ div#cardFunc{
                     <b-row class="my-5 rounded" id="hoverQuadGrande">
                         <b-col lg="7" class="text-center">
                             <h3>
-                            <p ><b>No ano de 1973 nascia o CEO da Serginho do Taxi, o Sergio Couto ou popularmente conhecido como "Serginho".</b></p>
+                            <p ><b>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque delectus in omnis quas, illo nobis eum maxime explicabo repellat aliquid at quia, odit saepe quam doloremque possimus, fugit doloribus a!</b></p>
 
-                            <p><b>Sua vida profissional começou muito cedo, e logo ele se tornou taxista seguindo os passos de seu pai. Após um tempo dirigindo seu taxi, começou a resolver a parte burocrática da documentação e a partir daí essa era sua nova fonte de renda, se expandindo para serviços automotivos em geral se mantendo até os dias de hoje.</b></p>
+                            <p><b>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere non nobis sunt quo consequatur alias vitae porro nihil! Provident nisi odit veniam repudiandae, nobis minus velit dignissimos quos hic aspernatur. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum molestias laborum dolorum architecto ullam distinctio saepe quibusdam aliquam, reiciendis corporis. Praesentium sequi asperiores illum cum iure tenetur doloremque, possimus dolor!</b></p>
                             </h3>
                         </b-col>
 
                         <b-col lg="5">
-                            <img :src="pulse" class="img-fluid mx-auto rounded" alt="">
+                            <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/brandName.jpg')" alt="imagem">
                         </b-col>
                     </b-row>
                 </div>
@@ -147,42 +147,46 @@ div#cardFunc{
                     <h1 class="main-title" style="font-weight:bolder">NOSSO TIME</h1>
                 </div>
                 <hr class="bg-secondary">
-            
-                <b-card-group class="mx-1" rounded>
-                    <b-card id="cardFunc" :img-src="serginho" img-alt="Image" img-top class="mx-1" rounded >
-                        <div>
+                <div class="container">
+                    <b-card-group class="mx-1" rounded>
+                        <b-card id="cardFunc" class="mx-1" rounded>
+                            <b-card-img :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/srX.jpg')" alt="Image"></b-card-img>
+                            <div>
+                                <b-card-text>
+                                    <p><b>Sr x.</b></p>
+                                    <p><i>CEO</i></p>
+                                </b-card-text>
+                            </div>
+                        </b-card>
+    
+                        <b-card id="cardFunc" class="mx-1" rounded>
+                            <b-card-img :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/srX.jpg')" alt="Image"></b-card-img>
+    
                             <b-card-text>
-                                <p><b>Sergio Couto</b></p>
-                                <p><i>CEO</i></p>
-                                
+                                <p><b>Sr x2</b></p>
+                                <p><i>Corretor</i></p>
                             </b-card-text>
-                        </div>
-                    </b-card>
-
-                    <b-card id="cardFunc" :img-src="matheus" img-alt="Image" img-top class="mx-1" rounded>
-                        <b-card-text>
-                            <p><b>Matheus Noguerol</b></p>
-                            <p><i>Corretor</i></p>
-                            
-                        </b-card-text>
-                    </b-card>
-
-                    <b-card id="cardFunc" :img-src="alex" img-alt="Image" img-top class="mx-1" rounded>
-                        <b-card-text>
-                            <p><b>Alex Pereira</b></p>
-                            <p><i>Despachante</i></p>
-                            
-                        </b-card-text>
-                    </b-card>
-
-                    <b-card id="cardFunc" :img-src="denilson" img-alt="Image" img-top class="mx-1" rounded>
-                        <b-card-text>
-                            <p><b>Denilson Barbosa</b></p>
-                            <p><i>Despachante</i></p>
-                            
-                        </b-card-text>
-                    </b-card>
-                </b-card-group>
+                        </b-card>
+    
+                        <b-card id="cardFunc" class="mx-1" rounded>
+                            <b-card-img :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/srX.jpg')" alt="Image"></b-card-img>
+    
+                            <b-card-text>
+                                <p><b>Sr x3</b></p>
+                                <p><i>Despachante</i></p>
+                            </b-card-text>
+                        </b-card>
+    
+                        <b-card id="cardFunc" class="mx-1" rounded>
+                            <b-card-img :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/srX.jpg')" alt="Image"></b-card-img>
+    
+                            <b-card-text>
+                                <p><b>Sr x4</b></p>
+                                <p><i>Despachante</i></p>
+                            </b-card-text>
+                        </b-card>
+                    </b-card-group>
+                </div>
            </div>
         </main>
 

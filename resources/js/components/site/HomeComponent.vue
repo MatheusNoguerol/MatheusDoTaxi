@@ -2,7 +2,7 @@
     export default {
         data(){
             return{
-               escritorio: '../public/images/servico2.jpeg', 
+               escritorio: '../public/images/adm.jpg', 
                borracharia: '../public/images/servicos.jpg', 
                seguros: '../public/images/seguro.png', 
             }
@@ -154,7 +154,7 @@ div#quadfora{
                 </b-col>
 
                 <b-col lg="5">
-                    <img :src="escritorio" class="img-fluid mx-auto rounded" alt="">
+                    <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/adm.jpg')" alt="imagem">
                 </b-col>
             </b-row>
 
@@ -166,13 +166,13 @@ div#quadfora{
                 </b-col>
 
                 <b-col lg="5">
-                    <img :src="seguros" class="img-fluid mx-auto rounded" alt="">
+                    <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/seguro.png')" alt="imagem">
                 </b-col>
             </b-row>
 
             <b-row class="my-5 w-100 rounded" id="hoverQuadGrande">
                 <b-col lg="5">
-                    <img :src="borracharia" class="img-fluid mx-auto rounded" alt="">
+                    <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/borracharia.jpg')" alt="imagem">
                 </b-col>
 
                 <b-col lg="7" class="text-center">
