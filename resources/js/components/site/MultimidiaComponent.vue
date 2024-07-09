@@ -66,8 +66,33 @@ div#midias:hover{
 
         <hr class="bg-secondary w-100">
 
-        
-        <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/carro1.jpg')" alt="imagem">
+        <b-row class="m-2">
+            <b-col>
+                <div class="container">
+                    <b-carousel
+                        id="carousel-no-animation"
+                        style="text-shadow: 0px 0px 2px #000"
+                        no-animation
+                        indicators
+                        img-width="1024"
+                        img-height="480"
+                    >
+                        <b-carousel-slide
+                        caption="First Slide"
+                        :img-src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/carro1.jpg')"
+                        ></b-carousel-slide>
+                        <b-carousel-slide
+                        caption="Second Slide"
+                        :img-src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/carro2.jpg')"
+                        ></b-carousel-slide>
+                        <b-carousel-slide
+                        caption="Third Slide"
+                        :img-src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/carro3.jpg')"
+                        ></b-carousel-slide>
+                    </b-carousel>
+                    </div>
+            </b-col>
+        </b-row>
         <div class="container mt-3 mb-5 rounded" id="carousel">
             <b-embed
             class="pr-3 pl-3"
@@ -88,42 +113,43 @@ div#midias:hover{
                     <div class="card-body">
                         <h5 class="card-title">Acesse o site de integração da prefeitura com o cidadão.</h5>
                         <span class="direita">Clique no botão abaixo para ser redirecionado.</span><br>
-                        <a href="http://carioca.rio" class="btn btn-primary">Carioca Digital</a><!--AQUI ENTRA BOTAO QUE LEVA PARA FORMULARIO DE ATENDIMENTO REMOTO-->
+                        <br><a href="http://carioca.rio" class="btn btn-primary">Carioca Digital</a>
                     </div>
                     </div>
                 </div>
             </section>
-
-            <div  id="quadfora" class="p-7 pt-2 pb-2 mb-2 mt-1 text-dark">
+            
+            <div  id="quadfora" class="text-dark pt-2">
                 <div  class=" text-center" style="font-weight: bold;">
                     <div class="row m-2">
-                        <div id="bordado" class="col p-3">
-                            Contato<br>
-                            (21)98144-3296<br>
-                            (21)3936-4967
-                        </div>
-                        <div id="bordado" class="col p-3">
-                            Horarios<br>
-                            Segunda à Sexta<br>
-                            09:00 às 17:00
-                        </div>
-                        <div id="bordado" class="col p-3">
-                            Localizacao<br>
-                            Rua Padre Manoel da Nobrega 1166<br>
-                            quintino 
-                            21321-009
-                        </div>
-                        <div id="bordado" class="col p-3">
-                            Sigam a gente nas redes sociais:<br>
-                            Instagram<br>  Facebook
-                        </div>
+                    <div id="bordado" class="col p-2">
+                        Contato<br>
+                        (21)95554-3555<br>
+                        (21)3444-4555
+                    </div>
+                    <div id="bordado" class="col p-2">
+                        Horarios<br>
+                        Segunda à Sexta<br>
+                        09:00 às 17:00
+                    </div>
+                    <div id="bordado" class="col p-2">
+                        Localizacao<br>
+                        Rua General do rosário 1166<br>
+                        Barra da Tijuca 
+                        21749-09
+                    </div>
+                    <div id="bordado" class="col p-2">
+                        Sigam a gente nas redes sociais:<br>
+                        Instagram<br>  Facebook
+                    </div>
                     </div>
                 </div> 
+                <div class="card-footer text-muted text-center">
+                    Copyright 2022 - by Matheus Noguerol    
+                    <a target="_blank" href="https://www.facebook.com/matheus.noguerol">Facebook</a>
+                    <a target="_blank" href="https://www.instagram.com/noguerolmatheus/?hl=pt-br">Instagram</a>
+                </div> 
             </div>
-            
-            <div class="card-footer text-muted text-center mb-2">
-            Copyright &copy; 2022 - by Matheus Noguerol    
-            </div> 
         </footer>
 
     </div>

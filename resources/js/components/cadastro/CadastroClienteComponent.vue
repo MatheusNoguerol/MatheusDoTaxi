@@ -653,7 +653,7 @@ export default {
       self.arquivo = null
 
       console.log('row ->',row)
-      self.documentoEscolhido = '../storage/app/public/images/' + row.item.CAMINHO
+      self.documentoEscolhido = require('/xampp/htdocs/SerginhoDoTaxi/storage/app/public/images/' + row.item.CAMINHO) 
       self.arquivo = row.item.CAMINHO
       self.tipoDocumentoEscolhido = row.item.TIPODOCUMENTO
       self.extensao = row.item.EXTENSAO

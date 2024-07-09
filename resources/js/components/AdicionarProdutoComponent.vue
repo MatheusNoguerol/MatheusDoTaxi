@@ -21,6 +21,6 @@
 
 <template>  
     <div>
-        <h1>foi</h1>
+        Em desenvolvimento...
     </div>
 </template>

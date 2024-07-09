@@ -91,28 +91,15 @@ div#sombraFoto{
             <hr class=bg-secondary>
             <div class="row m-auto container">
                 <div id="sombraFoto" class="col col-md-12 overflow-hidden rounded" style="display:grid; font-weight: bold; text-align: center;">
-                    <img :src="fotoFrenteLoja " class="img-fluid" alt="...">
+                    <img class="img-fluid mx-auto rounded" :src="require('/xampp/htdocs/SerginhoDoTaxi/public/images/loja.jpg')" alt="imagem">
                 </div>
             </div>  
             <br>
         </section>
         <div class="row m-auto" id="mapa">
             <div class="col col-md-12 overflow-hidden" style="display:grid; font-weight: bold; text-align: center;">
-                <iframe class="w-100" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.999408694295!2d-43.319209848851045!3d-22.876480242469473!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997da14bddeb2b%3A0x8cc28573c685bff0!2sSerginho%20do%20Taxi!5e0!3m2!1spt-BR!2sbr!4v1667482244479!5m2!1spt-BR!2sbr" height="300" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" ></iframe>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3674.412645859525!2d-42.48720822625085!3d-22.935025318618447!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x975e859edc0a55%3A0xe07c823c6ce832b8!2sIta%C3%BAna%2C%20Saquarema%20-%20RJ%2C%2028990-000!5e0!3m2!1spt-BR!2sbr!4v1719610759626!5m2!1spt-BR!2sbr" width="100%" height="450" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
-        </div>
-
-
-
-        <div class="container w-100 mb-5 mt-5 rounded" id="coments">
-            <b-row class="my-5 w-100 rounded text-center" id="hoverQuadGrande">
-                <b-col lg="6">
-                    <img :src="avaliacoes" class="img-fluid mx-auto rounded" alt="">
-                </b-col>
-                <b-col lg="6">
-                    <img :src="comentarios2" class="img-fluid mx-auto rounded" alt="">
-                </b-col>
-            </b-row>
         </div>
 
         
@@ -128,42 +115,43 @@ div#sombraFoto{
                     <div class="card-body">
                         <h5 class="card-title">Acesse o site de integração da prefeitura com o cidadão.</h5>
                         <span class="direita">Clique no botão abaixo para ser redirecionado.</span><br>
-                        <a href="http://carioca.rio" class="btn btn-primary">Carioca Digital</a><!--AQUI ENTRA BOTAO QUE LEVA PARA FORMULARIO DE ATENDIMENTO REMOTO-->
+                        <br><a href="http://carioca.rio" class="btn btn-primary">Carioca Digital</a>
                     </div>
                     </div>
                 </div>
             </section>
-
-            <div  id="quadfora" class="p-7 pt-2 pb-2 mb-2 mt-1 text-dark">
+            
+            <div  id="quadfora" class="text-dark pt-2">
                 <div  class=" text-center" style="font-weight: bold;">
                     <div class="row m-2">
-                        <div id="bordado" class="col p-3">
-                            Contato<br>
-                            (21)98144-3296<br>
-                            (21)3936-4967
-                        </div>
-                        <div id="bordado" class="col p-3">
-                            Horarios<br>
-                            Segunda à Sexta<br>
-                            09:00 às 17:00
-                        </div>
-                        <div id="bordado" class="col p-3">
-                            Localizacao<br>
-                            Rua Padre Manoel da Nobrega 1166<br>
-                            quintino 
-                            21321-009
-                        </div>
-                        <div id="bordado" class="col p-3">
-                            Sigam a gente nas redes sociais:<br>
-                            Instagram<br>  Facebook
-                        </div>
+                    <div id="bordado" class="col p-2">
+                        Contato<br>
+                        (21)95554-3555<br>
+                        (21)3444-4555
+                    </div>
+                    <div id="bordado" class="col p-2">
+                        Horarios<br>
+                        Segunda à Sexta<br>
+                        09:00 às 17:00
+                    </div>
+                    <div id="bordado" class="col p-2">
+                        Localizacao<br>
+                        Rua General do rosário 1166<br>
+                        Barra da Tijuca 
+                        21749-09
+                    </div>
+                    <div id="bordado" class="col p-2">
+                        Sigam a gente nas redes sociais:<br>
+                        Instagram<br>  Facebook
+                    </div>
                     </div>
                 </div> 
+                <div class="card-footer text-muted text-center">
+                    Copyright 2022 - by Matheus Noguerol    
+                    <a target="_blank" href="https://www.facebook.com/matheus.noguerol">Facebook</a>
+                    <a target="_blank" href="https://www.instagram.com/noguerolmatheus/?hl=pt-br">Instagram</a>
+                </div> 
             </div>
-            
-            <div class="card-footer text-muted text-center mb-2">
-            Copyright &copy; 2022 - by Matheus Noguerol    
-            </div> 
         </footer>
 
     </div>

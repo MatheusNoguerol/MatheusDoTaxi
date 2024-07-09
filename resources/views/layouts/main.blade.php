@@ -52,7 +52,6 @@
   <div id="app">
     @yield('content')
   </div>
-  
   <footer id="rodape">
     <section>
       <div class="card text-center bg-dark bg-opacity-10">
